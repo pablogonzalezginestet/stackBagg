@@ -1,0 +1,23 @@
+Package: EnsBagg
+Title: Ensemble IPCW Bagging
+Version: 0.0.0.9000
+Authors@R: c(
+           person("Pablo", "Gonzalez Ginestet", email = "pablo.gonzalez.ginestet@ki.se",
+           role = c("aut", "cre"), comment = "https://staff.ki.se/people/pabgon" ),
+           person("Erin", "Gabriel", email = "erin.gabriel@ki.se",
+           role = c("aut"), comment = "https://staff.ki.se/people/erigab" ),
+           person("Julian", "Wolfson", email = "julianw@umn.edu",
+           role = c("aut"), comment = "https://sites.google.com/umn.edu/julianw" )
+           )
+Description: Estimation the risk of an event at a specific time in the presence of censored data with competing risk using a collection of 
+             machine learning algorithms.
+             Each algorithm is trained on a IPC-weighted bootstrap sample from the training set and predictions are obtained for the validation set.
+             The Ensemble IPCW Bagging prediction is given by the weighted linear combination of the prediction of each algorithm.
+             The area under the IPCW time-varying receiver operator curve (AUC) is used for evaluating
+             the predictive performance and calibrating the ensemble and each single algorithm.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat
+RoxygenNote: 6.1.1
