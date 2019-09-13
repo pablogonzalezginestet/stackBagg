@@ -1,4 +1,4 @@
-#' @title Simulation settings  from Gonzalez Ginestet et al. (2019+) Ensemble IPCW Bagging paper
+#' @title Simulation settings from Gonzalez Ginestet et al. (2019+). "Ensemble IPCW Bagging bagging: a case study in the HIV care registry"
 #' @description Function that generates data of the different simulation studies
 #' presented in the accompanying paper. This function requires the
 #'   \code{gam} package to be installed.
@@ -11,6 +11,7 @@
 #' \item{test.data}{simulated  test data set} }
 #' @examples
 #' DT=datagenPaper(J = 1 , n = 1250, frac.train = 0.8, simulation=1, scenario=4)
+#' @export
 
 # scenario=1 : Independent censoring. Censoring time does not depend on any covariate.
 # scenario=2 : Independent censoring, non-informative. Censoring time depends on a
@@ -293,20 +294,4 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
 }
 
 
-#' @title Simulation settings  from Gonzalez Ginestet et al. (2019+) Ensemble IPCW Bagging paper
-#' @description Function that generates data of the different simulation studies
-#' presented in the accompanying paper. This function requires the
-#'   \code{gam} package to be installed.
-#' @param J number of simulated data sets
-#' @param n number of sample size
-#' @param frac.train percentange train data set. A number between 0 and 1.
-#' @param simulation study indicator. It takes on 1 and 2. 
-#' @param scenario scenario indicator. It takes on 1, 2, 3 and 4.
-#' @return A list with the following elements: \describe{ \item{train.data}{ simulated train data set}
-#' \item{test.data}{simulated  test data set} }
-#' @examples
-#' DT <- gendata(J = 1, n = 1000, frac.train=0.8 ,simulation=1,scenario=4)
-#' @rdname gendata
-#' @export
 
-gendata(J , n , frac.train ,simulation,scenario)
