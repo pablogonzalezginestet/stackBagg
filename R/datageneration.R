@@ -1,15 +1,15 @@
 #' @title Simulation settings  from Gonzalez Ginestet et al. (2019+) Ensemble IPCW Bagging paper
 #' @description Function that generates data of the different simulation studies
 #' presented in the accompanying paper. This function requires the
+#'   \code{gam} package to be installed.
+#' @param J number of simulated data sets
+#' @param n number of sample size
+#' @param frac.train percentange train data set. A number between 0 and 1.
+#' @param simulation study indicator. It takes on 1 and 2. 
+#' @param scenario scenario indicator. It takes on 1, 2, 3 and 4.
+#' @return A list with the following elements: \describe{ \item{train.data}{ simulated train data set}
+#' \item{test.data}{simulated  test data set} }
 
-
-
-
-# J = number of simulated data sets
-# n = sample size
-# frac.train = percentange train data set. A number between 0 and 1.
-# simulation = simulation indicator setting. It takes on 1 and 2. 
-# scenario = scenario indicator. It takes on 1, 2, 3 and 4.
 
 # scenario=1 : Independent censoring. Censoring time does not depend on any covariate.
 # scenario=2 : Independent censoring, non-informative. Censoring time depends on a
@@ -279,10 +279,8 @@ datagenPaper=function(J = 500 , n = 1250, frac.train = 0.8, simulation, scenario
     sim.data.train <- data.frame(sim.data[train.set,])
     sim.data.test <- data.frame(sim.data[test.set,]) 
     
-    sim.data.train<- sim.data.train[c("id","E","wts.1","wts.11","ttilde","delta","trueT",xnam)]
-    colnames(sim.data.train)[c(3,4)] <- c("wts","wts.nn")
-    sim.data.test.1 <- sim.data.test[c("id","E","wts.1","wts.11","ttilde","delta","trueT",xnam)]
-    colnames(sim.data.test.1)[c(3,4)] <- c('wts',"wts.nn")
+    sim.data.train<- sim.data.train[c("id","E","ttilde","delta","trueT",xnam)]
+    sim.data.test.1 <- sim.data.test[c("id","E","ttilde","delta","trueT",xnam)]
     
     train.data[[j]]=sim.data.train
     test.data[[j]]=sim.data.test
@@ -292,3 +290,22 @@ datagenPaper=function(J = 500 , n = 1250, frac.train = 0.8, simulation, scenario
   return(list(train.data, test.data))
   
 }
+
+
+#' @title Simulation settings  from Gonzalez Ginestet et al. (2019+) Ensemble IPCW Bagging paper
+#' @description Function that generates data of the different simulation studies
+#' presented in the accompanying paper. This function requires the
+#'   \code{gam} package to be installed.
+#' @param J number of simulated data sets
+#' @param n number of sample size
+#' @param frac.train percentange train data set. A number between 0 and 1.
+#' @param simulation study indicator. It takes on 1 and 2. 
+#' @param scenario scenario indicator. It takes on 1, 2, 3 and 4.
+#' @return A list with the following elements: \describe{ \item{train.data}{ simulated train data set}
+#' \item{test.data}{simulated  test data set} }
+#' @examples
+#' DT <- gendata(J = 1, n = 1000, frac.train=0.8 ,simulation=1,scenario=4)
+#' @rdname gendata
+#' @export
+
+
