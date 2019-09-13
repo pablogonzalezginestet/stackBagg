@@ -1,3 +1,9 @@
+#' @title Simulation settings  from Gonzalez Ginestet et al. (2019+) Ensemble IPCW Bagging paper
+#' @description Function that generates data of the different simulation studies
+#' presented in the accompanying paper. This function requires the
+
+
+
 
 # J = number of simulated data sets
 # n = sample size
