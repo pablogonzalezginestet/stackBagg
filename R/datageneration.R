@@ -9,7 +9,8 @@
 #' @param scenario scenario indicator. It takes on 1, 2, 3 and 4.
 #' @return A list with the following elements: \describe{ \item{train.data}{ simulated train data set}
 #' \item{test.data}{simulated  test data set} }
-
+#' @examples
+#' DT=datagenPaper(J = 1 , n = 1250, frac.train = 0.8, simulation=1, scenario=4)
 
 # scenario=1 : Independent censoring. Censoring time does not depend on any covariate.
 # scenario=2 : Independent censoring, non-informative. Censoring time depends on a
@@ -29,7 +30,7 @@
 # typ1expt = percertange of the individuals suffering type 1 event
 # typ2expt = percertange of the individuals suffering type 1 event
 
-datagenPaper=function(J = 500 , n = 1250, frac.train = 0.8, simulation, scenario) {
+datagenPaper=function(J, n , frac.train , simulation, scenario) {
   
   set.seed(500)
   train.data=list()
@@ -308,4 +309,4 @@ datagenPaper=function(J = 500 , n = 1250, frac.train = 0.8, simulation, scenario
 #' @rdname gendata
 #' @export
 
-
+gendata(J , n , frac.train ,simulation,scenario)
