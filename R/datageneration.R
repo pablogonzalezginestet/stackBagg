@@ -271,7 +271,7 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
     
     
     sim.data=data.frame(id = 1:length(ttilde), ttilde, delta, trueT = Y < Tstar & Y < Y2, Cen, Y, Y2,X)
-    sim.data<- mutate(sim.data,E=as.factor(ifelse(ttilde < Tstar & delta==1, 1 , ifelse(ttilde < Tstar & delta==2 | ttilde>Tstar, 0, NA))),
+    sim.data<- dplyr::mutate(sim.data,E=as.factor(ifelse(ttilde < Tstar & delta==1, 1 , ifelse(ttilde < Tstar & delta==2 | ttilde>Tstar, 0, NA))),
                       deltac.1=ifelse(delta==0,1,0))
     
     xnam <- paste("X", 1:20, sep="")

@@ -22,6 +22,7 @@ Imports:
     class,
     CoxBoost,
     cvAUC,
+    dplyr,
     e1071,
     gam,
     glmnet,
@@ -40,4 +41,3 @@ LazyData: true
 Suggests: 
     testthat
 RoxygenNote: 6.1.1
-
