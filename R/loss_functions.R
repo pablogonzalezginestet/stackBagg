@@ -1,5 +1,5 @@
 
-#' IPCW Weighted AUC Loss Function
+#' IPC Weighted AUC Loss Function
 #' @description Compute time-varying IPCW AUC to account for censoring and competing risks.
 #' @param T  vector of censored event-times
 #' @param delta  vector of event indicators at the corresponding value of the vector T. Censored observations must be denoted by the value 0. 
@@ -21,7 +21,6 @@ ipcw_auc <- function (T,delta, marker,cause, wts, tao){
     return(area)
   }
   
-  #marker <- crossprod(t(Z),par)
   n <- length(T)
   n_marker <- length(unique(marker))
   n_times <- length(tao)
@@ -60,7 +59,6 @@ ipcw_auc <- function (T,delta, marker,cause, wts, tao){
   return(AUC)
   
 }
-
 
 
 
