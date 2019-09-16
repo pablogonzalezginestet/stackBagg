@@ -54,7 +54,7 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
     if(simulation==1){
 
     X2 <- X[, c(1, 6, 11, 16)]
-    X2 <- cbind(X2[,1],X2[,2], X2[, 1] * X2[, 2], bs(X2[, 3], df = 4, degree = 3), bs(X[, 4], df = 4, degree = 3))
+    X2 <- cbind(X2[,1],X2[,2], X2[, 1] * X2[, 2], splines::bs(X2[, 3], df = 4, degree = 3), splines::bs(X[, 4], df = 4, degree = 3))
     
     beta <- c(.75, .75, 5, 1.5, -2.5, 3, 2, 2, 3, 3, .9)
     g1 <- sqrt(exp(6 + X2 %*% beta )) 
