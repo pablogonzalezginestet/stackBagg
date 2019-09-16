@@ -1,7 +1,7 @@
 
-#' Internal sail functions
+#' Internal EnsBagg functions
 #' 
-#' @description Internal sail helper functions
+#' @description Internal EnsBagg helper functions
 #'
 #' @details These functions are not intended for use by users.
 #'
