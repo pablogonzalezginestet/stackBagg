@@ -190,14 +190,14 @@ ML_list <- list(
 #' @return a matrix of predictions where each column is the prediction of each algorithm based on the testdata
 #' @rdname EnsBagg-internal
 
-MLprocedures_natively <- function(traindata,testdata,fmla,tune.params){ 
+MLprocedures_natively <- function(traindata,testdata,fmla,tuneparams){ 
   traindata<- as.data.frame(traindata)
   wts <- traindata$wts.nn 
   
   pred1 <- ML_list_natively$logfun(traindata,testdata,fmla,wts)
-  pred2 <- ML_list_natively$GAMfun(traindata,testdata,fmla,tune.params$gam,wts)
-  pred3 <- ML_list_natively$lassofun(traindata,testdata,fmla,tune.params$lasso,wts)
-  pred4 <- ML_list_natively$rffun(traindata,testdata,fmla,tune.params$rf,wts)
+  pred2 <- ML_list_natively$GAMfun(traindata,testdata,fmla,tuneparams$gam,wts)
+  pred3 <- ML_list_natively$lassofun(traindata,testdata,fmla,tuneparams$lasso,wts)
+  pred4 <- ML_list_natively$rffun(traindata,testdata,fmla,tuneparams$rf,wts)
   return(cbind(pred1,pred2,pred3,pred4))
 }
 
@@ -244,7 +244,7 @@ ML_list_natively <- list(
 )
 
 ############################# Algorithm 2 Ensemble IPCW Bagging ##############################################
-#' @description  
+#' @description  Obtain predictions
 #' @param folds Number of folds
 #' @param MLprocedures \link{MLprocedures}
 #' @param fmla formula object ex. "E ~ x1+x2"
@@ -256,7 +256,7 @@ ML_list_natively <- list(
 #' @rdname EnsBagg-internal
 
 
-crossval_function <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data,A) {
+ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data,A) {
   result <- vector("list", A)
   AUC.train <- vector("list", A)
   result_id <- vector("list")
@@ -274,7 +274,7 @@ crossval_function <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, da
     n_test.set <- nrow(test.set)
     
     #boot
-    b <-boot(data=train.set, statistic=MLprocedures, R=B, fmla=formula,tune.params=tune.params,
+    b <-boot::boot(data=train.set, statistic=MLprocedures, R=B, fmla=fmla,tuneparams=tuneparams,
              testdata=test.set, weights = train.set$wts)
     
     d<- apply(b$t,1,function(x) split(x, rep(seq(A), each = n_test.set)))
@@ -300,6 +300,23 @@ crossval_function <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, da
   prediction=prediction[order(prediction[,1]),]
   names(prediction) = c("id",paste("Set", 1:(ncol(prediction)-1), sep=""))
   AUC.train <- sapply(AUC.train, function(x) sum(x)/folds)
-  return(list(prediction,AUC.train))
+  data <- data[order(data$id),] # sort the data by id since the predictions are sorted by id too 
+ 
+  coef_init <- rep(1/ncol(prediction),ncol(prediction)) #initial values
+  penal_grid=c(.01,.1,.5,1,5,10,15,25,50,100) # grid of penalization terms considered in the optimization problem
+  auc_coef <- matrix(NA,length(penal_grid),ncol(prediction)+2) # a matrix that store the AUC value at the optimum coefficients, if it has converged, the penalization term selected and the optimum coefficients
+  for(i in 1:length(penal_grid)){
+    auc_coef[i,] <- optimun_auc_coef(penal_grid[i],data,prediction)
+  }
+  
+  coef_opt <- auc_coef[which.max(auc_coef[,1]),][-(1:2)]
+  coef_opt_normalized <- coef_opt/sum(coef_opt) # optimal coefficients normalized 
+  convergence_indicator <- auc_coef[which.max(auc_coef[,1]),][2]
+  penal_chosen <- penal_grid[which.max(AUC_coef.bfgs[,1])]
+  
+  
+  return(list(prediction,AUC.train,coef_opt_normalized,convergence_indicator,penal_chosen))
   
 }
+
+
