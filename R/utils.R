@@ -137,7 +137,7 @@ ML_list <- list(
     X=X[!is.na(data$E),]
     fit.svm <- e1071::svm(y = as.factor(Y), x = X, 
                           type = "C-classification", fitted = FALSE, probability = TRUE, 
-                          kernel = "radial", cost =svm.grid[1],gamma=svm.grid[2])
+                          kernel = c("radial","linear")[svm.grid[3]] , cost =svm.grid[1],gamma=ifelse(svm.grid[3]==2,NULL,svm.grid[2]))
     pred <- attr(predict(fit.svm, newdata = testdata, probability = TRUE), 
                  "prob")[, "1"]
     return(pred)
