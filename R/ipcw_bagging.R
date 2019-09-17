@@ -94,7 +94,7 @@ ipcw_genbagg <- function(fmla,tuneparams,MLprocedures,traindata,testdata) {
   
   result <- vector("list", A)
   n_testdata <- nrow(testdata)
-  b <-boot::boot(data=traindata, statistic=MLprocedures, R=B, fmla=fmla,tune.params=tuneparams,
+  b <-boot::boot(data=traindata, statistic=MLprocedures, R=B, fmla=fmla,tuneparams=tuneparams,
            testdata=testdata, weights = traindata$wts)
   
   d<- apply(b$t,1,function(x) split(x, rep(seq(A), each = n_testdata)))
