@@ -1,5 +1,5 @@
 
-############################# Algorithm 2 Ensemble IPCW Bagging ##############################################
+#' Algorithm 2: Ensemble IPCW Bagging 
 #' @description  Obtain predictions
 #' @param folds Number of folds
 #' @param MLprocedures \link{MLprocedures}
@@ -8,8 +8,9 @@
 #' @param B number of bootstrap samples
 #' @param data a training data set
 #' @param A a number of machine learning algorithms in the library
-#' @return a list with the predictions of each machine learning algorithm and the average AUC across folds for each of them
-
+#' @return a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
+#' @rdname ipcw_ensbagg
+#' @export
 
 
 ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data,A) {
@@ -77,22 +78,23 @@ ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data,A)
 
 
 
-############################# Algorithm 1 General IPCW Bagging ##############################################
+#' Algorithm 1: General IPCW Bagging 
+
 #' @description  Obtain predictions
 #' @param fmla formula object ex. "E ~ x1+x2"
 #' @param tuneparams a list of tune parameters for each machine learning procedure
 #' @param MLprocedures \link{MLprocedures}
 #' @param traindata a training data set
 #' @param testdata a test data set 
-#' @return a list with the predictions of each machine learning algorithm and the average AUC across folds for each of them
-#' @rdname wBrierScore
+#' @return a matrix with the predictions on the test data set of each machine learning algorithm considered in \link{MLprocedures}
+#' @rdname ipcw_genbagg
 #' @export
 
-pred_function <- function(fmla,tuneparams,MLprocedures,traindata,testdata) {
+ipcw_genbagg <- function(fmla,tuneparams,MLprocedures,traindata,testdata) {
   
   result <- vector("list", A)
   n_testdata <- nrow(testdata)
-  b <-boot(data=traindata, statistic=MLprocedures, R=B, fmla=formula,tune.params=tune.params,
+  b <-boot::boot(data=traindata, statistic=MLprocedures, R=B, fmla=fmla,tune.params=tuneparams,
            testdata=testdata, weights = traindata$wts)
   
   d<- apply(b$t,1,function(x) split(x, rep(seq(A), each = n_testdata)))
