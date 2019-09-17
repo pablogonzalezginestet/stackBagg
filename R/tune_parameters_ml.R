@@ -1,50 +1,19 @@
+#' Tuning parameter selection
+#' @description Tuning parameter selection
+#' @param gam_param a vector containing degree of freedom 3 and 4
+#' @param lasso_param a grid of values for the shrinkage term 
+#' @param randomforest_param a two column matrix: first column denotes the num_trees parameter and the second column denotes the mtry parameter.
+#' @param knn_param a grid of  positive integers values
+#' @param svm_param a three column matrix:  first column denotes the cost parameter, second column the gamma and third column the kernel. kernel=1 denotes "radial" and kernel=2 denotes "linear".
+#' @param nn_param a grid of positive integers values for the neurons
+#' @param bart_param a three column matrix:  first column denotes the num_tree parameter, second column the k parameter and third column the q parameter.
+#' @param folds number of folds
+#' @param fmla formula object ex. "E ~ x1+x2"
+#' @param tao evaluation time point of interest 
+#' @param data data set that contains at least id, E , ttilde, delta, wts and covariates
+#' @return a list with the tune parameters selected using the IPCW AUC loss function.
+#' @export
 
-
-#setwd("/Users/pgonzalezginestet/Documents/KarolinskaInstitutet/1st_Project/Code/Hebbe/My_version_withErinsuggestion/Scenario1")
-rm(list = ls())
-setwd("Z:/Project 1/Data")
-load("hiv.train.RData")
-source("functions_packages.R")
-#load("hiv.test.RData")
-
-data=hiv.train
-B=10 #boostraps
-folds=5 
-Tstar=tao=730
-
-xnam=c("age","sex","immigrant","ethnicity","infection_route","count_languages","condition.at.supression","count_drug.at.supression",names(hiv.train)[15:31] ) #i took away birht country since it has too many factors
-xnam.factor=colnames(data)[sapply(data, class)=="factor"]
-xnam.cont=xnam[!(xnam %in% xnam.factor)]
-xnam.cont.gam=xnam.cont[sapply(apply(hiv.train[xnam.cont],2,unique),function(z) length(z)>3)]
-fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
-
-grid.gam=c(3,4)
-grid.knn=seq(1,50,by=1)
-#Radial basis function
-cost=c(10^3, 10^2, 10, 1)
-gamma=c(10^(-5), 10^(-4), 10^(-3), 10^(-2), 10^(-1))
-grid.svm=rbind(cbind(cost=rep(cost, times=rep(length(gamma),length(cost))),gamma=rep(gamma,length(cost)),kernel=1 ), cbind(cost,gamma=NA,kernel=2) )
-
-grid.nn=c(1,2,3,4,5) #,floor( length(xnam)/2 ))   #seq(1,20,by=1)
-num.trees = c(50,100,250,500,750,1000)
-mtry=c(1,floor(sqrt(ncol(data[xnam]))),floor(ncol(data[xnam])/3),floor(ncol(data[xnam])/3),seq(floor(ncol(data[xnam])/3)+1,19,by=2)) 
-grid.rf=cbind(rep(num.trees,times=rep(length(mtry),length(num.trees))),rep(mtry,length(num.trees)))
-
-#default used in the function bartMachineCV
-num_tree = c(50, 200)
-k = c(1,2,3,5)
-#nu = c(3,10) #not used for classification 
-q=c(0.9,0.99,0.75)
-grid.temp=cbind( rep(num_tree,times=rep(length(k),length(num_tree))), rep(k,length(num_tree))  )
-
-grid.bart= cbind(rep(grid.temp[,1],times=rep(length(q),length(grid.temp[,1]))),rep(grid.temp[,2],times=rep(length(q),length(grid.temp[,2]))), 
-                 rep(q,length(grid.temp[,1]))  )
-grid.lasso=glmnet(fmla,data=data[!is.na(data$E),],family="binomial")$lambda
-lambda_max <- max(grid.lasso)
-epsilon <- .0001
-K <- 100
-lambdapath <- round(exp(seq(log(lambda_max), log(lambda_max*epsilon), length.out = K)), digits = 10)
-grid.lasso=lambdapath
 
 
 tune_params_ml <- function( gam_param,
@@ -123,22 +92,22 @@ pred.test.bart=pred.test.bart[order(id.set),]
 pred.test.lasso=pred.test.lasso[order(id.set),]
 data=data[order(data$id),]
 
-loss.function.gam=apply(pred.test.gam,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts.nn,tao))
-loss.function.knn=apply(pred.test.knn,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts.nn,tao))
-loss.function.svm=apply(pred.test.svm,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts.nn,tao))
-loss.function.nn=apply(pred.test.nn,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts.nn,tao))
-loss.function.rf=apply(pred.test.rf,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts.nn,tao))
-loss.function.bart=apply(pred.test.bart,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts.nn,tao))
-loss.function.lasso=apply(pred.test.lasso,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts.nn,tao))
+loss.function.gam=apply(pred.test.gam,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts,tao))
+loss.function.knn=apply(pred.test.knn,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts,tao))
+loss.function.svm=apply(pred.test.svm,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts,tao))
+loss.function.nn=apply(pred.test.nn,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts,tao))
+loss.function.rf=apply(pred.test.rf,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts,tao))
+loss.function.bart=apply(pred.test.bart,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts,tao))
+loss.function.lasso=apply(pred.test.lasso,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts,tao))
 
 tuneparams=list(
-  gam=grid.gam[which.max(loss.function.gam)],
-  knn=grid.knn[which.max(loss.function.knn)],
-  svm=grid.svm[which.max(loss.function.svm),],
-  nn=grid.nn[which.max(loss.function.nn)],
-  rf=grid.rf[which.max(loss.function.rf),],
-  bart=grid.bart[which.max(loss.function.bart),],
-  lasso=grid.lasso[which.max(loss.function.lasso)]
+  gam=gam_param[which.max(loss.function.gam)],
+  knn=knn_param[which.max(loss.function.knn)],
+  svm=svm_param[which.max(loss.function.svm),],
+  nn=nn_param[which.max(loss.function.nn)],
+  rf=randomforest_param[which.max(loss.function.rf),],
+  bart=bart_param[which.max(loss.function.bart),],
+  lasso=lasso_param[which.max(loss.function.lasso)]
 )
 
   names(tuneparams$lasso)=c("lambda")
@@ -153,10 +122,13 @@ tuneparams=list(
   
 }
 
-#svm: cost , gamma
-#rf: number of trees, mtry
-#bart: num_tree, k , q
 
 
-save(tune.params,file="tune.params.RData")
+
+
+
+
+
+
+
 
