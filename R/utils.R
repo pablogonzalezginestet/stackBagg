@@ -81,6 +81,21 @@ ML_list <- list(
   },
   
   GAMfun = function(data,testdata,fmla,df) {
+    if (length(df)>1){
+      
+      newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
+      newfmla=reformulate(newterms,fmla[[2]])
+      fit <- gam(newfmla, data = data, family = 'quasibinomial')
+      pred.df3 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+      
+      newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
+      newfmla=reformulate(newterms,fmla[[2]])
+      fit <- gam(newfmla, data = data, family = 'quasibinomial')
+      pred.df4 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+      return(cbind(pred.df3,pred.df4))
+      
+    }else{
+      
     if (df==3){
       newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
       newfmla=reformulate(newterms,fmla[[2]])
@@ -91,7 +106,9 @@ ML_list <- list(
     fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
     pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
     return(pred)
-  } , 
+    }
+    
+    }, 
   
   lassofun=function(data,testdata,fmla,lambda){
     fit <- glmnet::glmnet(fmla,data=data,lambda=lambda,family="binomial")
