@@ -13,7 +13,7 @@
 #' @export
 
 
-ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data,A) {
+ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data) {
   result <- vector("list", A)
   AUC.train <- vector("list", A)
   result_id <- vector("list")
@@ -32,7 +32,7 @@ ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data,A)
     
     #boot
     b <-boot::boot(data=train.set, statistic=MLprocedures, R=B, fmla=fmla,tuneparams=tuneparams,
-                   testdata=test.set, weights = train.set$wts)
+                   testdata=test.set, weights = train.set$sum_wts_one)
     
     d<- apply(b$t,1,function(x) split(x, rep(seq(A), each = n_test.set)))
     D.all <- list()
@@ -43,7 +43,7 @@ ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data,A)
       }
       D.all <- colMeans(d.all,na.rm=T)
       result[[s]]<-c(result[[s]], D.all)
-      AUC.train[[s]] <- c(AUC.train[[s]], AUC_function(T=test.set$ttilde,delta=test.set$delta,marker=D.all,cause=1,wts=test.set$wts.nn,tao))
+      AUC.train[[s]] <- c(AUC.train[[s]], ipcw_auc(T=test.set$ttilde,delta=test.set$delta,marker=D.all,cause=1,wts=test.set$wts,tao))
       d.all <- NULL
     }
     result_id[[k]]<- test.set$id
@@ -59,7 +59,7 @@ ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data,A)
   AUC.train <- sapply(AUC.train, function(x) sum(x)/folds)
   data <- data[order(data$id),] # sort the data by id since the predictions are sorted by id too 
   
-  coef_init <- rep(1/ncol(prediction),ncol(prediction)) #initial values
+  coef_init <- rep(1/A,A) #initial values
   penal_grid=c(.01,.1,.5,1,5,10,15,25,50,100) # grid of values of the penalization term considered in the optimization problem
   auc_coef <- matrix(NA,length(penal_grid),ncol(prediction)+2) # a matrix that store the AUC value at the optimum coefficients, if it has converged, the penalization term selected and the optimum coefficients
   for(i in 1:length(penal_grid)){
@@ -72,7 +72,7 @@ ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data,A)
   penal_chosen <- penal_grid[which.max(auc_coef[,1])]
   
   
-  return(list(prediction,AUC.train,coef_opt_normalized,convergence_indicator,penal_chosen))
+  return(list(prediction=prediction,auc=AUC.train,coefficients=coef_opt_normalized,convergence_indicator=convergence_indicator,penalization_term=penal_chosen))
   
 }
 
