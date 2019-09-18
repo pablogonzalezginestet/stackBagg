@@ -297,7 +297,7 @@ grid_parametersDataHIV <- function(fmla,xnam,data){
   
   cost=c(10^3, 10^2, 10, 1)
   gamma=c(10^(-5), 10^(-4), 10^(-3), 10^(-2), 10^(-1))
-  svm_param=rbind(cbind(cost=rep(cost, times=rep(length(gamma),length(cost))),gamma=rep(gamma,length(cost)),kernel=1 ), cbind(cost,gamma=NA,kernel=2) )
+  svm_param=rbind(cbind(cost=rep(cost, times=rep(length(gamma),length(cost))),gamma=rep(gamma,length(cost)),kernel=1 ), cbind(cost=c(10,1,0.1,.01),gamma=NA,kernel=2) )
   
   nn_param=c(1,2,3,4,5)
   
