@@ -130,14 +130,20 @@ ML_list <- list(
       testdata <- as.data.frame(testdata)[xnam]
     }else{
       X=data[xnam.cont]
-      X=cbind(X,predict(dummyVars( ~ ., data =data[xnam.factor], levelsOnly = FALSE), newdata=data[xnam.factor]))
+      X=cbind(X,predict(caret::dummyVars( ~ ., data =data[xnam.factor], levelsOnly = FALSE), newdata=data[xnam.factor]))
       testdata=as.data.frame(cbind(testdata[xnam.cont],predict(dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
     }
     
     X=X[!is.na(data$E),]
+    if(svm.grid[3]==1){
     fit.svm <- e1071::svm(y = as.factor(Y), x = X, 
                           type = "C-classification", fitted = FALSE, probability = TRUE, 
-                          kernel = c("radial","linear")[svm.grid[3]] , cost =svm.grid[1],gamma=ifelse(svm.grid[3]==2,NULL,svm.grid[2]))
+                          kernel = "radial" , cost =svm.grid[1],gamma=svm.grid[2])
+    }else{
+      fit.svm <- e1071::svm(y = as.factor(Y), x = X, 
+                            type = "C-classification", fitted = FALSE, probability = TRUE, 
+                            kernel = "linear" , cost =svm.grid[1])
+    }
     pred <- attr(predict(fit.svm, newdata = testdata, probability = TRUE), 
                  "prob")[, "1"]
     return(pred)
@@ -253,7 +259,7 @@ ML_list_natively <- list(
 
   rffunw=function(traindata,testdata,fmla,grid.rf,wts){
     data.rf=na.omit(cbind(y=traindata$E,wts=wts,traindata[xnam]))
-    fit<- ranger::ranger(y~ .-wts, data =data.rf ,case.weights=data.rf$wts,probability = TRUE,  num.trees =grid.rf[1] ,mtry = grid.rf[2])
+    fit<- ranger::ranger(y~ .-wts, data =data.rf ,case.weights=data.rf$wts,probability = TRUE,  num.trees =grid.rf[1] ,mtry = grid.rf[2] )
     pred<- predict(fit, data = testdata,type = "response")$predictions[,2]
     return(pred)
   }
@@ -261,11 +267,13 @@ ML_list_natively <- list(
 )
 
 
+#########    Tuning Parameter    #################
+#' Grid of values for the Real Data Application: InfCareHIV Register
 #' @description  A grid of values for hyperparameters used in the Real Data Application: InfCareHIV Register. This grid of values isan argument in the tuning parameter function tune_parameter_ml.R 
 #' @param fmla formula object ex. "E ~ x1+x2"
 #' @param xnam a vector with the covariates names considered in the modeling
 #' @param data a training data set
-#' @return a list with a grid of suggested values for each hyperparameter of each machine learning algorithm considered in the library 
+#' @return a list with a grid of values for each hyperparameter
 #' @rdname EnsBagg-internal
 
 
@@ -314,4 +322,56 @@ grid_parametersDataHIV <- function(fmla,xnam,data){
 }
 
 
+#' Grid of values for the Simulation
+#' @description  A grid of values for hyperparameters used in the Real Data Application: InfCareHIV Register. This grid of values isan argument in the tuning parameter function tune_parameter_ml.R 
+#' @param fmla formula object ex. "E ~ x1+x2"
+#' @param xnam a vector with the covariates names considered in the modeling
+#' @param data a training data set
+#' @return a list with a grid of suggested values for each hyperparameter of each machine learning algorithm considered in the library 
+#' @rdname EnsBagg-internal
+
+
+grid_parametersSimulation <- function(fmla,xnam,data){
+  
+  gam_param=c(3,4)
+  
+  grid.lasso=glmnet(fmla,data=data[!is.na(data$E),],family="binomial")$lambda
+  lambda_max <- max(grid.lasso)
+  epsilon <- .0001
+  K <- 100
+  lambdapath <- round(exp(seq(log(lambda_max), log(lambda_max*epsilon), length.out = K)), digits = 10)
+  lasso_param=lambdapath
+  
+  
+  num.trees = 500
+  mtry=round(sqrt(length(xnam))) #  the (rounded down) square root of the number variables 
+  randomforest_param=c(num.trees,mtry)
+  
+  knn_param=seq(1,50,by=1)
+  
+  cost=.1
+  gamma=NA
+  svm_param=c(cost,gamma,2)
+  
+  nn_param=c(1,2,3,4,5)
+  
+  num_tree = c(50, 200)
+  k = c(1,2,3,5)
+  q=c(0.9,0.99,0.75)
+  grid.temp=cbind( rep(num_tree,times=rep(length(k),length(num_tree))), rep(k,length(num_tree))  )
+  bart_param= cbind(rep(grid.temp[,1],times=rep(length(q),length(grid.temp[,1]))),rep(grid.temp[,2],times=rep(length(q),length(grid.temp[,2]))), 
+                    rep(q,length(grid.temp[,1]))  )
+  
+  return( list(
+    gam_param=gam_param,
+    lasso_param=lasso_param,
+    randomforest_param=randomforest_param,
+    knn_param=knn_param,
+    svm_param=svm_param,
+    nn_param=nn_param,
+    bart_param=bart_param
+  ) 
+  )
+  
+}
 
