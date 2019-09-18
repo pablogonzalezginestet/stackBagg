@@ -261,7 +261,57 @@ ML_list_natively <- list(
 )
 
 
+#' @description  A grid of values for hyperparameters used in the Real Data Application: InfCareHIV Register. This grid of values isan argument in the tuning parameter function tune_parameter_ml.R 
+#' @param fmla formula object ex. "E ~ x1+x2"
+#' @param xnam a vector with the covariates names considered in the modeling
+#' @param data a training data set
+#' @return a list with a grid of suggested values for each hyperparameter of each machine learning algorithm considered in the library 
+#' @rdname EnsBagg-internal
 
+
+grid_parametersDataHIV <- function(fmla,xnam,data){
+  
+  gam_param=c(3,4)
+  
+  grid.lasso=glmnet(fmla,data=data[!is.na(data$E),],family="binomial")$lambda
+  lambda_max <- max(grid.lasso)
+  epsilon <- .0001
+  K <- 100
+  lambdapath <- round(exp(seq(log(lambda_max), log(lambda_max*epsilon), length.out = K)), digits = 10)
+  lasso_param=lambdapath
+  
+  
+  num.trees = c(50,100,250,500,750,1000)
+  mtry=c(1,floor(sqrt(ncol(data[xnam]))),floor(ncol(data[xnam])/3),floor(ncol(data[xnam])/3),seq(floor(ncol(data[xnam])/3)+1,19,by=2)) 
+  randomforest_param=cbind(rep(num.trees,times=rep(length(mtry),length(num.trees))),rep(mtry,length(num.trees)))
+  
+  knn_param=seq(1,50,by=1)
+  
+  cost=c(10^3, 10^2, 10, 1)
+  gamma=c(10^(-5), 10^(-4), 10^(-3), 10^(-2), 10^(-1))
+  svm_param=rbind(cbind(cost=rep(cost, times=rep(length(gamma),length(cost))),gamma=rep(gamma,length(cost)),kernel=1 ), cbind(cost,gamma=NA,kernel=2) )
+  
+  nn_param=c(1,2,3,4,5)
+  
+  num_tree = c(50, 200)
+  k = c(1,2,3,5)
+  q=c(0.9,0.99,0.75)
+  grid.temp=cbind( rep(num_tree,times=rep(length(k),length(num_tree))), rep(k,length(num_tree))  )
+  bart_param= cbind(rep(grid.temp[,1],times=rep(length(q),length(grid.temp[,1]))),rep(grid.temp[,2],times=rep(length(q),length(grid.temp[,2]))), 
+                    rep(q,length(grid.temp[,1]))  )
+  
+  return( list(
+    gam_param=gam_param,
+    lasso_param=lasso_param,
+    randomforest_param=randomforest_param,
+    knn_param=knn_param,
+    svm_param=svm_param,
+    nn_param=nn_param,
+    bart_param=bart_param
+    ) 
+    )
+  
+}
 
 
 
