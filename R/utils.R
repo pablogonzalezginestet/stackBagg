@@ -349,7 +349,7 @@ grid_parametersSimulation <- function(fmla,xnam,data){
   
   knn_param=seq(1,50,by=1)
   
-  cost=.1
+  cost=.01
   gamma=NA
   svm_param=c(cost,gamma,2)
   
