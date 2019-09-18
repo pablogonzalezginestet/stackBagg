@@ -215,7 +215,7 @@ ML_list <- list(
 
 MLprocedures_natively <- function(traindata,testdata,fmla,tuneparams){ 
   traindata<- as.data.frame(traindata)
-  wts <- traindata$wts.nn 
+  wts <- traindata$wts
   
   pred1 <- ML_list_natively$logfun(traindata,testdata,fmla,wts)
   pred2 <- ML_list_natively$GAMfun(traindata,testdata,fmla,tuneparams$gam,wts)
