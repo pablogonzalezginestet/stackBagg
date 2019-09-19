@@ -13,7 +13,7 @@
 #' @export
 
 
-ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data) {
+ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data ,A) {
   result <- vector("list", A)
   AUC.train <- vector("list", A)
   result_id <- vector("list")
@@ -90,7 +90,7 @@ ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data) {
 #' @rdname ipcw_genbagg
 #' @export
 
-ipcw_genbagg <- function(fmla,tuneparams,MLprocedures,traindata,testdata) {
+ipcw_genbagg <- function(fmla,tuneparams,MLprocedures,traindata,testdata,A) {
   
   result <- vector("list", A)
   n_testdata <- nrow(testdata)
