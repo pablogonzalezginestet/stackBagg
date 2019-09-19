@@ -28,11 +28,10 @@ ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART",
   ml_names<- c("LogisticReg","GAM","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
   }
 
-xnam <- paste("X", 1:20, sep="")
-xnam.factor=colnames(data[xnam])[sapply(data[xnam], class)=="factor"]
+xnam.factor=colnames(train.data[xnam])[sapply(train.data[xnam], class)=="factor"]
+if(length(xnam.factor)==0) xnam.factor=NULL
 xnam.cont=xnam[!(xnam %in% xnam.factor)]
-apply(data[xnam.cont],2, function(z) length(unique(z))>3 )
-fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
+xnam.cont.gam=xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
 
 # create binary outcome,E, was created by dichotomizing the time to failure at tao
 train.data<- dplyr::mutate(train.data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
@@ -40,6 +39,7 @@ train.data<- dplyr::mutate(train.data,E=as.factor(ifelse(ttilde < tao & delta==1
 test.data<- dplyr::mutate(test.data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
                            deltac=ifelse(delta==0,1,0))
 
+fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
 
 if(weighting=="CoxBoost"){
 # CoxBoost Weights
@@ -84,7 +84,7 @@ if(weighting=="CoxPH"){
   
   wts.coxph=NULL
   for (i in 1:nrow(train.data)){
-    newdata <- sim.data.train[i,]
+    newdata <- train.data[i,]
     newdata_cov <-  train.data[i,xnam]
     G <- basel_surv$surv ^(exp(sum(newdata_cov * beta.cox.train )))
     wts.coxph <- c(wts.coxph, as.numeric(!is.na(newdata$E)) / (G[ max(which(basel_surv$time <= min(newdata$ttilde, tao) ) ) ]  ) )
@@ -115,9 +115,9 @@ if(weighting=="CoxPH"){
 
 auc_ipcwBagg <- matrix(NA, nrow = 1 , ncol = A + 1 )
 
-algorithm2<- ipcw_ensbagg(folds=folds, MLprocedure=MLprocedure, fmla=fmla, tuneparams=tuneparams, B=B, data=train.data )
+algorithm2<- ipcw_ensbagg(folds=folds, MLprocedures=MLprocedures, fmla=fmla, tuneparams=tuneparams, B=B, data=train.data ,A)
 
-prediction_ipcwBagg<- ipcw_genbagg(fmla,tuneparams,MLprocedures,traindata = train.data,testdata = test.data)
+prediction_ipcwBagg<- ipcw_genbagg(fmla,tuneparams,MLprocedures,traindata = train.data,testdata = test.data , A)
 predicion_ens_ipcwBagg <- as.matrix(prediction_ipcwBagging) %*% algorithm2$coefficients #combining predictions
 auc_ipcwBagg[1,1:A] <- apply(prediction_ipcwBagging,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
 auc_ipcwBagg[1,A+1] <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predicion_ens_ipcwBagg,cause=1,wts=test.data$wts,tao)
