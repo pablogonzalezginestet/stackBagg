@@ -57,13 +57,13 @@ MLprocedures <- function(traindata,testdata,fmla,tuneparams,i){
   sampledata<- as.data.frame(traindata[i, ])
   
   pred1 <- ML_list$logfun(sampledata,testdata,fmla)
-  pred2 <- ML_list$GAMfun(sampledata,testdata,fmla,tuneparams$gam)
-  pred3 <- ML_list$lassofun(sampledata,testdata,fmla,tuneparams$lasso)
-  pred4 <- ML_list$rffun(sampledata,testdata,fmla,tuneparams$rf)
-  pred5 <- ML_list$svmfun(sampledata,testdata, tuneparams$svm)
-  pred6 <- ML_list$bartfun(sampledata,testdata, tuneparams$bart)
-  pred7 <- ML_list$knnfun(sampledata,testdata, tuneparams$knn)
-  pred8 <- ML_list$nn(sampledata,testdata,tuneparams$nn)
+  pred2 <- ML_list$GAMfun(sampledata,testdata,fmla,tuneparams$gam_param)
+  pred3 <- ML_list$lassofun(sampledata,testdata,fmla,tuneparams$lasso_param)
+  pred4 <- ML_list$rffun(sampledata,testdata,fmla,tuneparams$randomforest_param)
+  pred5 <- ML_list$svmfun(sampledata,testdata, tuneparams$svm_param)
+  pred6 <- ML_list$bartfun(sampledata,testdata, tuneparams$bart_param)
+  pred7 <- ML_list$knnfun(sampledata,testdata, tuneparams$knn_param)
+  pred8 <- ML_list$nn(sampledata,testdata,tuneparams$nn_param)
   return(cbind(pred1,pred2,pred3,pred4,pred5,pred6,pred7,pred8))
 }
 
@@ -80,8 +80,8 @@ ML_list <- list(
     return(pred)
   },
   
-  GAMfun = function(data,testdata,fmla,df) {
-    if (length(df)>1){
+  GAMfun = function(data,testdata,fmla,param) {
+    if (length(param)>1){
       
       newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
       newfmla=reformulate(newterms,fmla[[2]])
@@ -96,7 +96,7 @@ ML_list <- list(
       
     }else{
       
-    if (df==3){
+    if (param==3){
       newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
       newfmla=reformulate(newterms,fmla[[2]])
     }else{
@@ -110,20 +110,20 @@ ML_list <- list(
     
     }, 
   
-  lassofun=function(data,testdata,fmla,lambda){
-    fit <- glmnet::glmnet(fmla,data=data,lambda=lambda,family="binomial")
-    pred <- predict(fit, newdata = testdata, type = "response", s =lambda)
+  lassofun=function(data,testdata,fmla,param){
+    fit <- glmnetUtils::glmnet(fmla,data=data,lambda=param,family="binomial")
+    pred <- predict(fit, newdata = testdata, type = "response", s =param)
     return(pred)
   } ,
   
-  rffun=function(data,testdata,fmla,grid.rf){
+  rffun=function(data,testdata,fmla,param){
     data=na.omit(cbind(E=as.factor(data$E),data[xnam]))
-    fit<- ranger::ranger(fmla,data =data,probability = TRUE, num.trees = grid.rf[1],mtry = grid.rf[2] )
+    fit<- ranger::ranger(fmla,data =data,probability = TRUE, num.trees = param[1],mtry = param[2] )
     pred<- predict(fit, data = testdata,type = "response")$predictions[,2]
     return(pred)
   },
   
-  svmfun=function(data,testdata,svm.grid){
+  svmfun=function(data,testdata,param){
     Y=na.omit(data$E)
     if(is.null(xnam.factor)){
       X=data[xnam] 
@@ -131,35 +131,35 @@ ML_list <- list(
     }else{
       X=data[xnam.cont]
       X=cbind(X,predict(caret::dummyVars( ~ ., data =data[xnam.factor], levelsOnly = FALSE), newdata=data[xnam.factor]))
-      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
+      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
     }
     
     X=X[!is.na(data$E),]
-    if(svm.grid[3]==1){
+    if(param[3]==1){
     fit.svm <- e1071::svm(y = as.factor(Y), x = X, 
                           type = "C-classification", fitted = FALSE, probability = TRUE, 
-                          kernel = "radial" , cost =svm.grid[1],gamma=svm.grid[2])
+                          kernel = "radial" , cost =param[1],gamma=param[2])
     }else{
       fit.svm <- e1071::svm(y = as.factor(Y), x = X, 
                             type = "C-classification", fitted = FALSE, probability = TRUE, 
-                            kernel = "linear" , cost =svm.grid[1])
+                            kernel = "linear" , cost =param[1])
     }
     pred <- attr(predict(fit.svm, newdata = testdata, probability = TRUE), 
                  "prob")[, "1"]
     return(pred)
   } ,
   
-  bartfun=function(data,testdata,bart.grid){
+  bartfun=function(data,testdata,param){
     Y=na.omit(data$E)
     X=data[xnam][!is.na(data$E),]
     testdata <- as.data.frame(testdata)[xnam]
-    fit <- bartMachine::bartMachine(X,factor(Y, levels = c("1", "0")),num_trees = bart.grid[1],num_burn_in = 250, verbose = FALSE, alpha = 0.95,
-                                    beta = 2, k = bart.grid[2], q=bart.grid[3], num_iterations_after_burn_in = 1000)
+    fit <- bartMachine::bartMachine(X,factor(Y, levels = c("1", "0")),num_trees = param[1],num_burn_in = 250, verbose = FALSE, alpha = 0.95,
+                                    beta = 2, k = param[2], q=param[3], num_iterations_after_burn_in = 1000)
     pred <- predict(fit,testdata,type="prob" )
     return(pred)
   } ,
   
-  knnfun=function(data,testdata,k){
+  knnfun=function(data,testdata,param){
     Y=na.omit(data$E)
     if(is.null(xnam.factor)){
       X=data[xnam] 
@@ -171,13 +171,13 @@ ML_list <- list(
     }
     X=X[!is.na(data$E),]
     
-    fit <- class::knn(train = X, test = testdata, k = k, cl = Y, prob = TRUE)
+    fit <- class::knn(train = X, test = testdata, k = param, cl = Y, prob = TRUE)
     pred <- (as.numeric(fit) - 1) * attr(fit, "prob") + (1 - (as.numeric(fit) - 1)) * (1 - attr(fit, "prob"))
     return(pred)
   } ,
   
   
-  nnfun=function(traindata,testdata,neurons){
+  nnfun=function(traindata,testdata,param){
     
     if(is.null(xnam.factor)){
       testdata <- as.data.frame(testdata)[xnam]
@@ -194,7 +194,7 @@ ML_list <- list(
     
     traindata=traindata[!is.na(traindata$E),]
     
-    fit=neuralnet::neuralnet(fmla,traindata,hidden =as.numeric(neurons) ,threshold = 0.1,act.fct ="logistic" ,linear.output = FALSE,err.fct = "ce", stepmax=1e+08)
+    fit=neuralnet::neuralnet(fmla,traindata,hidden =as.numeric(param) ,threshold = 0.1,act.fct ="logistic" ,linear.output = FALSE,err.fct = "ce", stepmax=1e+08)
     pred=predict(fit, testdata)[,2]
     return(pred)
     
@@ -251,7 +251,7 @@ ML_list_natively <- list(
   } , 
   
   lassofun=function(traindata,testdata,fmla,lambda,wts){
-    fit <- glmnet::glmnet(fmla,data=traindata,lambda=lambda,family="binomial", weights=wts)
+    fit <- glmnetUtils::glmnet(fmla,data=traindata,lambda=lambda,family="binomial", weights=wts)
     pred <- predict(fit, newdata = testdata, type = "response", s =lambda)
     return(pred)
   } ,
@@ -320,58 +320,3 @@ grid_parametersDataHIV <- function(fmla,xnam,data){
     )
   
 }
-
-
-#' Grid of values for the Simulation
-#' @description  A grid of values for hyperparameters used in the Real Data Application: InfCareHIV Register. This grid of values isan argument in the tuning parameter function tune_parameter_ml.R 
-#' @param fmla formula object ex. "E ~ x1+x2"
-#' @param xnam a vector with the covariates names considered in the modeling
-#' @param data a training data set
-#' @return a list with a grid of suggested values for each hyperparameter of each machine learning algorithm considered in the library 
-#' @rdname EnsBagg-internal
-
-
-grid_parametersSimulation <- function(fmla,xnam,data){
-  
-  gam_param=c(3,4)
-  
-  grid.lasso=glmnet(fmla,data=data[!is.na(data$E),],family="binomial")$lambda
-  lambda_max <- max(grid.lasso)
-  epsilon <- .0001
-  K <- 100
-  lambdapath <- round(exp(seq(log(lambda_max), log(lambda_max*epsilon), length.out = K)), digits = 10)
-  lasso_param=lambdapath
-  
-  
-  num.trees = 500
-  mtry=round(sqrt(length(xnam))) #  the (rounded down) square root of the number variables 
-  randomforest_param=c(num.trees,mtry)
-  
-  knn_param=seq(1,50,by=1)
-  
-  cost=.01
-  gamma=NA
-  svm_param=c(cost,gamma,2)
-  
-  nn_param=c(1,2,3,4,5)
-  
-  num_tree = c(50, 200)
-  k = c(1,2,3,5)
-  q=c(0.9,0.99,0.75)
-  grid.temp=cbind( rep(num_tree,times=rep(length(k),length(num_tree))), rep(k,length(num_tree))  )
-  bart_param= cbind(rep(grid.temp[,1],times=rep(length(q),length(grid.temp[,1]))),rep(grid.temp[,2],times=rep(length(q),length(grid.temp[,2]))), 
-                    rep(q,length(grid.temp[,1]))  )
-  
-  return( list(
-    gam_param=gam_param,
-    lasso_param=lasso_param,
-    randomforest_param=randomforest_param,
-    knn_param=knn_param,
-    svm_param=svm_param,
-    nn_param=nn_param,
-    bart_param=bart_param
-  ) 
-  )
-  
-}
-
