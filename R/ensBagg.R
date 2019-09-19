@@ -29,10 +29,10 @@ ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART",
   ml_names<- c("LogisticReg","GAM","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
   }
 
-xnam.factor=colnames(train.data[xnam])[sapply(train.data[xnam], class)=="factor"]
+xnam.factor <- colnames(train.data[xnam])[sapply(train.data[xnam], class)=="factor"]
 if(length(xnam.factor)==0) xnam.factor=NULL
-xnam.cont=xnam[!(xnam %in% xnam.factor)]
-xnam.cont.gam=xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
+xnam.cont <- xnam[!(xnam %in% xnam.factor)]
+xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
 
 # create binary outcome,E, was created by dichotomizing the time to failure at tao
 train.data<- dplyr::mutate(train.data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
@@ -119,7 +119,7 @@ test.data <- test.data[c("id","E","wts","sum_wts_one","ttilde","delta",xnam)]
 
 auc_ipcwBagg <- matrix(NA, nrow = 1 , ncol = A + 1 )
 
-algorithm2<- ipcw_ensbagg(folds=folds, MLprocedures=MLprocedures, fmla=fmla, tuneparams=tuneparams, B=B, data=train.data ,A)
+algorithm2<- ipcw_ensbagg(folds=folds, MLprocedures=MLprocedures, fmla=fmla, tuneparams=tuneparams, B=B, data=train.data ,A,xnam.cont.gam)
 
 prediction_ipcwBagg<- ipcw_genbagg(fmla,tuneparams,MLprocedures,traindata = train.data,testdata = test.data , A)
 predicion_ens_ipcwBagg <- as.matrix(prediction_ipcwBagging) %*% algorithm2$coefficients #combining predictions
