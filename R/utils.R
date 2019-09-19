@@ -52,12 +52,12 @@ risk_auc<- function(par,lambda,Z,data){
 #' @rdname EnsBagg-internal
 
 
-MLprocedures <- function(traindata,testdata,fmla,tuneparams,i){ 
+MLprocedures <- function(traindata,testdata,fmla,xnam.cont.gam,tuneparams,i){ 
   
   sampledata<- as.data.frame(traindata[i, ])
   
   pred1 <- ML_list$logfun(sampledata,testdata,fmla)
-  pred2 <- ML_list$GAMfun(sampledata,testdata,fmla,tuneparams$gam_param)
+  pred2 <- ML_list$GAMfun(sampledata,testdata,fmla,xnam.cont.gam,tuneparams$gam_param)
   pred3 <- ML_list$lassofun(sampledata,testdata,fmla,tuneparams$lasso_param)
   pred4 <- ML_list$rffun(sampledata,testdata,fmla,tuneparams$randomforest_param)
   pred5 <- ML_list$svmfun(sampledata,testdata, tuneparams$svm_param)
@@ -80,17 +80,17 @@ ML_list <- list(
     return(pred)
   },
   
-  GAMfun = function(data,testdata,fmla,param) {
+  GAMfun = function(data,testdata,fmla,xnam.cont.gam,param) {
     if (length(param)>1){
       
       newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
       newfmla=reformulate(newterms,fmla[[2]])
-      fit <- gam(newfmla, data = data, family = 'quasibinomial')
+      fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
       pred.df3 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
       
       newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
       newfmla=reformulate(newterms,fmla[[2]])
-      fit <- gam(newfmla, data = data, family = 'quasibinomial')
+      fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
       pred.df4 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
       return(cbind(pred.df3,pred.df4))
       
