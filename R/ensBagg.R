@@ -14,7 +14,7 @@
 #' @rdname ensbagg
 #' @export
 
- ensBagg <- function(train.data,test.data, xnam, tao , weighting , folds , tuneparams ,B=NULL ){
+ensBagg <- function(train.data,test.data, xnam, tao , weighting , folds , tuneparams ,B=NULL ){
 
 # global parameters
 if (missing(B)) {
@@ -112,6 +112,9 @@ if(weighting=="CoxPH"){
   test.data$sum_wts_one <- wts.coxph/sum(wts.coxph)
   
 }
+
+train.data <- train.data[c("id","E","wts","sum_wts_one","ttilde","delta",xnam)]
+test.data <- test.data[c("id","E","wts","sum_wts_one","ttilde","delta",xnam)]
 
 auc_ipcwBagg <- matrix(NA, nrow = 1 , ncol = A + 1 )
 
