@@ -8,7 +8,7 @@
 #' @param B number of bootstrap samples
 #' @param data a training data set
 #' @param A a number of machine learning algorithms in the library
-#' @return a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
+#' @return a list with the predictions of each machine learning algorithm (id, predictions), the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
 #' @rdname ipcw_ensbagg
 #' @export
 
@@ -61,9 +61,9 @@ ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data ,A
   
   coef_init <- rep(1/A,A) #initial values
   penal_grid=c(.01,.1,.5,1,5,10,15,25,50,100) # grid of values of the penalization term considered in the optimization problem
-  auc_coef <- matrix(NA,length(penal_grid),ncol(prediction)+2) # a matrix that store the AUC value at the optimum coefficients, if it has converged, the penalization term selected and the optimum coefficients
+  auc_coef <- matrix(NA,length(penal_grid),ncol(prediction[,-1])+2) # a matrix that store the AUC value at the optimum coefficients, if it has converged, the penalization term selected and the optimum coefficients
   for(i in 1:length(penal_grid)){
-    auc_coef[i,] <- optimun_auc_coef(penal_grid[i],data,prediction)
+    auc_coef[i,] <- optimun_auc_coef(penal_grid[i],data,prediction[,-1])
   }
   
   coef_opt <- auc_coef[which.max(auc_coef[,1]),][-(1:2)]
