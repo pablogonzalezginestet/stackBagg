@@ -17,8 +17,8 @@ NULL
 
 
 optimun_auc_coef = function(lambda,data,Z){
-  optimal_coef <- optim(par = coef_init.1, fn = .cvAUC,lambda=lambda ,Z=Z, data=data,method = "BFGS",control=list(maxit=10000))
-  AUC_coef_opt<- AUC_function(T=data$ttilde,delta=data$delta,marker=crossprod(t(Z),optimal_coef$par),cause=1,wts=data$wts.nn,tao)
+  optimal_coef <- optim(par = coef_init, fn = risk_auc,lambda=lambda ,Z=Z, data=data,method = "BFGS",control=list(maxit=10000))
+  AUC_coef_opt<- ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(Z),optimal_coef$par),cause=1,wts=data$wts,tao)
   return(c(AUC_coef_opt,optimal_coef$convergence,optimal_coef$par))
 }
 
@@ -35,7 +35,7 @@ optimun_auc_coef = function(lambda,data,Z){
 risk_auc<- function(par,lambda,Z,data){
   par <- par/sum(par) 
   marker_pred <- crossprod(t(Z),par)
-  Risk_AUC=1-AUC_function(T=data$ttilde,delta=data$delta,marker=marker_pred,cause=1,wts=data$wts.nn,tao)+lambda*sum(abs(par))
+  Risk_AUC=1-ipcw_auc(T=data$ttilde,delta=data$delta,marker=marker_pred,cause=1,wts=data$wts,tao)+lambda*sum(abs(par))
   return(Risk_AUC)
 }
 
