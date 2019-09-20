@@ -13,7 +13,17 @@
 #' @export
 
 
-ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data ,A,xnam) {
+ipcw_ensbagg <- function(folds,
+                         MLprocedures,
+                         fmla,
+                         tuneparams ,
+                         B=NULL,
+                         data ,
+                         A,
+                         xnam,
+                         xnam.factor,
+                         xnam.cont,
+                         xnam.cont.gam) {
   result <- vector("list", A)
   AUC.train <- vector("list", A)
   result_id <- vector("list")
@@ -31,8 +41,19 @@ ipcw_ensbagg <- function(folds, MLprocedures, fmla, tuneparams , B=NULL, data ,A
     n_test.set <- nrow(test.set)
     
     #boot
-    b <-boot::boot(data=train.set, statistic=MLprocedures, R=B, fmla=fmla,tuneparams=tuneparams,
-                   testdata=test.set, weights = train.set$sum_wts_one,xnam)
+   # b <-boot::boot(data=train.set, statistic=MLprocedures, R=B, fmla=fmla,tuneparams=tuneparams,
+    #              testdata=test.set, weights = train.set$sum_wts_one )
+   b <-boot::boot(data=train.set,
+                  testdat=test.set,
+                  fmla=fmla,
+                  xnam=xnam,
+                  xnam.factor=xnam.factor,
+                  xnam.cont=xnam.cont,
+                  xnam.cont.gam=xnam.cont.gam,
+                  tuneparams=tuneparams,
+                  statistic=MLprocedures,
+                  R=B,
+                  weights = train.set$sum_wts_one )
     
     d<- apply(b$t,1,function(x) split(x, rep(seq(A), each = n_test.set)))
     D.all <- list()
