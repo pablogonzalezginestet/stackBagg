@@ -51,24 +51,45 @@ risk_auc<- function(par,lambda,Z,data){
 #' @return a matrix of predictions where each column is the prediction of each algorithm based on the testdata
 #' @rdname EnsBagg-internal
 
+#MLprocedures <- function(traindata,testdata,fmla, tuneparams,i){ 
+  
+  
+ # sampledata<- as.data.frame(traindata[i, ])
+  
+  #pred1 <- ML_list$logfun(sampledata,testdata,fmla)
+  #pred2 <- ML_list$GAMfun(sampledata,testdata,fmla, tuneparams$gam_param)
+  #pred3 <- ML_list$lassofun(sampledata,testdata,fmla, tuneparams$lasso_param)
+  #pred4 <- ML_list$rffun(sampledata,testdata,fmla, tuneparams$randomforest_param)
+  #pred5 <- ML_list$svmfun(sampledata,testdata, tuneparams$svm_param)
+  #pred6 <- ML_list$bartfun(sampledata,testdata, tuneparams$bart_param)
+  #pred7 <- ML_list$knnfun(sampledata,testdata, tuneparams$knn_param)
+  #pred8 <- ML_list$nn(sampledata,testdata, tuneparams$nn_param)
+ # return(cbind(pred1,pred2,pred3,pred4,pred5,pred6,pred7,pred8))
+#}
 
-MLprocedures <- function(traindata,testdata,fmla,xnam,tuneparams,i){ 
+
+
+MLprocedures <- function(traindat,
+                         testdat,
+                         fmla,
+                         xnam,
+                         xnam.factor,
+                         xnam.cont,
+                         xnam.cont.gam,
+                         tuneparams,
+                         i){ 
   
-  xnam.factor <- colnames(traindata[xnam])[sapply(traindata[xnam], class)=="factor"]
-  if(length(xnam.factor)==0) xnam.factor=NULL
-  xnam.cont <- xnam[!(xnam %in% xnam.factor)]
-  xnam.cont.gam <- xnam.cont[apply(traindata[xnamcont],2, function(z) length(unique(z))>3 )]
   
-  sampledata<- as.data.frame(traindata[i, ])
+  sampledata<- as.data.frame(traindat[i, ])
   
-  pred1 <- ML_list$logfun(sampledata,testdata,fmla)
-  pred2 <- ML_list$GAMfun(sampledata,testdata,fmla,xnam.cont.gam,tuneparams$gam_param)
-  pred3 <- ML_list$lassofun(sampledata,testdata,fmla,tuneparams$lasso_param)
-  pred4 <- ML_list$rffun(sampledata,testdata,fmla,tuneparams$randomforest_param)
-  pred5 <- ML_list$svmfun(sampledata,testdata, tuneparams$svm_param)
-  pred6 <- ML_list$bartfun(sampledata,testdata, tuneparams$bart_param)
-  pred7 <- ML_list$knnfun(sampledata,testdata, tuneparams$knn_param)
-  pred8 <- ML_list$nn(sampledata,testdata,tuneparams$nn_param)
+  pred1 <- ML_list$logfun(sampledata,testdat,fmla, xnam,xnam.factor,xnam.cont)
+  pred2 <- ML_list$GAMfun(sampledata,testdat,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param)
+  pred3 <- ML_list$lassofun(sampledata,testdat,fmla,xnam,xnam.factor,xnam.cont,tuneparams$lasso_param)
+  pred4 <- ML_list$rffun(sampledata,testdat,fmla,xnam,xnam.factor,xnam.cont,tuneparams$randomforest_param)
+  pred5 <- ML_list$svmfun(sampledata,testdat,xnam,xnam.factor,xnam.cont,tuneparams$svm_param)
+  pred6 <- ML_list$bartfun(sampledata,testdat,xnam,xnam.factor,xnam.cont, tuneparams$bart_param)
+  pred7 <- ML_list$knnfun(sampledata,testdat,xnam,xnam.factor,xnam.cont, tuneparams$knn_param)
+  pred8 <- ML_list$nn(sampledata,testdat,xnam,xnam.factor,xnam.cont,tuneparams$nn_param)
   return(cbind(pred1,pred2,pred3,pred4,pred5,pred6,pred7,pred8))
 }
 
@@ -80,64 +101,76 @@ MLprocedures <- function(traindata,testdata,fmla,xnam,tuneparams,i){
 
 ML_list <- list(
   
-  logfun= function(data,testdata,fmla){
-    fit <- stats::glm(fmla, data = data,family = "binomial")
-    pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+  logfun= function(data,testdat,fmla, xnam,xnam.factor,xnam.cont){
+    #logfun= function(data,testdat,fmla){
+      fit <- stats::glm(fmla, data = data,family = "binomial")
+    pred <- predict(fit, newdata=testdat, type = "response", na.action=na.omit)
     return(pred)
   },
   
-  GAMfun = function(data,testdata,fmla,xnam.cont.gam,param) {
-    if (length(param)>1){
+  GAMfun = function(data,
+                    testdat,
+                    fmla,
+                    xnam,
+                    xnam.factor,
+                    xnam.cont,
+                    xnam.cont.gam,
+                    param) {
+   # GAMfun = function(data,testdat,fmla,param) {
+        if (length(param)>1){
       
-      newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
+      newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=3)"),xnam[!xnam %in% xnam.cont.gam]) 
       newfmla=reformulate(newterms,fmla[[2]])
-      fit <- gam::gam(fmla, data = data, family = 'quasibinomial')
-      pred.df3 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+      fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
+      pred.df3 <- predict(fit, newdata=testdat, type = "response", na.action=na.omit)
       
-      newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
+      newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=4)"),xnam[!xnam %in% xnam.cont.gam]) 
       newfmla=reformulate(newterms,fmla[[2]])
-      fit <- gam::gam(fmla, data = data, family = 'quasibinomial')
-      pred.df4 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+      fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
+      pred.df4 <- predict(fit, newdata=testdat, type = "response", na.action=na.omit)
       return(cbind(pred.df3,pred.df4))
       
     }else{
       
     if (param==3){
-      newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
+      newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=3)"),xnam[!xnam %in% xnam.cont.gam]) 
       newfmla=reformulate(newterms,fmla[[2]])
     }else{
-      newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
+      newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=4)"),xnam[!xnam %in% xnam.cont.gam])
       newfmla=reformulate(newterms,fmla[[2]]) 
     }
-    fit <- gam::gam(fmla, data = data, family = 'quasibinomial')
-    pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+    fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
+    pred <- predict(fit, newdata=testdat, type = "response", na.action=na.omit)
     return(pred)
     }
     
     }, 
   
-  lassofun=function(data,testdata,fmla,param){
+  lassofun=function(data,testdat,fmla,xnam,xnam.factor,xnam.cont,param){
+    #lassofun=function(data,testdat,fmla,param){
     fit <- glmnetUtils::glmnet(fmla,data=data,lambda=param,family="binomial")
-    pred <- predict(fit, newdata = testdata, type = "response", s =param)
+    pred <- predict(fit, newdata = testdat, type = "response", s =param)
     return(pred)
   } ,
   
-  rffun=function(data,testdata,fmla,param){
+  rffun=function(data,testdat,fmla,xnam,xnam.factor,xnam.cont,param){
+  #rffun=function(data,testdat,fmla,param){
     data=na.omit(cbind(E=as.factor(data$E),data[xnam]))
     fit<- ranger::ranger(fmla,data =data,probability = TRUE, num.trees = param[1],mtry = param[2] )
-    pred<- predict(fit, data = testdata,type = "response")$predictions[,2]
+    pred<- predict(fit, data = testdat,type = "response")$predictions[,2]
     return(pred)
   },
   
-  svmfun=function(data,testdata,xnam,xnam.factor,xnam.cont,param){
+  svmfun=function(data,testdat,xnam,xnam.factor,xnam.cont,param){
+  #svmfun=function(data,testdat,param){
     Y=na.omit(data$E)
     if(is.null(xnam.factor)){
       X=data[xnam] 
-      testdata <- as.data.frame(testdata)[xnam]
+      testdat <- as.data.frame(testdat)[xnam]
     }else{
       X=data[xnam.cont]
       X=cbind(X,predict(caret::dummyVars( ~ ., data =data[xnam.factor], levelsOnly = FALSE), newdata=data[xnam.factor]))
-      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
+      testdat=as.data.frame(cbind(testdat[xnam.cont],predict(caret::dummyVars( ~ ., data =testdat[xnam.factor], levelsOnly = FALSE), newdata=testdat[xnam.factor])))
     }
     
     X=X[!is.na(data$E),]
@@ -150,58 +183,61 @@ ML_list <- list(
                             type = "C-classification", fitted = FALSE, probability = TRUE, 
                             kernel = "linear" , cost =param[1])
     }
-    pred <- attr(predict(fit.svm, newdata = testdata, probability = TRUE), 
+    pred <- attr(predict(fit.svm, newdata = testdat, probability = TRUE), 
                  "prob")[, "1"]
     return(pred)
   } ,
   
-  bartfun=function(data,testdata,xnam,param){
-    Y=na.omit(data$E)
+  bartfun=function(data,testdat,xnam,xnam.factor,xnam.cont,param){
+ #bartfun=function(data,testdat,param){
+   Y=na.omit(data$E)
     X=data[xnam][!is.na(data$E),]
-    testdata <- as.data.frame(testdata)[xnam]
+    testdat <- as.data.frame(testdat)[xnam]
     fit <- bartMachine::bartMachine(X,factor(Y, levels = c("1", "0")),num_trees = param[1],num_burn_in = 250, verbose = FALSE, alpha = 0.95,
                                     beta = 2, k = param[2], q=param[3], num_iterations_after_burn_in = 1000)
-    pred <- predict(fit,testdata,type="prob" )
+    pred <- predict(fit,testdat,type="prob" )
     return(pred)
   } ,
   
-  knnfun=function(data,testdata,xnam,xnam.factor,xnam.cont,param){
-    Y=na.omit(data$E)
+  knnfun=function(data,testdat,xnam,xnam.factor,xnam.cont,param){
+ #knnfun=function(data,testdat,param){
+   Y=na.omit(data$E)
     if(is.null(xnam.factor)){
       X=data[xnam] 
-      testdata <- as.data.frame(testdata)[xnam]
+      testdat <- as.data.frame(testdat)[xnam]
     }else{
       X=data[xnam.cont]
       X=cbind(X,predict(dummyVars( ~ ., data =data[xnam.factor], levelsOnly = FALSE), newdata=data[xnam.factor]))
-      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
+      testdat=as.data.frame(cbind(testdat[xnam.cont],predict(dummyVars( ~ ., data =testdat[xnam.factor], levelsOnly = FALSE), newdata=testdat[xnam.factor])))
     }
     X=X[!is.na(data$E),]
     
-    fit <- class::knn(train = X, test = testdata, k = param, cl = Y, prob = TRUE)
+    fit <- class::knn(train = X, test = testdat, k = param, cl = Y, prob = TRUE)
     pred <- (as.numeric(fit) - 1) * attr(fit, "prob") + (1 - (as.numeric(fit) - 1)) * (1 - attr(fit, "prob"))
     return(pred)
   } ,
   
   
-  nnfun=function(traindata,testdata,xnam,xnam.factor,xnam.cont,param){
-    
+  nnfun=function(traindata,testdat,xnam,xnam.factor,xnam.cont,param){
+  #nnfun=function(traindata,testdat,param){
+   
     if(is.null(xnam.factor)){
-      testdata <- as.data.frame(testdata)[xnam]
+      testdat <- as.data.frame(testdat)[xnam]
       fmla=as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
     }else{
       X=traindata[xnam.cont]
       X=cbind(X,predict(dummyVars( ~ ., data =traindata[xnam.factor], levelsOnly = FALSE), newdata=traindata[xnam.factor]))
-      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
+      testdat=as.data.frame(cbind(testdat[xnam.cont],predict(dummyVars( ~ ., data =testdat[xnam.factor], levelsOnly = FALSE), newdata=testdat[xnam.factor])))
       colnames(X)=c(paste("x", 1:(dim(X)[2]), sep=""))
       traindata=cbind(E=traindata$E,X)
-      colnames(testdata)=c(paste("x", 1:(dim(testdata)[2]), sep=""))
+      colnames(testdat)=c(paste("x", 1:(dim(testdat)[2]), sep=""))
       fmla=as.formula(paste("E ~ ", paste(names(X), collapse= "+")))
     }
     
     traindata=traindata[!is.na(traindata$E),]
     
     fit=neuralnet::neuralnet(fmla,traindata,hidden =as.numeric(param) ,threshold = 0.1,act.fct ="logistic" ,linear.output = FALSE,err.fct = "ce", stepmax=1e+08)
-    pred=predict(fit, testdata)[,2]
+    pred=predict(fit, testdat)[,2]
     return(pred)
     
   }
