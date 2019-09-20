@@ -33,6 +33,7 @@ xnam.factor <- colnames(train.data[xnam])[sapply(train.data[xnam], class)=="fact
 if(length(xnam.factor)==0){ xnam.factor<- NULL}
 xnam.cont <- xnam[!(xnam %in% xnam.factor)]
 xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
+print(xnam.cont.gam)
 
 # create binary outcome,E, was created by dichotomizing the time to failure at tao
 train.data<- dplyr::mutate(train.data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
@@ -128,13 +129,21 @@ algorithm2<- ipcw_ensbagg(folds=folds,
                           A=A,
                           xnam=xnam,
                           xnam.factor=xnam.factor,
-                          xnam.cont=xnam.factor,
-                          xnam.cont.gam=xnam.factor)
+                          xnam.cont=xnam.cont,
+                          xnam.cont.gam=xnam.cont.gam)
 
-#prediction_ipcwBagg<- ipcw_genbagg(fmla,tuneparams,MLprocedures,traindata = train.data,testdata = test.data , A)
-#predicion_ens_ipcwBagg <- as.matrix(prediction_ipcwBagging) %*% algorithm2$coefficients #combining predictions
-#auc_ipcwBagg[1,1:A] <- apply(prediction_ipcwBagging,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
-#auc_ipcwBagg[1,A+1] <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predicion_ens_ipcwBagg,cause=1,wts=test.data$wts,tao)
+
+
+prediction_ipcwBagg<- ipcw_genbagg(fmla,
+                                   tuneparams,
+                                   MLprocedures,
+                                   traindata = train.data,
+                                   testdata = test.data ,
+                                   A)
+
+predicion_ens_ipcwBagg <- as.matrix(prediction_ipcwBagging) %*% algorithm2$coefficients #combining predictions
+auc_ipcwBagg[1,1:A] <- apply(prediction_ipcwBagging,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
+auc_ipcwBagg[1,A+1] <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predicion_ens_ipcwBagg,cause=1,wts=test.data$wts,tao)
 
 #colnames(prediction_ipcwBagg) <- ml_names
 #colnames(predicion_ens_ipcwBagg) <- C("Ensemble")
