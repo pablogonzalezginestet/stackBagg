@@ -36,8 +36,7 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
   set.seed(500)
   train.data=list()
   test.data=list()
-  Tstar=26.5
-  tao= Tstar
+  tao=26.5
   D <- matrix(NA,nrow = J,ncol = 3)
   
   for (j in 1:J){
@@ -66,12 +65,12 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
       k1 <- exp(2.5 * X[, 2]) 
       k2 <- 2.5 
       cenper<-0.22 
-      cskl <- (Tstar / ((-log(1 - cenper)) ^ (1)))
+      cskl <- (tao / ((-log(1 - cenper)) ^ (1)))
       
       typ1expt<- 0.27  
       typ2expt<- 0.1 
-      rescl <- (Tstar / ((-log(1-typ1expt)) ^ (1/g2)))
-      reskl <- (Tstar / ((-log(1-typ2expt)) ^ (1 / k2)))
+      rescl <- (tao / ((-log(1-typ1expt)) ^ (1/g2)))
+      reskl <- (tao / ((-log(1-typ2expt)) ^ (1 / k2)))
       
       g1 <- g1 * mean(rescl / (g1))
       k1 <- k1 * mean(reskl / (k1))
@@ -89,14 +88,14 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
       
       censb1 <- sqrt(exp( X[, c(3, 4,9 ,19, 20)] %*% c(.7,.7,.7,-2,-2)))
       cenper<-0.26
-      cskl <- (Tstar / ((-log(1 - cenper)) ^ (1)))
+      cskl <- (tao / ((-log(1 - cenper)) ^ (1)))
       censb1 <- censb1 * mean(cskl / censb1)
       
       typ1expt<- 0.27
       typ2expt<- 0.1 
       
-      rescl <- (Tstar / ((-log(1-typ1expt)) ^ (1/g2)))
-      reskl <- (Tstar / ((-log(1-typ2expt)) ^ (1 / k2)))
+      rescl <- (tao / ((-log(1-typ1expt)) ^ (1/g2)))
+      reskl <- (tao / ((-log(1-typ2expt)) ^ (1 / k2)))
       
       g1 <- g1 * mean(rescl / (g1))
       k1 <- k1 * mean(reskl / (k1))
@@ -112,14 +111,14 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
       
       censb1 <- sqrt(exp( X[, c(1, 6, 11, 16,20)] %*% c(.7,.7,.7,-2,-2)))
       cenper<-0.26
-      cskl <- (Tstar / ((-log(1 - cenper)) ^ (1)))
+      cskl <- (tao / ((-log(1 - cenper)) ^ (1)))
       censb1 <- censb1 * mean(cskl / censb1)
       
       typ1expt<- 0.27  
       typ2expt<- 0.1 
       
-      rescl <- (Tstar / ((-log(1-typ1expt)) ^ (1/g2)))
-      reskl <- (Tstar / ((-log(1-typ2expt)) ^ (1 / k2)))
+      rescl <- (tao / ((-log(1-typ1expt)) ^ (1/g2)))
+      reskl <- (tao / ((-log(1-typ2expt)) ^ (1 / k2)))
       
       g1 <- g1 * mean(rescl / (g1))
       k1 <- k1 * mean(reskl / (k1))
@@ -135,14 +134,14 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
       
       censb1 <- sqrt(exp( X[, c(1, 6, 11, 16,20)] %*% c(.7,.7,.7,-2,-2)))
       cenper<-0.26
-      cskl <- (Tstar / ((-log(1 - cenper)) ^ (1)))
+      cskl <- (tao / ((-log(1 - cenper)) ^ (1)))
       censb1 <- censb1 * mean(cskl / censb1)
  
       typ1expt<- 0.27  
       typ2expt<- 0.1 
       
-      rescl <- (Tstar / ((-log(1-typ1expt)) ^ (1/g2)))
-      reskl <- (Tstar / ((-log(1-typ2expt)) ^ (1 / k2)))
+      rescl <- (tao / ((-log(1-typ1expt)) ^ (1/g2)))
+      reskl <- (tao / ((-log(1-typ2expt)) ^ (1 / k2)))
       
       g1 <- g1 * mean(rescl / (g1))
       k1 <- k1 * mean(reskl / (k1))
@@ -171,13 +170,13 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
         k1 <- exp(2.5 * X[, 2]) 
         k2 <- 2.5 
         cenper<-0.22 
-        cskl <- (Tstar / ((-log(1 - cenper)) ^ (1)))
+        cskl <- (tao / ((-log(1 - cenper)) ^ (1)))
         
         typ1expt<- 0.24 
         typ2expt<- 0.1  
         
-        rescl <- (Tstar / ((-log(1-typ1expt)) ^ (1/g2)))
-        reskl <- (Tstar / ((-log(1-typ2expt)) ^ (1 / k2)))
+        rescl <- (tao / ((-log(1-typ1expt)) ^ (1/g2)))
+        reskl <- (tao / ((-log(1-typ2expt)) ^ (1 / k2)))
         
         g1 <- g1 * mean(rescl / (g1))
         k1 <- k1 * mean(reskl / (k1))
@@ -195,15 +194,15 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
        
         censb1 <- sqrt(exp( cbind(ifelse(X[,3]<median(X[,3]),0,1),X[,4], X[,9],cos(X[,19])/.7) %*% c(.5,.7,.7,.8)))
         cenper<-0.26
-        cskl <- (Tstar / ((-log(1 - cenper)) ^ (1)))
+        cskl <- (tao / ((-log(1 - cenper)) ^ (1)))
         censb1 <- censb1 * mean(cskl / censb1)
       
         
         typ1expt<- 0.24  
         typ2expt<- 0.1 
         
-        rescl <- (Tstar / ((-log(1-typ1expt)) ^ (1/g2)))
-        reskl <- (Tstar / ((-log(1-typ2expt)) ^ (1 / k2)))
+        rescl <- (tao / ((-log(1-typ1expt)) ^ (1/g2)))
+        reskl <- (tao / ((-log(1-typ2expt)) ^ (1 / k2)))
         
         g1 <- g1 * mean(rescl / (g1))
         k1 <- k1 * mean(reskl / (k1))
@@ -219,15 +218,15 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
         
         censb1 <- sqrt(exp( cbind(ifelse(X[,1]<median(X[,1]),0,1),X[,6], X[,11],cos(X[,16])/.7,X[,20]) %*% c(.5,.7,.7,.8,-2)))
         cenper<-0.26
-        cskl <- (Tstar / ((-log(1 - cenper)) ^ (1)))
+        cskl <- (tao / ((-log(1 - cenper)) ^ (1)))
         censb1 <- censb1 * mean(cskl / censb1)
         
         
         typ1expt<- 0.24
         typ2expt<- 0.1 
      
-        rescl <- (Tstar / ((-log(1-typ1expt)) ^ (1/g2)))
-        reskl <- (Tstar / ((-log(1-typ2expt)) ^ (1 / k2)))
+        rescl <- (tao / ((-log(1-typ1expt)) ^ (1/g2)))
+        reskl <- (tao / ((-log(1-typ2expt)) ^ (1 / k2)))
         
         g1 <- g1 * mean(rescl / (g1))
         k1 <- k1 * mean(reskl / (k1))
@@ -244,14 +243,14 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
         
         censb1 <- sqrt(exp( cbind(ifelse(X[,1]<median(X[,1]),0,1),X[,6], X[,11],cos(X[,16])/.7,X[,20]) %*% c(.5,.7,.7,.8,-2)))
         cenper<-0.26
-        cskl <- (Tstar / ((-log(1 - cenper)) ^ (1)))
+        cskl <- (tao / ((-log(1 - cenper)) ^ (1)))
         censb1 <- censb1 * mean(cskl / censb1)
         
         typ1expt<- 0.24 
         typ2expt<- 0.1 
         
-        rescl <- (Tstar / ((-log(1-typ1expt)) ^ (1/g2)))
-        reskl <- (Tstar / ((-log(1-typ2expt)) ^ (1 / k2)))
+        rescl <- (tao / ((-log(1-typ1expt)) ^ (1/g2)))
+        reskl <- (tao / ((-log(1-typ2expt)) ^ (1 / k2)))
         
         g1 <- g1 * mean(rescl / (g1))
         k1 <- k1 * mean(reskl / (k1))
@@ -270,8 +269,8 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
                     ifelse(Y < Y2, 1, 2))
     
     
-    sim.data=data.frame(id = 1:length(ttilde), ttilde, delta, trueT = Y < Tstar & Y < Y2, Cen, Y, Y2,X)
-    sim.data<- dplyr::mutate(sim.data,E=as.factor(ifelse(ttilde < Tstar & delta==1, 1 , ifelse(ttilde < Tstar & delta==2 | ttilde>Tstar, 0, NA))),
+    sim.data=data.frame(id = 1:length(ttilde), ttilde, delta, trueT = Y < tao & Y < Y2, Cen, Y, Y2,X)
+    sim.data<- dplyr::mutate(sim.data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
                       deltac.1=ifelse(delta==0,1,0))
     
     xnam <- paste("X", 1:20, sep="")
