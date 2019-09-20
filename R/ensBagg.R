@@ -134,25 +134,31 @@ algorithm2<- ipcw_ensbagg(folds=folds,
 
 
 
-prediction_ipcwBagg<- ipcw_genbagg(fmla,
-                                   tuneparams,
-                                   MLprocedures,
+prediction_ipcwBagg<- ipcw_genbagg(fmla=fmla,
+                                   tuneparams=tuneparams,
+                                   MLprocedures=MLprocedures,
                                    traindata = train.data,
                                    testdata = test.data ,
-                                   A)
+                                   A=A,
+                                   xnam=xnam,
+                                   xnam.factor=xnam.factor,
+                                   xnam.cont=xnam.cont,
+                                   xnam.cont.gam=xnam.cont.gam )
 
-predicion_ens_ipcwBagg <- as.matrix(prediction_ipcwBagging) %*% algorithm2$coefficients #combining predictions
-auc_ipcwBagg[1,1:A] <- apply(prediction_ipcwBagging,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
+
+predicion_ens_ipcwBagg <- as.matrix(prediction_ipcwBagg) %*% algorithm2$coefficients #combining predictions
+
+auc_ipcwBagg[1,1:A] <- apply(prediction_ipcwBagg,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
 auc_ipcwBagg[1,A+1] <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predicion_ens_ipcwBagg,cause=1,wts=test.data$wts,tao)
 
-#colnames(prediction_ipcwBagg) <- ml_names
-#colnames(predicion_ens_ipcwBagg) <- C("Ensemble")
-#colnames(auc_ipcwBagg) <- c(ml_names,"Ensemble")
+colnames(prediction_ipcwBagg) <- ml_names
+colnames(predicion_ens_ipcwBagg) <- c("Ensemble")
+colnames(auc_ipcwBagg) <- c(ml_names,"Ensemble")
 
-#return(
- # list( prediction_ipcwBagg,
-  #  predicion_ens_ipcwBagg,
-   # auc_ipcwBagg)
-    #   )
+return(list( 
+    prediction_ipcwBagg,
+    predicion_ens_ipcwBagg,
+    auc_ipcwBagg
+    ) )
 
 }
