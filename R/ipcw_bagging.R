@@ -45,7 +45,7 @@ ipcw_ensbagg <- function(folds,
     #              testdata=test.set, weights = train.set$sum_wts_one )
    
    b <-boot::boot(data=train.set,
-                  testdat=test.set,
+                  testdata=test.set,
                   fmla=fmla,
                   xnam=xnam,
                   xnam.factor=xnam.factor,
@@ -113,12 +113,33 @@ ipcw_ensbagg <- function(folds,
 #' @rdname ipcw_genbagg
 #' @export
 
-ipcw_genbagg <- function(fmla,tuneparams,MLprocedures,traindata,testdata,A,xnam) {
+ipcw_genbagg <- function(fmla,
+                         tuneparams,
+                         MLprocedures,
+                         traindata,
+                         testdata,
+                         A,
+                         xnam,
+                         xnam.factor,
+                         xnam.cont,
+                         xnam.cont.gam) {
   
   result <- vector("list", A)
   n_testdata <- nrow(testdata)
-  b <-boot::boot(data=traindata, statistic=MLprocedures, R=B, fmla=fmla,tuneparams=tuneparams,
-           testdata=testdata, weights = traindata$wts,xnam)
+  
+  b <-boot::boot(data=traindata,
+                 testdata=testdata,
+                 fmla=fmla,
+                 xnam=xnam,
+                 xnam.factor=xnam.factor,
+                 xnam.cont=xnam.cont,
+                 xnam.cont.gam=xnam.cont.gam,
+                 tuneparams=tuneparams,
+                 statistic=MLprocedures,
+                 R=B,
+                 weights = traindata$sum_wts_one )
+  
+
   
   d<- apply(b$t,1,function(x) split(x, rep(seq(A), each = n_testdata)))
   D.all <- list()
