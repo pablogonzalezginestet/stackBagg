@@ -8,6 +8,10 @@
 #' @param B number of bootstrap samples
 #' @param data a training data set
 #' @param A a number of machine learning algorithms in the library
+#' @param xnam all covariates in the model
+#' @param xnam.factor categorical variables include in the model
+#' @param xnam.cont continous variables include in the model
+#' @param xnam.cont.gam continous variables to be included in the smoothing operator gam::s(,df)
 #' @return a list with the predictions of each machine learning algorithm (id, predictions), the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
 #' @rdname ipcw_ensbagg
 #' @export
@@ -109,6 +113,11 @@ ipcw_ensbagg <- function(folds,
 #' @param MLprocedures \link{MLprocedures}
 #' @param traindata a training data set
 #' @param testdata a test data set 
+#' @param A number of algorithms in the library
+#' @param xnam all covariates in the model
+#' @param xnam.factor categorical variables include in the model
+#' @param xnam.cont continous variables include in the model
+#' @param xnam.cont.gam continous variables to be included in the smoothing operator gam::s(,df=)
 #' @return a matrix with the predictions on the test data set of each machine learning algorithm considered in \link{MLprocedures}
 #' @rdname ipcw_genbagg
 #' @export
