@@ -5,8 +5,10 @@
 #' @param J number of simulated data sets
 #' @param n number of sample size
 #' @param frac.train percentange train data set. A number between 0 and 1.
+#' @param tao time point of interest
 #' @param simulation study indicator. It takes on 1 and 2. 
 #' @param scenario scenario indicator. It takes on 1, 2, 3 and 4.
+#' @param weighting Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.
 #' @return A list with the following elements: \describe{ \item{train.data}{ simulated train data set}
 #' \item{test.data}{simulated  test data set} }
 #' @examples
@@ -31,12 +33,12 @@
 # typ1expt = percertange of the individuals suffering type 1 event
 # typ2expt = percertange of the individuals suffering type 1 event
 
-datagenPaper=function(J, n , frac.train , simulation, scenario) {
+datagenPaper=function(J, n , frac.train ,tao=26.5 , simulation, scenario, weighting ) {
   
   set.seed(500)
-  train.data=list()
-  test.data=list()
-  tao=26.5
+  sim_train_data=list()
+  sim_test_data=list()
+
   D <- matrix(NA,nrow = J,ncol = 3)
   
   for (j in 1:J){
@@ -280,15 +282,88 @@ datagenPaper=function(J, n , frac.train , simulation, scenario) {
     sim.data.train <- data.frame(sim.data[train.set,])
     sim.data.test <- data.frame(sim.data[test.set,]) 
     
-    sim.data.train<- sim.data.train[c("id","E","ttilde","delta","trueT",xnam)]
-    sim.data.test.1 <- sim.data.test[c("id","E","ttilde","delta","trueT",xnam)]
     
-    train.data[[j]]=sim.data.train
-    test.data[[j]]=sim.data.test
+    if(weighting=="CoxBoost"){
+      # CoxBoost Weights
+      #train data
+      X.boost <- as.matrix(sim.data.train[xnam])
+      fit.cboost <- peperr::fit.CoxBoost(Surv(sim.data.train$ttilde,sim.data.train$deltac), x=X.boost,cplx=300) 
+      
+      wts.boost=NULL
+      for (i in 1:nrow(sim.data.train) ){
+        tao_temp <- min(sim.data.train$ttilde[i],tao)
+        wts.boost<- c(wts.boost,abs(sim.data.train$deltac[i]-1) / peperr::predictProb(fit.cboost, Surv(sim.data.train$ttilde[i],sim.data.train$deltac[i]), sim.data.train[xnam],tao_temp,complexity = 300)[i])
+      }
+      
+      sim.data.train$wts <- wts.boost
+      sim.data.train$sum_wts_one <- wts.boost/sum(wts.boost)
+      
+      #test data
+      X.boost <- as.matrix(sim.data.test[xnam])
+      fit.cboost <- peperr::fit.CoxBoost(Surv(sim.data.test$ttilde,sim.data.test$deltac), x=X.boost,cplx=300) 
+      
+      wts.boost=NULL
+      for (i in 1:nrow(sim.data.test) ){
+        tao_temp <- min(sim.data.test$ttilde[i],tao)
+        wts.boost<- c(wts.boost,abs(sim.data.test$deltac[i]-1) / peperr::predictProb(fit.cboost, Surv(sim.data.test$ttilde[i],sim.data.test$deltac[i]), sim.data.test[xnam],tao_temp,complexity = 300)[i])
+      }
+      
+      sim.data.test$wts <- wts.boost
+      sim.data.test$sum_wts_one <- wts.boost/sum(wts.boost)
+      
+    }
+    
+    if(weighting=="CoxPH"){
+      #Cox PH weights
+      
+      fmla.c <- as.formula(paste("Surv(ttilde,deltac) ~ ", paste(xnam, collapse= "+")))
+      #train data set
+      cox.C.train<- survival::coxph(fmla.c, data=sim.data.train)
+      newdata_zero <- sim.data.train[1,]
+      newdata_zero[xnam] <- 0
+      basel_surv <- survival::survfit(cox.C.train, newdata=newdata_zero[xnam])
+      beta.cox.train <-  cox.C.train$coef
+      
+      wts.coxph=NULL
+      for (i in 1:nrow(sim.data.train)){
+        newdata <- sim.data.train[i,]
+        newdata_cov <-  sim.data.train[i,xnam]
+        G <- basel_surv$surv ^(exp(sum(newdata_cov * beta.cox.train )))
+        wts.coxph <- c(wts.coxph, as.numeric(!is.na(newdata$E)) / (G[ max(which(basel_surv$time <= min(newdata$ttilde, tao) ) ) ]  ) )
+      }
+      
+      sim.data.train$wts <- wts.coxph
+      sim.data.train$sum_wts_one <- wts.coxph/sum(wts.coxph)
+      
+      #test data set
+      cox.C.test<- survival::coxph(fmla.c, data=sim.data.test)
+      newdata_zero <- sim.data.test[1,]
+      newdata_zero[xnam]=0
+      basel_surv <- survival::survfit(cox.C.test, newdata=newdata_zero[xnam])
+      beta.cox.test <-  cox.C.test$coef
+      
+      wts.coxph=NULL
+      for (i in 1:nrow(sim.data.test)){
+        newdata <- sim.data.test[i,]
+        newdata_cov <-  sim.data.test[i,xnam]
+        G <- basel_surv$surv ^(exp(sum(newdata_cov * beta.cox.test )))
+        wts.coxph <- c(wts.coxph, as.numeric(!is.na(newdata$E)) / (G[ max(which(basel_surv$time <= min(newdata$ttilde, tao) ) ) ]  ) )
+      }
+      
+      sim.data.test$wts <- wts.coxph
+      sim.data.test$sum_wts_one <- wts.coxph/sum(wts.coxph)
+      
+    }
+    
+    sim.data.train <- sim.data.train[c("id","E","wts","sum_wts_one","ttilde","delta","trueT",xnam)]
+    sim.data.test <- sim.data.test[c("id","E","wts","sum_wts_one","ttilde","delta","trueT",xnam)]
+    
+    sim_train_data[[j]]=sim.data.train
+    sim_test_data[[j]]=sim.data.test
     
   }  
   
-  return(list(train.data, test.data))
+  return(list( sim_train_data,sim_test_data))
   
 }
 
