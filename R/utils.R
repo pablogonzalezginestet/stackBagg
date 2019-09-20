@@ -52,7 +52,12 @@ risk_auc<- function(par,lambda,Z,data){
 #' @rdname EnsBagg-internal
 
 
-MLprocedures <- function(traindata,testdata,fmla,xnam.cont.gam,tuneparams,i){ 
+MLprocedures <- function(traindata,testdata,fmla,xnam,tuneparams,i){ 
+  
+  xnam.factor <- colnames(traindata[xnam])[sapply(traindata[xnam], class)=="factor"]
+  if(length(xnam.factor)==0) xnam.factor=NULL
+  xnam.cont <- xnam[!(xnam %in% xnam.factor)]
+  xnam.cont.gam <- xnam.cont[apply(traindata[xnamcont],2, function(z) length(unique(z))>3 )]
   
   sampledata<- as.data.frame(traindata[i, ])
   
@@ -69,6 +74,7 @@ MLprocedures <- function(traindata,testdata,fmla,xnam.cont.gam,tuneparams,i){
 
 #' @description  Library of Machine Learning procedures
 #' @importFrom caret dummyVars
+#' @import gam
 #' @return a list of Machine Learning functions
 #' @rdname EnsBagg-internal
 
@@ -85,12 +91,12 @@ ML_list <- list(
       
       newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
       newfmla=reformulate(newterms,fmla[[2]])
-      fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
+      fit <- gam::gam(fmla, data = data, family = 'quasibinomial')
       pred.df3 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
       
       newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
       newfmla=reformulate(newterms,fmla[[2]])
-      fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
+      fit <- gam::gam(fmla, data = data, family = 'quasibinomial')
       pred.df4 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
       return(cbind(pred.df3,pred.df4))
       
@@ -103,7 +109,7 @@ ML_list <- list(
       newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
       newfmla=reformulate(newterms,fmla[[2]]) 
     }
-    fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
+    fit <- gam::gam(fmla, data = data, family = 'quasibinomial')
     pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
     return(pred)
     }
@@ -123,7 +129,7 @@ ML_list <- list(
     return(pred)
   },
   
-  svmfun=function(data,testdata,param){
+  svmfun=function(data,testdata,xnam,xnam.factor,xnam.cont,param){
     Y=na.omit(data$E)
     if(is.null(xnam.factor)){
       X=data[xnam] 
@@ -149,7 +155,7 @@ ML_list <- list(
     return(pred)
   } ,
   
-  bartfun=function(data,testdata,param){
+  bartfun=function(data,testdata,xnam,param){
     Y=na.omit(data$E)
     X=data[xnam][!is.na(data$E),]
     testdata <- as.data.frame(testdata)[xnam]
@@ -159,7 +165,7 @@ ML_list <- list(
     return(pred)
   } ,
   
-  knnfun=function(data,testdata,param){
+  knnfun=function(data,testdata,xnam,xnam.factor,xnam.cont,param){
     Y=na.omit(data$E)
     if(is.null(xnam.factor)){
       X=data[xnam] 
@@ -177,7 +183,7 @@ ML_list <- list(
   } ,
   
   
-  nnfun=function(traindata,testdata,param){
+  nnfun=function(traindata,testdata,xnam,xnam.factor,xnam.cont,param){
     
     if(is.null(xnam.factor)){
       testdata <- as.data.frame(testdata)[xnam]
