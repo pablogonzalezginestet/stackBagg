@@ -273,7 +273,7 @@ datagenPaper=function(J, n , frac.train ,tao=26.5 , simulation, scenario, weight
     
     sim.data=data.frame(id = 1:length(ttilde), ttilde, delta, trueT = Y < tao & Y < Y2, Cen, Y, Y2,X)
     sim.data<- dplyr::mutate(sim.data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
-                      deltac.1=ifelse(delta==0,1,0))
+                      deltac=ifelse(delta==0,1,0))
     
     xnam <- paste("X", 1:20, sep="")
 
@@ -281,6 +281,7 @@ datagenPaper=function(J, n , frac.train ,tao=26.5 , simulation, scenario, weight
     test.set <- setdiff(1:nrow(sim.data), train.set) 
     sim.data.train <- data.frame(sim.data[train.set,])
     sim.data.test <- data.frame(sim.data[test.set,]) 
+    
     
     
     if(weighting=="CoxBoost"){
