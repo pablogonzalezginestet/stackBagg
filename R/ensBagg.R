@@ -30,7 +30,7 @@ ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART",
   }
 
 xnam.factor <- colnames(train.data[xnam])[sapply(train.data[xnam], class)=="factor"]
-if(length(xnam.factor)==0) xnam.factor=NULL
+if(length(xnam.factor)==0){ xnam.factor<- NULL}
 xnam.cont <- xnam[!(xnam %in% xnam.factor)]
 xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
 
@@ -119,21 +119,31 @@ test.data <- test.data[c("id","E","wts","sum_wts_one","ttilde","delta",xnam)]
 
 auc_ipcwBagg <- matrix(NA, nrow = 1 , ncol = A + 1 )
 
-algorithm2<- ipcw_ensbagg(folds=folds, MLprocedures=MLprocedures, fmla=fmla, tuneparams=tuneparams, B=B, data=train.data ,A,xnam.cont.gam)
+algorithm2<- ipcw_ensbagg(folds=folds, 
+                          MLprocedures=MLprocedures,
+                          fmla=fmla,
+                          tuneparams=tuneparams,
+                          B=B,
+                          data=train.data ,
+                          A=A,
+                          xnam=xnam,
+                          xnam.factor=xnam.factor,
+                          xnam.cont=xnam.factor,
+                          xnam.cont.gam=xnam.factor)
 
-prediction_ipcwBagg<- ipcw_genbagg(fmla,tuneparams,MLprocedures,traindata = train.data,testdata = test.data , A)
-predicion_ens_ipcwBagg <- as.matrix(prediction_ipcwBagging) %*% algorithm2$coefficients #combining predictions
-auc_ipcwBagg[1,1:A] <- apply(prediction_ipcwBagging,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
-auc_ipcwBagg[1,A+1] <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predicion_ens_ipcwBagg,cause=1,wts=test.data$wts,tao)
+#prediction_ipcwBagg<- ipcw_genbagg(fmla,tuneparams,MLprocedures,traindata = train.data,testdata = test.data , A)
+#predicion_ens_ipcwBagg <- as.matrix(prediction_ipcwBagging) %*% algorithm2$coefficients #combining predictions
+#auc_ipcwBagg[1,1:A] <- apply(prediction_ipcwBagging,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
+#auc_ipcwBagg[1,A+1] <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predicion_ens_ipcwBagg,cause=1,wts=test.data$wts,tao)
 
-colnames(prediction_ipcwBagg) <- ml_names
-colnames(predicion_ens_ipcwBagg) <- C("Ensemble")
-colnames(auc_ipcwBagg) <- c(ml_names,"Ensemble")
+#colnames(prediction_ipcwBagg) <- ml_names
+#colnames(predicion_ens_ipcwBagg) <- C("Ensemble")
+#colnames(auc_ipcwBagg) <- c(ml_names,"Ensemble")
 
-return(
-  list( prediction_ipcwBagg,
-    predicion_ens_ipcwBagg,
-    auc_ipcwBagg)
-       )
+#return(
+ # list( prediction_ipcwBagg,
+  #  predicion_ens_ipcwBagg,
+   # auc_ipcwBagg)
+    #   )
 
 }
