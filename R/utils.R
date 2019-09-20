@@ -16,7 +16,7 @@ NULL
 #' @return a vector with the optimal AUC value and the optimal coefficient  
 
 
-optimun_auc_coef = function(lambda,data,Z){
+optimun_auc_coef = function(coef_init,lambda,data,Z){
   optimal_coef <- optim(par = coef_init, fn = risk_auc,lambda=lambda ,Z=Z, data=data,method = "BFGS",control=list(maxit=10000))
   AUC_coef_opt<- ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(Z),optimal_coef$par),cause=1,wts=data$wts,tao)
   return(c(AUC_coef_opt,optimal_coef$convergence,optimal_coef$par))
@@ -120,27 +120,31 @@ ML_list <- list(
         if (length(param)>1){
       
       newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=3)"),xnam[!xnam %in% xnam.cont.gam]) 
-      newfmla=reformulate(newterms,fmla[[2]])
+      newfmla=stats::reformulate(newterms,fmla[[2]])
+      #X <- apply(train.data[xnam.cont.gam],2, function(x) gam::s(x,3))
+      
       fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
       pred.df3 <- predict(fit, newdata=testdat, type = "response", na.action=na.omit)
       
       newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=4)"),xnam[!xnam %in% xnam.cont.gam]) 
-      newfmla=reformulate(newterms,fmla[[2]])
+      newfmla=stats::reformulate(newterms,fmla[[2]])
       fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
       pred.df4 <- predict(fit, newdata=testdat, type = "response", na.action=na.omit)
+      
       return(cbind(pred.df3,pred.df4))
       
     }else{
       
     if (param==3){
       newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=3)"),xnam[!xnam %in% xnam.cont.gam]) 
-      newfmla=reformulate(newterms,fmla[[2]])
+      newfmla=stats::reformulate(newterms,fmla[[2]])
     }else{
       newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=4)"),xnam[!xnam %in% xnam.cont.gam])
-      newfmla=reformulate(newterms,fmla[[2]]) 
+      newfmla=stats::reformulate(newterms,fmla[[2]]) 
     }
     fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
     pred <- predict(fit, newdata=testdat, type = "response", na.action=na.omit)
+    
     return(pred)
     }
     
