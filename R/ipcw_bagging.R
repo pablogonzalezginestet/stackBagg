@@ -108,6 +108,7 @@ ipcw_ensbagg <- function(folds,
 #' Algorithm 1: General IPCW Bagging 
 
 #' @description  Obtain predictions
+#' @importFrom boot boot
 #' @param fmla formula object ex. "E ~ x1+x2"
 #' @param tuneparams a list of tune parameters for each machine learning procedure
 #' @param MLprocedures \link{MLprocedures}
