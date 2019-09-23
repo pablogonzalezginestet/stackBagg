@@ -1,13 +1,18 @@
 
 #'  Ensemble IPCW Bagging 
 #' @description  Main Algorithm
-#' @param train.data 
-#' @param test.data   
-#' @param xnam
-#' @param tao
+#' @param train.data a data.frame with at least the following variables and column names: 
+#' id: unique identifiers of each subject
+#' ttilde: event-times (censored), 
+#' delta: event indicator at the corresponding value of the variable ttilde. Censored observations must be denoted by the value 0. Main event of interest is denoted by 1. 
+#' covariates/features:  these are the covariate that the user potentially want to use in building the preodiction model. 
+#' @param test.data a data.frame with the same variables and names that the train.data  
+#' @param xnam vector with the names of the covariates to be included in the model
+#' @param tao evaluation time point of interest
 #' @param weighting CoxPH or CoxBoost 
 #' @param folds Number of folds
-#' @param tuneparams a list of tune parameters for each machine learning procedure
+#' @param tuneparams a list of tune parameters for each machine learning procedure. Name them as gam_param, lasso_param, randomforest_param, svm_param, bart_param, knn_param, nn_param.
+#' Default values are the same used for the simulation.
 #' @param B number of bootstrap samples
 #' @return a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
 #' @importFrom dplyr mutate
@@ -15,12 +20,18 @@
 #' @rdname ensbagg
 #' @export
 
-ensBagg <- function(train.data,test.data, xnam, tao , weighting , folds , tuneparams ,B=NULL ){
+ensBagg <- function(train.data,test.data, xnam, tao , weighting , folds , tuneparams=NULL ,B=NULL ){
 
+  
 # global parameters
 if (missing(B)) {
   B <- 10
 }
+
+if (missing(tuneparams)) {
+tuneparams <- EnsBagg::parametersSimulation(folds = 5,xnam,train.data)
+  }  
+  
 if(length(tuneparams$gam)>1){
 A<- length(ML_list)+1 # if we consider gam with df=3 and df=4
 ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
@@ -146,19 +157,20 @@ prediction_ipcwBagg<- ipcw_genbagg(fmla=fmla,
                                    xnam.cont.gam=xnam.cont.gam )
 
 
-predicion_ens_ipcwBagg <- as.matrix(prediction_ipcwBagg) %*% algorithm2$coefficients #combining predictions
+prediction_ens_ipcwBagg <- as.matrix(prediction_ipcwBagg) %*% algorithm2$coefficients #combining predictions
 
 auc_ipcwBagg[1,1:A] <- apply(prediction_ipcwBagg,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
-auc_ipcwBagg[1,A+1] <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predicion_ens_ipcwBagg,cause=1,wts=test.data$wts,tao)
+auc_ipcwBagg[1,A+1] <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=prediction_ens_ipcwBagg,cause=1,wts=test.data$wts,tao)
 
 colnames(prediction_ipcwBagg) <- ml_names
-colnames(predicion_ens_ipcwBagg) <- c("Ensemble")
+colnames(prediction_ens_ipcwBagg) <- c("Ensemble")
 colnames(auc_ipcwBagg) <- c(ml_names,"Ensemble")
 
+
 return(list( 
-    prediction_ipcwBagg,
-    predicion_ens_ipcwBagg,
-    auc_ipcwBagg
+    prediction_ensBagg=cbind(prediction_ipcwBagg,prediction_ens_ipcwBagg),
+    auc_ipcwBagg=auc_ipcwBagg,
+    tuneparams=tuneparams
     ) )
 
 }
