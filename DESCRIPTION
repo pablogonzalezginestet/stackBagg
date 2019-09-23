@@ -17,23 +17,6 @@ Description: Estimation the risk of an event at a specific time in the presence 
              the predictive performance and calibrating the ensemble and each single algorithm.
 Depends: R (>= 3.4.0)
 Imports: 
-    bartMachine,
-    boot,
-    class,
-    CoxBoost,
-    cvAUC,
-    dplyr,
-    e1071,
-    gam,
-    glmnet,
-    glmnetUtils,
-    KMsurv,
-    neuralnet,
-    peperr,
-    randomForest,
-    ranger,
-    randomForestSRC,
-    riskRegression,
     survival
 License: MIT + file LICENSE
 Encoding: UTF-8
