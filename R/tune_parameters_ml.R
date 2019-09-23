@@ -8,7 +8,7 @@
 #' @param nn_param a grid of positive integers values for the neurons
 #' @param bart_param a three column matrix:  first column denotes the num_tree parameter, second column the k parameter and third column the q parameter.
 #' @param folds number of folds
-#' @param fmla formula object ex. "E ~ x1+x2"
+#' @param xnam vector with the names of the covariates to be included in the model
 #' @param tao evaluation time point of interest 
 #' @param data data set that contains at least id, E , ttilde, delta, wts and covariates
 #' @return a list with the tune parameters selected using the IPCW AUC loss function.
@@ -24,10 +24,13 @@ tune_params_ml <- function( gam_param,
                             nn_param,
                             bart_param,
                             folds,
-                            fmla,
+                            xnam,
                             tao,
                             data ) {
 
+  
+fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
+  
 pred.test.gam=NULL
 pred.test.knn=NULL
 pred.test.svm=NULL
@@ -38,7 +41,6 @@ pred.test.lasso=NULL
 id.set=NULL
 
 test.id_temp=1:nrow(data)
-#data$E=as.numeric(data$E)-1
 
 for (k in 1:folds) {
   
