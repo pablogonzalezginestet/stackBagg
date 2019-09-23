@@ -34,9 +34,11 @@ tuneparams <- EnsBagg::parametersSimulation(folds = 5,xnam,train.data)
   
 if(length(tuneparams$gam)>1){
 A<- length(ML_list)+1 # if we consider gam with df=3 and df=4
+A_native <- length(ML_list_natively)+1
 ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
 }else{
   A<- length(ML_list)
+  A_native <- length(ML_list_natively)
   ml_names<- c("LogisticReg","GAM","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
   }
 
@@ -44,7 +46,7 @@ xnam.factor <- colnames(train.data[xnam])[sapply(train.data[xnam], class)=="fact
 if(length(xnam.factor)==0){ xnam.factor<- NULL}
 xnam.cont <- xnam[!(xnam %in% xnam.factor)]
 xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
-print(xnam.cont.gam)
+
 
 # create binary outcome,E, was created by dichotomizing the time to failure at tao
 train.data<- dplyr::mutate(train.data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
@@ -130,6 +132,7 @@ train.data <- train.data[c("id","E","wts","sum_wts_one","ttilde","delta",xnam)]
 test.data <- test.data[c("id","E","wts","sum_wts_one","ttilde","delta",xnam)]
 
 auc_ipcwBagg <- matrix(NA, nrow = 1 , ncol = A + 1 )
+auc_native_weights <- matrix(NA, nrow = 1 , ncol =A_native)
 
 algorithm2<- ipcw_ensbagg(folds=folds, 
                           MLprocedures=MLprocedures,
@@ -166,10 +169,27 @@ colnames(prediction_ipcwBagg) <- ml_names
 colnames(prediction_ens_ipcwBagg) <- c("Ensemble")
 colnames(auc_ipcwBagg) <- c(ml_names,"Ensemble")
 
+# Native Weights
+prediction_native_weights <- MLprocedures_natively(   traindata = train.data,
+                                                      testdata = test.data ,
+                                                      fmla=fmla,
+                                                      xnam,
+                                                      xnam.factor,
+                                                      xnam.cont,
+                                                      xnam.cont.gam,
+                                                      tuneparams )
+                                     
+  
+auc_native_weights[1,1:A_native] <- apply(prediction_native_weights,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
+auc_native_weights <- as.matrix(auc_native_weights)
+colnames(auc_native_weights) <- c(ml_names[1:A_native])
+colnames(prediction_native_weights) <- c(ml_names[1:A_native])
 
 return(list( 
     prediction_ensBagg=cbind(prediction_ipcwBagg,prediction_ens_ipcwBagg),
     auc_ipcwBagg=auc_ipcwBagg,
+    prediction_native_weights=prediction_native_weights,
+    auc_native_weights=auc_native_weights,
     tuneparams=tuneparams
     ) )
 
