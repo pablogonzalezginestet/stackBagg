@@ -103,8 +103,7 @@ MLprocedures <- function(traindata,
 ML_list <- list(
   
   logfun= function(data,testdata,fmla, xnam,xnam.factor,xnam.cont){
-    #logfun= function(data,testdata,fmla){
-      fit <- stats::glm(fmla, data = data,family = "binomial")
+    fit <- stats::glm(fmla, data = data,family = "binomial")
     pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
     return(pred)
   },
@@ -260,53 +259,93 @@ ML_list <- list(
 #' @return a matrix of predictions where each column is the prediction of each algorithm based on the testdata
 #' @rdname EnsBagg-internal
 
-MLprocedures_natively <- function(traindata,testdata,fmla,tuneparams){ 
-  traindata<- as.data.frame(traindata)
+
+
+MLprocedures_natively <- function(
+         traindata,
+         testdata,
+         fmla,
+         xnam,
+         xnam.factor,
+         xnam.cont,
+         xnam.cont.gam,
+         tuneparams
+         ){ 
   wts <- traindata$wts
+  pred1 <- ML_list_natively$logfun(traindata,testdata,fmla, xnam,xnam.factor,xnam.cont,wts)
+  pred2 <- ML_list_natively$GAMfun(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param,wts)
+  pred3 <- ML_list_natively$lassofun(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$lasso_param,wts)
+  pred4 <- ML_list_natively$rffun(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$randomforest_param)
   
-  pred1 <- ML_list_natively$logfun(traindata,testdata,fmla,wts)
-  pred2 <- ML_list_natively$GAMfun(traindata,testdata,fmla,tuneparams$gam,wts)
-  pred3 <- ML_list_natively$lassofun(traindata,testdata,fmla,tuneparams$lasso,wts)
-  pred4 <- ML_list_natively$rffun(traindata,testdata,fmla,tuneparams$rf,wts)
   return(cbind(pred1,pred2,pred3,pred4))
 }
 
 
-
+#' @description  Library of Machine Learning procedures that allows for weights
+#' @importFrom caret dummyVars
+#' @import gam
+#' @return a list of Machine Learning functions
+#' @rdname EnsBagg-internal
+#' 
 ML_list_natively <- list(
   
-  
-  logfun= function(traindata,testdata,fmla,wts){
+  logfun= function(traindata,testdata,fmla, xnam,xnam.factor,xnam.cont,wts){
     fit <- stats::glm(fmla, data = traindata,family = "binomial", weights=wts)
     pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
     return(pred)
   },
   
   
-  GAMfun = function(traindata,testdata,fmla,df,wts) {
-    if (df==3){
-      newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
-      newfmla=reformulate(newterms,fmla[[2]])
+  GAMfun = function(traindata,
+                    testdata,
+                    fmla,
+                    xnam,
+                    xnam.factor,
+                    xnam.cont,
+                    xnam.cont.gam,
+                    param,
+                    wts) {
+    if (length(param)>1){
+      
+      newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=3)"),xnam[!xnam %in% xnam.cont.gam]) 
+      newfmla=stats::reformulate(newterms,fmla[[2]])
+      
+      fit <- gam::gam(newfmla, data = traindata, family = 'quasibinomial',weights=wts)
+      pred.df3 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+      
+      newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=4)"),xnam[!xnam %in% xnam.cont.gam]) 
+      newfmla=stats::reformulate(newterms,fmla[[2]])
+      fit <- gam::gam(newfmla, data = traindata, family = 'quasibinomial',weights=wts)
+      pred.df4 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+      
+      return(cbind(pred.df3,pred.df4))
+      
     }else{
-      newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),attr(terms(fmla[]), "term.labels")[!(attr(terms(fmla[]), "term.labels") %in% xnam.cont.gam)]) 
-      newfmla=reformulate(newterms,fmla[[2]]) 
+      
+      if (param==3){
+        newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=3)"),xnam[!xnam %in% xnam.cont.gam]) 
+        newfmla=stats::reformulate(newterms,fmla[[2]])
+      }else{
+        newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=4)"),xnam[!xnam %in% xnam.cont.gam])
+        newfmla=stats::reformulate(newterms,fmla[[2]]) 
+      }
+      fit <- gam::gam(newfmla, data = traindata, family = 'quasibinomial', weights=wts)
+      pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+      
+      return(pred)
     }
     
-    fit <- gam::gam(newfmla, data = traindata, family = 'quasibinomial', weights=wts)
-    pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
-    return(pred)
-  } , 
+  }, 
   
-  lassofun=function(traindata,testdata,fmla,lambda,wts){
-    fit <- glmnetUtils::glmnet(fmla,data=traindata,lambda=lambda,family="binomial", weights=wts)
-    pred <- predict(fit, newdata = testdata, type = "response", s =lambda)
+  lassofun=function(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,param,wts){
+    fit <- glmnetUtils::glmnet(fmla,data=traindata,lambda=param,family="binomial", weights=wts)
+    pred <- predict(fit, newdata = testdata, type = "response", s =param)
     return(pred)
   } ,
   
-
-  rffunw=function(traindata,testdata,fmla,grid.rf,wts){
-    data.rf=na.omit(cbind(y=traindata$E,wts=wts,traindata[xnam]))
-    fit<- ranger::ranger(y~ .-wts, data =data.rf ,case.weights=data.rf$wts,probability = TRUE,  num.trees =grid.rf[1] ,mtry = grid.rf[2] )
+  rffun=function(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,param){
+    data=na.omit(cbind(E=as.factor(traindata$E), wts=traindata$wts,traindata[xnam]))
+    fit<- ranger::ranger(fmla,data =data,probability = TRUE, case.weights=data$wts , num.trees = param[1],mtry = param[2] )
     pred<- predict(fit, data = testdata,type = "response")$predictions[,2]
     return(pred)
   }
