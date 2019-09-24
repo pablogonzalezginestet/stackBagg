@@ -5,6 +5,7 @@
 #' @param MLprocedures \link{MLprocedures}
 #' @param fmla formula object ex. "E ~ x1+x2"
 #' @param tuneparams a list of tune parameters for each machine learning procedure
+#' @param tao time point of interest
 #' @param B number of bootstrap samples
 #' @param data a training data set
 #' @param A a number of machine learning algorithms in the library
@@ -21,6 +22,7 @@ ipcw_ensbagg <- function(folds,
                          MLprocedures,
                          fmla,
                          tuneparams ,
+                         tao,
                          B=NULL,
                          data ,
                          A,
@@ -89,7 +91,7 @@ ipcw_ensbagg <- function(folds,
   penal_grid=c(.01,.1,.5,1,5,10,15,25,50,100) # grid of values of the penalization term considered in the optimization problem
   auc_coef <- matrix(NA,length(penal_grid),ncol(prediction[,-1])+2) # a matrix that store the AUC value at the optimum coefficients, if it has converged, the penalization term selected and the optimum coefficients
   for(i in 1:length(penal_grid)){
-    auc_coef[i,] <- optimun_auc_coef(coef_init,penal_grid[i],data,prediction[,-1])
+    auc_coef[i,] <- optimun_auc_coef(coef_init,penal_grid[i],data,prediction[,-1],tao)
   }
   
   coef_opt <- auc_coef[which.max(auc_coef[,1]),][-(1:2)]
@@ -115,6 +117,7 @@ ipcw_ensbagg <- function(folds,
 #' @param traindata a training data set
 #' @param testdata a test data set 
 #' @param A number of algorithms in the library
+#' @param B number of bootstrap samples
 #' @param xnam all covariates in the model
 #' @param xnam.factor categorical variables include in the model
 #' @param xnam.cont continous variables include in the model
@@ -129,6 +132,7 @@ ipcw_genbagg <- function(fmla,
                          traindata,
                          testdata,
                          A,
+                         B,
                          xnam,
                          xnam.factor,
                          xnam.cont,
