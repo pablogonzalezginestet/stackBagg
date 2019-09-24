@@ -16,6 +16,7 @@
 #' @param B number of bootstrap samples
 #' @return a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
 #' @importFrom dplyr mutate
+#' @importFrom Matrix Matrix
 #' @import survival
 #' @rdname ensbagg
 #' @export
@@ -23,24 +24,9 @@
 ensBagg <- function(train.data,test.data, xnam, tao , weighting , folds , tuneparams=NULL ,B=NULL ){
 
   
-# global parameters
 if (missing(B)) {
   B <- 10
 }
-
-if (missing(tuneparams)) {
-tuneparams <- EnsBagg::parametersSimulation(folds = 5,xnam,train.data)
-  }  
-  
-if(length(tuneparams$gam)>1){
-A<- length(ML_list)+1 # if we consider gam with df=3 and df=4
-A_native <- length(ML_list_natively)+1
-ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
-}else{
-  A<- length(ML_list)
-  A_native <- length(ML_list_natively)
-  ml_names<- c("LogisticReg","GAM","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
-  }
 
 xnam.factor <- colnames(train.data[xnam])[sapply(train.data[xnam], class)=="factor"]
 if(length(xnam.factor)==0){ xnam.factor<- NULL}
@@ -128,32 +114,52 @@ if(weighting=="CoxPH"){
   
 }
 
+
 train.data <- train.data[c("id","E","wts","sum_wts_one","ttilde","delta",xnam)]
 test.data <- test.data[c("id","E","wts","sum_wts_one","ttilde","delta",xnam)]
+
+
+if (missing(tuneparams)) {
+  tuneparams <- EnsBagg::parametersSimulation(folds = 5,xnam,train.data,tao)
+}  
+
+if(length(tuneparams$gam)>1){
+  A<- length(ML_list)+1 # if we consider gam with df=3 and df=4
+  A_native <- length(ML_list_natively)+1
+  ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
+}else{
+  A<- length(ML_list)
+  A_native <- length(ML_list_natively)
+  ml_names<- c("LogisticReg","GAM","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
+}
+
+
 
 auc_ipcwBagg <- matrix(NA, nrow = 1 , ncol = A + 1 )
 auc_native_weights <- matrix(NA, nrow = 1 , ncol =A_native)
 
-algorithm2<- ipcw_ensbagg(folds=folds, 
+algorithm2<- ipcw_ensbagg( folds=folds, 
                           MLprocedures=MLprocedures,
                           fmla=fmla,
                           tuneparams=tuneparams,
+                          tao,
                           B=B,
                           data=train.data ,
                           A=A,
                           xnam=xnam,
                           xnam.factor=xnam.factor,
                           xnam.cont=xnam.cont,
-                          xnam.cont.gam=xnam.cont.gam)
+                          xnam.cont.gam=xnam.cont.gam )
 
 
-
-prediction_ipcwBagg<- ipcw_genbagg(fmla=fmla,
+ 
+prediction_ipcwBagg<- ipcw_genbagg( fmla=fmla,
                                    tuneparams=tuneparams,
                                    MLprocedures=MLprocedures,
                                    traindata = train.data,
                                    testdata = test.data ,
                                    A=A,
+                                   B=B,
                                    xnam=xnam,
                                    xnam.factor=xnam.factor,
                                    xnam.cont=xnam.cont,
@@ -185,11 +191,43 @@ auc_native_weights <- as.matrix(auc_native_weights)
 colnames(auc_native_weights) <- c(ml_names[1:A_native])
 colnames(prediction_native_weights) <- c(ml_names[1:A_native])
 
+# Survival Methods
+
+#survival
+# cause specific Cox regression
+fmla.cox <- as.formula(paste("Hist(ttilde,delta) ~ ", paste(xnam, collapse= "+")))
+coxfit <- riskRegression::CSC(formula = fmla.cox,data = train.data) 
+predcoxfit <- riskRegression::predictRisk(coxfit, newdata = test.data[xnam], cause = 1, times = tao)
+auc_survival1 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predcoxfit,cause=1,wts=test.data$wts,tao)
+
+#cox boost 
+X.coxboost=as.matrix(train.data[xnam])
+newX.coxboost <- as.matrix(as.data.frame(test.data)[xnam])
+fitCoxboost <- CoxBoost::CoxBoost(time=train.data$ttilde,status=train.data$delta, x=X.coxboost,stepno=300,penalty=100)
+predCoxboost <- predict(fitCoxboost,newdata=newX.coxboost,times=tao,type="CIF")
+auc_survival2 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predCoxboost,cause=1,wts=test.data$wts,tao)
+
+#random forest
+fmla.rf <- as.formula(paste("Surv(ttilde,delta) ~ ", paste(xnam, collapse= "+")))
+fitSurvRf <- randomForestSRC::rfsrc(fmla.rf ,data=train.data ,nsplit = 3,ntree = 100)
+predSurvRf <- randomForestSRC::predict.rfsrc(fitSurvRf, test.data[xnam])
+time.index.cif.rf <- data.table::last(which(predSurvRf$time.interest<25))
+cifRf <- predSurvRf$cif[,time.index.cif.rf,1]
+auc_survival3 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=cifRf,cause=1,wts=test.data$wts,tao)
+
+auc_survival<- cbind(auc_survival1,auc_survival2,auc_survival3)
+colnames(auc_survival) <- c("CoxPH","CoxBoost","Random Forest")
+prediction_survival <- cbind(predcoxfit,predCoxboost,cifRf)
+colnames(prediction_survival) <- c("CoxPH","CoxBoost","Random Forest")
+
+
 return(list( 
     prediction_ensBagg=cbind(prediction_ipcwBagg,prediction_ens_ipcwBagg),
-    auc_ipcwBagg=auc_ipcwBagg,
     prediction_native_weights=prediction_native_weights,
+    prediction_survival=prediction_survival,
+    auc_ipcwBagg=auc_ipcwBagg,
     auc_native_weights=auc_native_weights,
+    auc_survival=auc_survival,
     tuneparams=tuneparams
     ) )
 
