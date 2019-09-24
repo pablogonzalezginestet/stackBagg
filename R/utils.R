@@ -14,11 +14,12 @@ NULL
 #' @param lambda penalization term. It is a positive scalar.
 #' @param data A data frame that contains at least: ttilde, delta, wts
 #' @param Z a matrix that contains the predictions. Each column represents a single marker.
+#' @param tao time point of interest 
 #' @return a vector with the optimal AUC value and the optimal coefficient  
 
 
-optimun_auc_coef = function(coef_init,lambda,data,Z){
-  optimal_coef <- optim(par = coef_init, fn = risk_auc,lambda=lambda ,Z=Z, data=data,method = "BFGS",control=list(maxit=10000))
+optimun_auc_coef = function(coef_init,lambda,data,Z,tao){
+  optimal_coef <- optim(par = coef_init, fn = risk_auc,lambda=lambda ,Z=Z, data=data,tao=tao,method = "BFGS",control=list(maxit=10000))
   AUC_coef_opt<- ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(Z),optimal_coef$par),cause=1,wts=data$wts,tao)
   return(c(AUC_coef_opt,optimal_coef$convergence,optimal_coef$par))
 }
@@ -29,11 +30,12 @@ optimun_auc_coef = function(coef_init,lambda,data,Z){
 #' @param lambda penalization term. It is a positive scalar.
 #' @param Z a matrix that contains the predictions. Each column represents a single marker.
 #' @param data A data frame  that constains at least: ttilde= time to event, delta=event type, wts= IPC weights
+#' @param tao time point of interest 
 #' @return 1-AUC
 #' @rdname EnsBagg-internal
 
 
-risk_auc<- function(par,lambda,Z,data){
+risk_auc<- function(par,lambda,Z,data,tao){
   par <- par/sum(par) 
   marker_pred <- crossprod(t(Z),par)
   Risk_AUC=1-ipcw_auc(T=data$ttilde,delta=data$delta,marker=marker_pred,cause=1,wts=data$wts,tao)+lambda*sum(abs(par))
