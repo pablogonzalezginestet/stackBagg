@@ -20,7 +20,7 @@ covariates/features:  these are the covariate that the user potentially want to 
 
 \item{tao}{evaluation time point of interest}
 
-\item{weighting}{CoxPH or CoxBoost}
+\item{weighting}{Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.}
 
 \item{folds}{Number of folds}
 
