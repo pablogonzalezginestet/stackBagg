@@ -4,8 +4,7 @@
 \alias{datagenPaper}
 \title{Simulation settings from Gonzalez Ginestet et al. (2019+). "Ensemble IPCW Bagging bagging: a case study in the HIV care registry"}
 \usage{
-datagenPaper(J, n, frac.train, tao = 26.5, simulation, scenario,
-  weighting)
+datagenPaper(J, n, frac.train, tao = 26.5, simulation, scenario)
 }
 \arguments{
 \item{J}{number of simulated data sets}
@@ -19,8 +18,6 @@ datagenPaper(J, n, frac.train, tao = 26.5, simulation, scenario,
 \item{simulation}{study indicator. It takes on 1 and 2.}
 
 \item{scenario}{scenario indicator. It takes on 1, 2, 3 and 4.}
-
-\item{weighting}{Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.}
 }
 \value{
 A list with the following elements: \describe{ \item{train.data}{ simulated train data set}
