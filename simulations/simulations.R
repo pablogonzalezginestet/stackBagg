@@ -1,5 +1,13 @@
 
-# Simulations
+# This script replicate the Simulation Study, section 5, from  Gonzalez Ginestet et al. (2019+). "Ensemble IPCW Bagging bagging: a case study in the HIV care registry"
+# The setting is the same as it is described in the paper:
+# n= 1250 sample size
+# J= 500 simulated data sets
+# 80% of the data is kept as training data set
+# two ways of computing the IPC weights: Cox PH and Cox Boost
+# 2 simulation studies and 4 scenarios in each simulation study
+# tune parameters are those that are specified in the paper and were computed using the function EnsBagg::parametersSimulation(folds = 5,xnam,train.data,tao) that computes the default tune parameters.
+
 
 
 ### Functions ####
