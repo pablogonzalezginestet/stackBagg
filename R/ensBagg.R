@@ -15,8 +15,6 @@
 #' Default values are the same used for the simulation.
 #' @param B number of bootstrap samples
 #' @return a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
-#' @importFrom dplyr mutate
-#' @importFrom Matrix Matrix
 #' @import survival
 #' @rdname ensbagg
 #' @export
