@@ -21,7 +21,7 @@ datagenPaper(J, n, frac.train, tao = 26.5, simulation, scenario)
 }
 \value{
 A list with the following elements: \describe{ \item{train.data}{ simulated train data set}
-\item{test.data}{simulated  test data set} }
+\item{test.data}{simulated  test data set} } and the true AUC
 }
 \description{
 Function that generates data of the different simulation studies
