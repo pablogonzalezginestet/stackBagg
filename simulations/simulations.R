@@ -1,9 +1,8 @@
 
 # Simulations
 
-J <- 500 # number of simulations
-xnam <- paste("X", 1:20, sep="")
 
+########### Functions #############
 sim1 <- function(simdata, j){
   sim.data.train=simdata[[1]][[j]]
   sim.data.test=simdata[[2]][[j]]
@@ -14,13 +13,17 @@ sim1 <- function(simdata, j){
   return(rlist::list.append(res,true_ens=true_ens,true_native=true_native,true_survival=true_survival))
 }
 
-simulation1_all_scenarios <- function(s){
-  simdata <- datagenPaper(J, n=500 , frac.train=0.80 ,tao=26.5 , simulation=s, scenario=s, weighting="CoxPH" )
+simulation1_all_scenarios <- function(d,s){
+  simdata <- datagenPaper(J, n=500 , frac.train=0.80 ,tao=26.5 , simulation=d, scenario=s )
   res_scen<- lapply(seq(1,J),function(x) sim1(simdata,x))
  }
 
+##################################
+
+J <- 500 # number of simulations
+xnam <- paste("X", 1:20, sep="") # names of the covariates 
 scenarios=list(1,2,3,4)
-res_simulation1=lapply(scenarios, function(s) simulation1_all_scenarios(s) )
+res_simulation1=lapply(scenarios, function(s) simulation1_all_scenarios(d=1,s) )
 
 #########################################################################
 
