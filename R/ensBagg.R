@@ -9,7 +9,7 @@
 #' @param test.data a data.frame with the same variables and names that the train.data  
 #' @param xnam vector with the names of the covariates to be included in the model
 #' @param tao evaluation time point of interest
-#' @param weighting CoxPH or CoxBoost 
+#' @param weighting Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.
 #' @param folds Number of folds
 #' @param tuneparams a list of tune parameters for each machine learning procedure. Name them as gam_param, lasso_param, randomforest_param, svm_param, bart_param, knn_param, nn_param.
 #' Default values are the same used for the simulation.
