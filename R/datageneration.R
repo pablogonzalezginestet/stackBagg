@@ -9,7 +9,7 @@
 #' @param simulation study indicator. It takes on 1 and 2. 
 #' @param scenario scenario indicator. It takes on 1, 2, 3 and 4.
 #' @return A list with the following elements: \describe{ \item{train.data}{ simulated train data set}
-#' \item{test.data}{simulated  test data set} }
+#' \item{test.data}{simulated  test data set} } and the true AUC
 #' @examples
 #' DT=datagenPaper(J = 1 , n = 1250, frac.train = 0.8, simulation=1, scenario=4)
 #' @export
@@ -37,8 +37,8 @@ datagenPaper=function(J, n , frac.train ,tao=26.5 , simulation, scenario ) {
   set.seed(500)
   sim_train_data=list()
   sim_test_data=list()
+  auc_weibull=matrix(NA,nrow = J,ncol = 1)
 
-  D <- matrix(NA,nrow = J,ncol = 3)
   
   for (j in 1:J){
     
@@ -287,9 +287,23 @@ datagenPaper=function(J, n , frac.train ,tao=26.5 , simulation, scenario ) {
     sim_train_data[[j]]=sim.data.train
     sim_test_data[[j]]=sim.data.test
     
+    #compute the true AUC
+    InnerFunc= function(x){ g1[i]^(-g2)*g2*x^(g2-1)+k1[i]^(-k2)*k2*x^(k2-1)  }
+    
+    InnerIntegral=function(y){
+      exp(-(sapply(y, function(z) { integrate(InnerFunc, 0, z)$value } ))) * g1[i]^(-g2)*g2*y^(g2-1)
+    }
+    
+    prob_type1=matrix(NA,nrow = nrow(sim.data),ncol = 1)
+    for(i in 1:nrow(sim.data)){
+      prob_type1[i]=integrate(InnerIntegral , 0,tao )$value
+    }
+    
+    auc_weibull[j]=cvAUC::AUC(prob_type1,labels = sim.data$trueT)
+    
   }  
   
-  return(list( sim_train_data,sim_test_data))
+  return(list( sim_train_data,sim_test_data, auc_weibull))
   
 }
 
