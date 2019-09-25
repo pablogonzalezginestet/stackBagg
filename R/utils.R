@@ -97,8 +97,6 @@ MLprocedures <- function(traindata,
 }
 
 #' @description  Library of Machine Learning procedures
-#' @importFrom caret dummyVars
-#' @import gam
 #' @return a list of Machine Learning functions
 #' @rdname EnsBagg-internal
 
@@ -118,12 +116,12 @@ ML_list <- list(
                     xnam.cont,
                     xnam.cont.gam,
                     param) {
-   # GAMfun = function(data,testdata,fmla,param) {
+   
         if (length(param)>1){
       
       newterms=c(paste0("gam::s(",xnam.cont.gam, ",df=3)"),xnam[!xnam %in% xnam.cont.gam]) 
       newfmla=stats::reformulate(newterms,fmla[[2]])
-      #X <- apply(train.data[xnam.cont.gam],2, function(x) gam::s(x,3))
+      
       
       fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
       pred.df3 <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
@@ -153,14 +151,14 @@ ML_list <- list(
     }, 
   
   lassofun=function(data,testdata,fmla,xnam,xnam.factor,xnam.cont,param){
-    #lassofun=function(data,testdata,fmla,param){
+
     fit <- glmnetUtils::glmnet(fmla,data=data,lambda=param,family="binomial")
     pred <- predict(fit, newdata = testdata, type = "response", s =param)
     return(pred)
   } ,
   
   rffun=function(data,testdata,fmla,xnam,xnam.factor,xnam.cont,param){
-  #rffun=function(data,testdata,fmla,param){
+  
     data=na.omit(cbind(E=as.factor(data$E),data[xnam]))
     fit<- ranger::ranger(fmla,data =data,probability = TRUE, num.trees = param[1],mtry = param[2] )
     pred<- predict(fit, data = testdata,type = "response")$predictions[,2]
@@ -168,7 +166,7 @@ ML_list <- list(
   },
   
   svmfun=function(data,testdata,xnam,xnam.factor,xnam.cont,param){
-  #svmfun=function(data,testdata,param){
+
     Y=na.omit(data$E)
     if(is.null(xnam.factor)){
       X=data[xnam] 
@@ -195,7 +193,7 @@ ML_list <- list(
   } ,
   
   bartfun=function(data,testdata,xnam,xnam.factor,xnam.cont,param){
- #bartfun=function(data,testdata,param){
+ 
    Y=na.omit(data$E)
     X=data[xnam][!is.na(data$E),]
     testdata <- as.data.frame(testdata)[xnam]
@@ -206,15 +204,15 @@ ML_list <- list(
   } ,
   
   knnfun=function(data,testdata,xnam,xnam.factor,xnam.cont,param){
- #knnfun=function(data,testdata,param){
+
    Y=na.omit(data$E)
     if(is.null(xnam.factor)){
       X=data[xnam] 
       testdata <- as.data.frame(testdata)[xnam]
     }else{
       X=data[xnam.cont]
-      X=cbind(X,predict(dummyVars( ~ ., data =data[xnam.factor], levelsOnly = FALSE), newdata=data[xnam.factor]))
-      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
+      X=cbind(X,predict(caret::dummyVars( ~ ., data =data[xnam.factor], levelsOnly = FALSE), newdata=data[xnam.factor]))
+      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
     }
     X=X[!is.na(data$E),]
     
@@ -225,15 +223,15 @@ ML_list <- list(
   
   
   nnfun=function(traindata,testdata,xnam,xnam.factor,xnam.cont,param){
-  #nnfun=function(traindata,testdata,param){
+  
    
     if(is.null(xnam.factor)){
       testdata <- as.data.frame(testdata)[xnam]
       fmla=as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
     }else{
       X=traindata[xnam.cont]
-      X=cbind(X,predict(dummyVars( ~ ., data =traindata[xnam.factor], levelsOnly = FALSE), newdata=traindata[xnam.factor]))
-      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
+      X=cbind(X,predict(caret::dummyVars( ~ ., data =traindata[xnam.factor], levelsOnly = FALSE), newdata=traindata[xnam.factor]))
+      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
       colnames(X)=c(paste("x", 1:(dim(X)[2]), sep=""))
       traindata=cbind(E=traindata$E,X)
       colnames(testdata)=c(paste("x", 1:(dim(testdata)[2]), sep=""))
@@ -284,8 +282,6 @@ MLprocedures_natively <- function(
 
 
 #' @description  Library of Machine Learning procedures that allows for weights
-#' @importFrom caret dummyVars
-#' @import gam
 #' @return a list of Machine Learning functions
 #' @rdname EnsBagg-internal
 #' 
