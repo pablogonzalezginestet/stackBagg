@@ -8,7 +8,6 @@
 #' @param tao time point of interest
 #' @param simulation study indicator. It takes on 1 and 2. 
 #' @param scenario scenario indicator. It takes on 1, 2, 3 and 4.
-#' @param weighting Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.
 #' @return A list with the following elements: \describe{ \item{train.data}{ simulated train data set}
 #' \item{test.data}{simulated  test data set} }
 #' @examples
@@ -33,7 +32,7 @@
 # typ1expt = percertange of the individuals suffering type 1 event
 # typ2expt = percertange of the individuals suffering type 1 event
 
-datagenPaper=function(J, n , frac.train ,tao=26.5 , simulation, scenario, weighting ) {
+datagenPaper=function(J, n , frac.train ,tao=26.5 , simulation, scenario ) {
   
   set.seed(500)
   sim_train_data=list()
