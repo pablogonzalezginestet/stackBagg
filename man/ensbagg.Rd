@@ -5,7 +5,7 @@
 \title{Ensemble IPCW Bagging}
 \usage{
 ensBagg(train.data, test.data, xnam, tao, weighting, folds,
-  tuneparams = NULL, B = NULL)
+  tuneparams = NULL, B = NULL, discard = NULL)
 }
 \arguments{
 \item{train.data}{a data.frame with at least the following variables: 
