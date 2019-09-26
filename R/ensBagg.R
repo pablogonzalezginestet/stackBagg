@@ -19,7 +19,7 @@
 #' @rdname ensbagg
 #' @export
 
-ensBagg <- function(train.data,test.data, xnam, tao , weighting , folds , tuneparams=NULL ,B=NULL ){
+ensBagg <- function(train.data,test.data, xnam, tao , weighting , folds , tuneparams=NULL ,B=NULL,discard=NULL ){
 
   
 if (missing(B)) {
@@ -234,6 +234,39 @@ colnames(auc_survival) <- c("CoxPH","CoxBoost","Random Forest")
 prediction_survival <- cbind(predcoxfit,predCoxboost,cifRf)
 colnames(prediction_survival) <- c("CoxPH","CoxBoost","Random Forest")
 
+if(!missing(discard)){
+  dat.discard.train <- train.data[!is.na(train.data$E),]
+  dat.discard.test <- test.data[!is.na(test.data$E),]
+  
+  pred1 <- ML_list$logfun(dat.discard.train,dat.discard.test,fmla, xnam,xnam.factor,xnam.cont)
+  pred2 <- ML_list$GAMfun(dat.discard.train,dat.discard.test,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param)
+  pred3 <- ML_list$lassofun(dat.discard.train,dat.discard.test,fmla,xnam,xnam.factor,xnam.cont,tuneparams$lasso_param)
+  pred4 <- ML_list$rffun(dat.discard.train,dat.discard.test,fmla,xnam,xnam.factor,xnam.cont,tuneparams$randomforest_param)
+  pred5 <- ML_list$svmfun(dat.discard.train,dat.discard.test,xnam,xnam.factor,xnam.cont,tuneparams$svm_param)
+  pred6 <- ML_list$bartfun(dat.discard.train,dat.discard.test,xnam,xnam.factor,xnam.cont, tuneparams$bart_param)
+  pred7 <- ML_list$knnfun(dat.discard.train,dat.discard.test,xnam,xnam.factor,xnam.cont, tuneparams$knn_param)
+  pred8 <- ML_list$nn(dat.discard.train,dat.discard.test,xnam,xnam.factor,xnam.cont,tuneparams$nn_param)
+  prediction_discard<- as.matrix(cbind(pred1,pred2,pred3,pred4,pred5,pred6,pred7,pred8))
+  colnames(prediction_discard) <- ml_names
+  auc_discard <- apply(prediction_discard,2, function(x) cvAUC::AUC(predictions = x,labels =dat.discard.test$E) )
+  
+  return(list( 
+    prediction_ensBagg=cbind(prediction_ipcwBagg,prediction_ens_ipcwBagg),
+    prediction_native_weights=prediction_native_weights,
+    prediction_survival=prediction_survival,
+    prediction_discard=prediction_discard,
+    optimal_coefficients=algorithm2$coefficients,
+    algorithm2$convergence_indicator,
+    algorithm2$penalization_term,
+    auc_ipcwBagg=auc_ipcwBagg,
+    auc_native_weights=auc_native_weights,
+    auc_survival=auc_survival,
+    auc_discard=auc_discard,
+    tuneparams=tuneparams
+  ) )
+}
+
+if(missing(discard)){
 
 return(list( 
     prediction_ensBagg=cbind(prediction_ipcwBagg,prediction_ens_ipcwBagg),
@@ -247,5 +280,6 @@ return(list(
     auc_survival=auc_survival,
     tuneparams=tuneparams
     ) )
+}
 
 }
