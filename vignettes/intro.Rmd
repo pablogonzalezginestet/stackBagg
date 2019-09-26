@@ -2,7 +2,7 @@
 title: "Introduction to EnsBagg package"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{intro}
+  %\VignetteIndexEntry{Introduction to EnsBagg package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,3 +17,19 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(EnsBagg)
 ```
+
+
+## Introduction
+
+This vignette focuses on 
+
+
+## Setup
+
+We load the package __EnsBagg__ 
+
+```{r, eval=FALSE}
+library(EnsBagg)
+```
+
+
