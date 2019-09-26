@@ -36,5 +36,7 @@ pred_auc <- EnsBagg::ensBagg(train.data = train, test.data = test, xnam=c("X9","
 ## Vignette
 
 
-See the vignette for details about examples usage of the functions found in  `EnsBagg` .
+See the vignette for details about examples usage of the functions found in  `EnsBagg`: [online vignette](https://pablogonzalezginestet.github.io/EnsBagg/)
+
+
 
