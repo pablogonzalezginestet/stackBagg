@@ -8,12 +8,11 @@ ensBagg(train.data, test.data, xnam, tao, weighting, folds,
   tuneparams = NULL, B = NULL)
 }
 \arguments{
-\item{train.data}{a data.frame with at least the following variables and column names: 
-id: unique identifiers of each subject
-ttilde: event-times (censored), 
-delta: event indicator at the corresponding value of the variable ttilde. Censored observations must be denoted by the value 0. Main event of interest is denoted by 1. 
-covariates/features:  these are the covariate that the user potentially want to use in building the preodiction model. 
-The first three columns of the data.frame must be in the following order: "id" , "event-times/time/ttilde" and "event indicator/delta/cause/status",}
+\item{train.data}{a data.frame with at least the following variables: 
+event-times (censored) in the first column,
+event indicator in the second column and 
+covariates/features that the user potentially want to use in building the preodiction model.
+Censored observations must be denoted by the value 0. Main event of interest is denoted by 1.}
 
 \item{test.data}{a data.frame with the same variables and names that the train.data}
 
