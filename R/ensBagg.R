@@ -6,6 +6,7 @@
 #' ttilde: event-times (censored), 
 #' delta: event indicator at the corresponding value of the variable ttilde. Censored observations must be denoted by the value 0. Main event of interest is denoted by 1. 
 #' covariates/features:  these are the covariate that the user potentially want to use in building the preodiction model. 
+#' The first three columns of the data.frame must be in the following order: "id" , "event-times/time/ttilde" and "event indicator/delta/cause/status", 
 #' @param test.data a data.frame with the same variables and names that the train.data  
 #' @param xnam vector with the names of the covariates to be included in the model
 #' @param tao evaluation time point of interest
@@ -30,6 +31,21 @@ xnam.factor <- colnames(train.data[xnam])[sapply(train.data[xnam], class)=="fact
 if(length(xnam.factor)==0){ xnam.factor<- NULL}
 xnam.cont <- xnam[!(xnam %in% xnam.factor)]
 xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
+
+# checking if the data was provided in the right form
+if(names(train.data)[1]!="id" | names(train.data)[1]!="ID" | names(train.data)[1]!="Id" ){
+  stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
+}
+if(names(test.data)[1]!="id" | names(test.data)[1]!="ID" | names(test.data)[1]!="Id" ){
+  stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
+}
+# rename second and third column
+names(train.data)[1] <- "id"
+names(train.data)[2] <- "ttilde"
+names(train.data)[3] <- "delta"
+names(test.data)[1] <- "id"
+names(test.data)[2] <- "ttilde"
+names(test.data)[3] <- "delta"
 
 
 # create binary outcome,E, was created by dichotomizing the time to failure at tao
