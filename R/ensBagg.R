@@ -1,12 +1,11 @@
 
 #'  Ensemble IPCW Bagging 
 #' @description  Main Algorithm
-#' @param train.data a data.frame with at least the following variables and column names: 
-#' id: unique identifiers of each subject
-#' ttilde: event-times (censored), 
-#' delta: event indicator at the corresponding value of the variable ttilde. Censored observations must be denoted by the value 0. Main event of interest is denoted by 1. 
-#' covariates/features:  these are the covariate that the user potentially want to use in building the preodiction model. 
-#' The first three columns of the data.frame must be in the following order: "id" , "event-times/time/ttilde" and "event indicator/delta/cause/status", 
+#' @param train.data a data.frame with at least the following variables: 
+#' event-times (censored) in the first column,
+#' event indicator in the second column and 
+#' covariates/features that the user potentially want to use in building the preodiction model.
+#' Censored observations must be denoted by the value 0. Main event of interest is denoted by 1.
 #' @param test.data a data.frame with the same variables and names that the train.data  
 #' @param xnam vector with the names of the covariates to be included in the model
 #' @param tao evaluation time point of interest
@@ -33,25 +32,26 @@ xnam.cont <- xnam[!(xnam %in% xnam.factor)]
 xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
 
 # checking if the data was provided in the right form
-if(names(train.data)[1]!="id" | names(train.data)[1]!="ID" | names(train.data)[1]!="Id" ){
-  stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
-}
-if(names(test.data)[1]!="id" | names(test.data)[1]!="ID" | names(test.data)[1]!="Id" ){
-  stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
-}
+#if(names(train.data)[1]!="id" | names(train.data)[1]!="ID" | names(train.data)[1]!="Id" ){
+#  stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
+#}
+#if(names(test.data)[1]!="id" | names(test.data)[1]!="ID" | names(test.data)[1]!="Id" ){
+ # stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
+#}
 # rename second and third column
-names(train.data)[1] <- "id"
-names(train.data)[2] <- "ttilde"
-names(train.data)[3] <- "delta"
-names(test.data)[1] <- "id"
-names(test.data)[2] <- "ttilde"
-names(test.data)[3] <- "delta"
+#names(train.data)[1] <- "id"
+names(train.data)[1] <- "ttilde"
+names(train.data)[2] <- "delta"
+#names(test.data)[1] <- "id"
+names(test.data)[1] <- "ttilde"
+names(test.data)[2] <- "delta"
 
 
 # create binary outcome,E, was created by dichotomizing the time to failure at tao
-train.data<- dplyr::mutate(train.data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
+# and we create id: unique identifiers of each subject
+train.data<- dplyr::mutate(train.data,id = 1:length(ttilde),E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
                          deltac=ifelse(delta==0,1,0))
-test.data<- dplyr::mutate(test.data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
+test.data<- dplyr::mutate(test.data,id = 1:length(ttilde),E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
                            deltac=ifelse(delta==0,1,0))
 
 fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
@@ -239,6 +239,9 @@ return(list(
     prediction_ensBagg=cbind(prediction_ipcwBagg,prediction_ens_ipcwBagg),
     prediction_native_weights=prediction_native_weights,
     prediction_survival=prediction_survival,
+    optimal_coefficients=algorithm2$coefficients,
+    algorithm2$convergence_indicator,
+    algorithm2$penalization_term,
     auc_ipcwBagg=auc_ipcwBagg,
     auc_native_weights=auc_native_weights,
     auc_survival=auc_survival,
