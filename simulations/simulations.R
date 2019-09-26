@@ -72,8 +72,14 @@ scenarios=list(1,2,3,4)
 
 #####    Weighting = CoxPH    ####
 
+start.time <- Sys.time()
 # Simulation 1
 res_simulation1=lapply(scenarios, function(s) simulation_all_scenarios(weighting = "CoxPH",d=1,s) )
+
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+time.taken
+
 table1_sim1 <- table1_paper(res_simulation1,J,scenarios)
 row.names(table1_sim1)[1] <- "True"
 # Simulation 2
