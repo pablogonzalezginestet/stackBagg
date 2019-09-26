@@ -77,7 +77,7 @@ ipcw_ensbagg <- function(folds,
     result_id[[k]]<- test.set$id
     
     # update progress bar
-    print(k)
+   # print(k)
   }
   
   matrix = do.call(cbind, result)
