@@ -24,14 +24,6 @@ if (!require("devtools")) install.packages("devtools")
 devtools::install_github("pablogonzalezginestet/ensBagg")
 ```
 
-## Example
-
-```R
-library(ensBagg)
-train<- as.data.frame(ensBagg::exampleData[[1]][,-(1:2)])
-test<- as.data.frame(ensBagg::exampleData[[2]][,-(1:2)])
-pred_auc <- ensBagg::ensBagg(train.data = train, test.data = test, xnam=c("X9","X18"),tao = 26.5,weighting = "CoxPH",folds = 5)
-```
 
 ## Vignette
 

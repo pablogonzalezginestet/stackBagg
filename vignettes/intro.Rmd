@@ -104,30 +104,42 @@ xnam
 ````
 
 Another argument of the function __ensBagg::ensBagg__ is a list of tune parameters for each machine learning procedure. If this argument is missing, the function uses as default values the same used for the simulation in the paper. For now, we are going to use the default values for the tune parameters.
-Additionally, we will use 5 folds and we are going to show the results under the two ways of computing the weights that this package allows.
+Additionally, we will use 5 folds and we are going to show the results computing the weights under a Cox proportional hazard model (CoxPH) and boosting
+Cox regression (Cox-Boost).
 
+Firstly, we model the weights under CoxPH and we train the different models and get their predictions on the test data set:
 ````{r, warning=FALSE}
 pred <- ensBagg::ensBagg(train.data = train,test.data = test,xnam = xnam,tao = 26.5,weighting = "CoxPH",folds = 5)
 ````
 
-
+We show several output of pred.
+Let s take a look first at the IPCW Bagging prediction of the different algorithms and the ensemble IPCW Bagging on the test data set:
 ````{r}
 head(pred$prediction_ensBagg,5)
 ````
 
-
-
-````{r}
-pred$auc_ipcwBagg
-````
-
+We can see the optimal coefficients used to get the ensemble IPCW Bagging:
 
 ````{r}
-pred$tuneparams
+pred$optimal_coefficients
 ````
 
+We could check if convergence has been reached in the optimization problem of finding the optimal coefficients (0 denotes convergence, 1 otherwise) and the penalization term used:
 ````{r}
 pred$convergence
 pred$penalization_term
 ````
 
+The assessment of predictive performance using the IPCW AUC is:
+
+````{r}
+pred$auc_ipcwBagg
+````
+
+We can check the tune parameters used to train the algorithms:
+
+````{r}
+pred$tuneparams
+````
+
+The GAM is trained with two degree of freedom 3 and 4. The LASSO paremeter refers to the lambda penalization term. The parameters in the random forest refer to the number of trees (num_tree=500) and the umber of variables randomly sampled as candidates at each split (mtry=4). k chosen in the k-NN is 25. The SVM parameters are the cost, gamma and kernel (radial=1 and linear=2). Since the kernel is linear the gamma is NA since the linear kernel does not use the gamma parameter. The neurons is set to 1 in the neural network. The last values are the parameter number of trees, k that determines the prior probability that the average of the outcome falls into (-3,3) and q the quantile of the prior on the error variance.  
