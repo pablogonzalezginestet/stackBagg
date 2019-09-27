@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-This vignette focuses on 
+This vignette focuses on giving an overview of the main functions of the package. This vignette uses the simulated data which ships with the package.  
 
 
 ## Setup
@@ -29,16 +29,16 @@ We load the package __ensBagg__
 library(ensBagg)
 ```
 
-## Quick start
+## Example: Simulated Data
 
-We give a quick overview of the main functions. We will use the simulated data which ships with the package and can be loaded via:
+The simulated data can be loaded via:
 
 ```{r}
 library(ensBagg)
 data("exampleData")
 ```
 
-__exampleData__ is a list where the first elemenent contains the training data set and the second element contains the test data set. 
+__exampleData__ is a list with three elements. The first elemenent contains the training data set and the second element contains the test data set: 
 
 ```{r}
 train <- exampleData[[1]][[1]]
@@ -55,6 +55,14 @@ auc_true <- exampleData[[3]][[1]]
 auc_true
 ```
 
+The train data set consists in 800 individuals where 167 of them are censored:
+```{r}
+summary(train)
+```
 
+The test data set consists in 200 individuals where 45 of them are censored:
+```{r}
+summary(train)
+```
 
 
