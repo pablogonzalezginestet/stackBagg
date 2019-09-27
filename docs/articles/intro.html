@@ -248,7 +248,51 @@
 <a class="sourceLine" id="cb11-2" title="2">xnam</a>
 <a class="sourceLine" id="cb11-3" title="3"><span class="co">#&gt;  [1] "X1"  "X2"  "X3"  "X4"  "X5"  "X6"  "X7"  "X8"  "X9"  "X10" "X11"</span></a>
 <a class="sourceLine" id="cb11-4" title="4"><span class="co">#&gt; [12] "X12" "X13" "X14" "X15" "X16" "X17" "X18" "X19" "X20"</span></a></code></pre></div>
-<p>Another argument of the function <strong>ensBagg::ensBagg</strong> is a list of tune parameters for each machine learning procedure.</p>
+<p>Another argument of the function <strong>ensBagg::ensBagg</strong> is a list of tune parameters for each machine learning procedure. If this argument is missing, the function uses as default values the same used for the simulation in the paper. For now, we are going to use the default values for the tune parameters. Additionally, we will use 5 folds and we are going to show the results under the two ways of computing the weights that this package allows.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">pred &lt;-<span class="st"> </span>ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/ensBagg-package.html">ensBagg</a></span>(<span class="dt">train.data =</span> train,<span class="dt">test.data =</span> test,<span class="dt">xnam =</span> xnam,<span class="dt">tao =</span> <span class="fl">26.5</span>,<span class="dt">weighting =</span> <span class="st">"CoxPH"</span>,<span class="dt">folds =</span> <span class="dv">5</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred<span class="op">$</span>prediction_ensBagg,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&gt;      LogisticReg      GAM.3      GAM.4     LASSO Random Forest       SVM</span></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="co">#&gt; [1,]  0.05323252 0.05323252 0.05323252 0.1827557     0.1150824 0.1767021</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co">#&gt; [2,]  0.28589849 0.28589849 0.28589849 0.2316066     0.1841758 0.2563167</span></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="co">#&gt; [3,]  0.15465197 0.15465198 0.15465198 0.2473348     0.1836098 0.2310032</span></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="co">#&gt; [4,]  0.36416145 0.36416145 0.36416145 0.3832734     0.6445491 0.3089495</span></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt; [5,]  0.09231887 0.09231888 0.09231888 0.2126873     0.1287649 0.2331995</span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="co">#&gt;            BART       k-NN Neural Network   Ensemble</span></a>
+<a class="sourceLine" id="cb13-9" title="9"><span class="co">#&gt; [1,] 0.05086700 0.07287057      0.1697976 0.09510976</span></a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt; [2,] 0.06189175 0.29107692      0.2516931 0.10447204</span></a>
+<a class="sourceLine" id="cb13-11" title="11"><span class="co">#&gt; [3,] 0.12584251 0.20127066      0.2441722 0.15997343</span></a>
+<a class="sourceLine" id="cb13-12" title="12"><span class="co">#&gt; [4,] 0.73083486 0.28570940      0.5192082 0.69083472</span></a>
+<a class="sourceLine" id="cb13-13" title="13"><span class="co">#&gt; [5,] 0.05926278 0.08739601      0.1295527 0.10338792</span></a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">pred<span class="op">$</span>auc_ipcwBagg</a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3     GAM.4     LASSO Random Forest       SVM</span></a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="co">#&gt; [1,]   0.5930585 0.5930585 0.5930585 0.6131328      0.661382 0.5946231</span></a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="co">#&gt;           BART      k-NN Neural Network  Ensemble</span></a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="co">#&gt; [1,] 0.6846651 0.5559935      0.5840866 0.6807437</span></a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">pred<span class="op">$</span>tuneparams</a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="co">#&gt; $gam_param</span></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="co">#&gt; [1] 3 4</span></a>
+<a class="sourceLine" id="cb15-4" title="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="co">#&gt; $lasso_param</span></a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="co">#&gt; [1] 0.03406258</span></a>
+<a class="sourceLine" id="cb15-7" title="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb15-8" title="8"><span class="co">#&gt; $randomforest_param</span></a>
+<a class="sourceLine" id="cb15-9" title="9"><span class="co">#&gt; [1] 500   4</span></a>
+<a class="sourceLine" id="cb15-10" title="10"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb15-11" title="11"><span class="co">#&gt; $knn_param</span></a>
+<a class="sourceLine" id="cb15-12" title="12"><span class="co">#&gt; [1] 25</span></a>
+<a class="sourceLine" id="cb15-13" title="13"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb15-14" title="14"><span class="co">#&gt; $svm_param</span></a>
+<a class="sourceLine" id="cb15-15" title="15"><span class="co">#&gt; [1] 0.01   NA 2.00</span></a>
+<a class="sourceLine" id="cb15-16" title="16"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb15-17" title="17"><span class="co">#&gt; $nn_param</span></a>
+<a class="sourceLine" id="cb15-18" title="18"><span class="co">#&gt; [1] 1</span></a>
+<a class="sourceLine" id="cb15-19" title="19"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb15-20" title="20"><span class="co">#&gt; $bart_param</span></a>
+<a class="sourceLine" id="cb15-21" title="21"><span class="co">#&gt; [1] 50.0  1.0  0.9</span></a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">pred<span class="op">$</span>convergence</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="co">#&gt; [1] 0</span></a>
+<a class="sourceLine" id="cb16-3" title="3">pred<span class="op">$</span>penalization_term</a>
+<a class="sourceLine" id="cb16-4" title="4"><span class="co">#&gt; [1] 0.01</span></a></code></pre></div>
 </div>
 </div>
   </div>

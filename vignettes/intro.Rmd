@@ -103,6 +103,31 @@ xnam <- names(train)[-(1:3)]
 xnam
 ````
 
-Another argument of the function __ensBagg::ensBagg__ is a list of tune parameters for each machine learning procedure. 
+Another argument of the function __ensBagg::ensBagg__ is a list of tune parameters for each machine learning procedure. If this argument is missing, the function uses as default values the same used for the simulation in the paper. For now, we are going to use the default values for the tune parameters.
+Additionally, we will use 5 folds and we are going to show the results under the two ways of computing the weights that this package allows.
 
+````{r, warning=FALSE}
+pred <- ensBagg::ensBagg(train.data = train,test.data = test,xnam = xnam,tao = 26.5,weighting = "CoxPH",folds = 5)
+````
+
+
+````{r}
+head(pred$prediction_ensBagg,5)
+````
+
+
+
+````{r}
+pred$auc_ipcwBagg
+````
+
+
+````{r}
+pred$tuneparams
+````
+
+````{r}
+pred$convergence
+pred$penalization_term
+````
 
