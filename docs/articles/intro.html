@@ -212,9 +212,14 @@
 <a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt;   &lt;dbl&gt; &lt;int&gt;</span></a>
 <a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; 1     2    24</span></a></code></pre></div>
 <p>Next we apply <strong>ensBagg</strong> to estimate the risk of experiencing the main event using the 20 covariates in the data set. In other words, using <strong>ensBagg</strong> we are going to estimate <span class="math inline">\(P(T&lt;26.5,\delta=1|X)\)</span> using a bunch of machine learning algorithms. Before applying <strong>ensBagg</strong>, we need to make sure that the data set is in the appropiate format: time event is in the first column and the second column is the indicator event type.</p>
-<div id="note-the-first-two-columns-of-the-data-frame-data-set-must-be-in-the-following-order-time-and-then-statusevent-indicator" class="section level4">
+<div id="note-the-first-two-columns-of-the-data-frame-data-set-must-be-in-the-following-order-time-and-then-statusevent-indicator--the-function-ensbaggensbagg-creates-for-us-the-binary-variable-of-interest-in-terms-of-the-time-point-of-interest-and-the-statusevent-indicator-" class="section level4">
 <h4 class="hasAnchor">
-<a href="#note-the-first-two-columns-of-the-data-frame-data-set-must-be-in-the-following-order-time-and-then-statusevent-indicator" class="anchor"></a>Note: The first two columns of the data.frame data set must be in the following order: time and then status/event indicator</h4>
+<a href="#note-the-first-two-columns-of-the-data-frame-data-set-must-be-in-the-following-order-time-and-then-statusevent-indicator--the-function-ensbaggensbagg-creates-for-us-the-binary-variable-of-interest-in-terms-of-the-time-point-of-interest-and-the-statusevent-indicator-" class="anchor"></a>Note: The first two columns of the data.frame data set must be in the following order: time and then status/event indicator. The function <strong>ensBagg::ensBagg</strong> creates for us the binary variable of interest in terms of the time point of interest and the status/event indicator.</h4>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">train &lt;-<span class="st"> </span>train[,<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a>
+<a class="sourceLine" id="cb10-2" title="2">test &lt;-<span class="st"> </span>test[,<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a></code></pre></div>
+<p>Another argument of the function <strong>ensBagg::ensBagg</strong> is the names of covariates as they are named in the data set that we want to include in the model. As we have said above, we are going to use all covariates</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">xnam &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(train)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)]</a></code></pre></div>
+<p>Another argument of the function <strong>ensBagg::ensBagg</strong> is a list of tune parameters for each machine learning procedure.</p>
 </div>
 </div>
   </div>
