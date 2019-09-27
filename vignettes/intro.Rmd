@@ -1,8 +1,8 @@
 ---
-title: "Introduction to EnsBagg package"
+title: "Introduction to ensBagg package"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to EnsBagg package}
+  %\VignetteIndexEntry{Introduction to ensBagg package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,10 +23,10 @@ This vignette focuses on
 
 ## Setup
 
-We load the package __EnsBagg__ 
+We load the package __ensBagg__ 
 
 ```{r, eval=FALSE}
-library(EnsBagg)
+library(ensBagg)
 ```
 
 
