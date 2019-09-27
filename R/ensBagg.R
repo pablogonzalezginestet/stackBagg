@@ -134,7 +134,7 @@ test.data <- test.data[c("id","E","wts","sum_wts_one","ttilde","delta",xnam)]
 
 
 if (missing(tuneparams)) {
-  tuneparams <- EnsBagg::parametersSimulation(folds = 5,xnam,train.data,tao)
+  tuneparams <- ensBagg::parametersSimulation(folds = 5,xnam,train.data,tao)
 }  
 
 if(length(tuneparams$gam)>1){
