@@ -29,4 +29,32 @@ We load the package __ensBagg__
 library(ensBagg)
 ```
 
+## Quick start
+
+We give a quick overview of the main functions. We will use the simulated data which ships with the package and can be loaded via:
+
+```{r}
+library(ensBagg)
+data("exampleData")
+```
+
+__exampleData__ is a list where the first elemenent contains the training data set and the second element contains the test data set. 
+
+```{r}
+train <- exampleData[[1]][[1]]
+head(train)
+test <- exampleData[[2]][[1]]
+head(test)
+```
+
+There is a third element __exampleData__ which is the true AUC for the simulated data  on the cumulative incidence of the
+main event at time 26.5 computed analytically under the Weibull distribution using the scale and shape parameter for both event times.
+
+```{r}
+auc_true <- exampleData[[3]][[1]]
+auc_true
+```
+
+
+
 
