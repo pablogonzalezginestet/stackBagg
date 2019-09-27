@@ -14,8 +14,8 @@
 
 ### Functions ####
 sim <- function(simdata,weighting,j){
-  sim.data.train=simdata[[1]][[j]]
-  sim.data.test=simdata[[2]][[j]]
+  sim.data.train=simdata[[1]][[j]][,-(1:2)] # remove the first two columns: id and E so to have the appropiate format
+  sim.data.test=simdata[[2]][[j]][,-(1:2)] # remove the first two columns: id and E
   res <- ensBagg(train.data=sim.data.train,test.data=sim.data.test, xnam, tao=26.5 , weighting=weighting , folds=5,B=10 )
   true_ens <- apply(res$prediction_ensBagg,2, function(x) cvAUC::AUC(predictions =x,labels = sim.data.test$trueT))
   true_native <- apply(res$prediction_native_weights,2, function(x) cvAUC::AUC(predictions =x,labels = sim.data.test$trueT))
@@ -24,7 +24,7 @@ sim <- function(simdata,weighting,j){
 }
 
 simulation_all_scenarios <- function(weighting,d,s){
-  simdata <- datagenPaper(J, n=1250 , frac.train=0.80 ,tao=26.5 , simulation=d, scenario=s )
+  simdata <- datagenPaper(J, n=400 , frac.train=0.80 ,tao=26.5 , simulation=d, scenario=s )
   res_scen<- lapply(seq(1,J),function(x) sim(simdata,weighting,x))
  }
 
