@@ -91,7 +91,7 @@ Before applying __ensBagg__, we need to make sure that the data set is in the ap
 #### Note: The first two columns of the data.frame data set must be in the following order: time and then status/event indicator
 
 ````{r}
-ensBagg::ensBagg(train.data = train, test.data = test, xnam=c("X9","X18"),tao = 26.5,weighting = "CoxPH",folds = 5)
+
 
 ````
 
