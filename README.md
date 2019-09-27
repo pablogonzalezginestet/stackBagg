@@ -16,7 +16,7 @@ The real data application in the paper relies on Swedish HIV care register (InfC
 
 ## Installation
 
-You can install the development version of `EnsBagg` from [GitHub](https://github.com/pablogonzalezginestet/EnsBagg) with:
+You can install the development version of `ensBagg` from [GitHub](https://github.com/pablogonzalezginestet/EnsBagg) with:
 
 
 ```R
@@ -27,16 +27,16 @@ devtools::install_github("pablogonzalezginestet/EnsBagg")
 ## Example
 
 ```R
-library(EnsBagg)
-train<- as.data.frame(EnsBagg::exampleData[[1]])
-test<- as.data.frame(EnsBagg::exampleData[[2]])
-pred_auc <- EnsBagg::ensBagg(train.data = train, test.data = test, xnam=c("X9","X18"),tao = 26.5,weighting = "CoxPH",folds = 5)
+library(ensBagg)
+train<- as.data.frame(ensBagg::exampleData[[1]])
+test<- as.data.frame(ensBagg::exampleData[[2]])
+pred_auc <- ensBagg::ensBagg(train.data = train, test.data = test, xnam=c("X9","X18"),tao = 26.5,weighting = "CoxPH",folds = 5)
 ```
 
 ## Vignette
 
 
-See the vignette for details about examples usage of the functions found in  `EnsBagg`: [online vignette](https://pablogonzalezginestet.github.io/EnsBagg/)
+See the vignette for details about examples usage of the functions found in  `ensBagg`: [online vignette](https://pablogonzalezginestet.github.io/EnsBagg/)
 
 
 
