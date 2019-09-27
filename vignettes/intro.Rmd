@@ -55,14 +55,30 @@ auc_true <- exampleData[[3]][[1]]
 auc_true
 ```
 
-The train data set consists in 800 individuals where 167 of them are censored:
+The train data set consists in 800 individuals where 167 are censored and 180 experience the event of interest at time 26.5:
 ```{r}
-summary(train)
+n_train<- dim(train)[1]
+n_train
+summary(train$E)
+```
+and 51 subjects experience the competing event within 26.5 time.
+````{r}
+library(magrittr)
+library(dplyr)
+train %>% subset(E==0 & ttilde<26.5) %>%  count(delta)
+````
+
+
+The test data set consists in 200 individuals where 45 are censored and 39 experience the event of interest: 
+```{r}
+n_test<- dim(test)[1]
+n_test
+summary(test$E)
 ```
 
-The test data set consists in 200 individuals where 45 of them are censored:
-```{r}
-summary(train)
-```
 
+````{r}
+library(dplyr)
+train %>% subset(E==0 & ttilde<26.5) %>%  count(delta)
+````
 
