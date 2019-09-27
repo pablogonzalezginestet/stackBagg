@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ensemble IPCW Bagging — ensBagg • EnsBagg</title>
+<title>Ensemble IPCW Bagging — ensBagg • ensBagg</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -65,7 +65,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">EnsBagg</a>
+        <a class="navbar-link" href="../index.html">ensBagg</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
@@ -89,7 +89,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/intro.html">Introduction to EnsBagg package</a>
+      <a href="../articles/intro.html">Introduction to ensBagg package</a>
     </li>
   </ul>
 </li>
@@ -125,18 +125,18 @@
     </div>
 
     <pre class="usage"><span class='fu'>ensBagg</span>(<span class='no'>train.data</span>, <span class='no'>test.data</span>, <span class='no'>xnam</span>, <span class='no'>tao</span>, <span class='no'>weighting</span>, <span class='no'>folds</span>,
-  <span class='kw'>tuneparams</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>tuneparams</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>discard</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>train.data</th>
-      <td><p>a data.frame with at least the following variables and column names: 
-id: unique identifiers of each subject
-ttilde: event-times (censored), 
-delta: event indicator at the corresponding value of the variable ttilde. Censored observations must be denoted by the value 0. Main event of interest is denoted by 1. 
-covariates/features:  these are the covariate that the user potentially want to use in building the preodiction model.</p></td>
+      <td><p>a data.frame with at least the following variables: 
+event-times (censored) in the first column,
+event indicator in the second column and 
+covariates/features that the user potentially want to use in building the preodiction model.
+Censored observations must be denoted by the value 0. Main event of interest is denoted by 1.</p></td>
     </tr>
     <tr>
       <th>test.data</th>
