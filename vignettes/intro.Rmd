@@ -38,11 +38,15 @@ library(ensBagg)
 data("exampleData")
 ```
 
-__exampleData__ is a list with three elements. The first elemenent contains the training data set and the second element contains the test data set: 
+__exampleData__ is a list with three elements. The first elemenent contains the training data set and the second element contains the test data set. The data set train and test consist of the variables id, the binary outcome E, the event times denoted as ttilde, delta as the event indicator at ttilde (censored
+observations are denoted by the value 0), the trueT which denotes the binary outcome under no censoring and lastly 20 covariates:
 
 ```{r}
 train <- exampleData[[1]][[1]]
 head(train)
+```
+
+```{r}
 test <- exampleData[[2]][[1]]
 head(test)
 ```
@@ -61,9 +65,8 @@ n_train<- dim(train)[1]
 n_train
 summary(train$E)
 ```
-and 51 subjects experience the competing event within 26.5 time.
+and 51 subjects experience the competing event within the time of interest 26.5. These individuals are part of the control group.
 ````{r}
-library(magrittr)
 library(dplyr)
 train %>% subset(E==0 & ttilde<26.5) %>%  count(delta)
 ````
@@ -76,9 +79,20 @@ n_test
 summary(test$E)
 ```
 
-
+and there are 24 subjects that experience the competing event  within the time of interest 26.5:
 ````{r}
 library(dplyr)
-train %>% subset(E==0 & ttilde<26.5) %>%  count(delta)
+test %>% subset(E==0 & ttilde<26.5) %>%  count(delta)
 ````
+
+Next we apply __ensBagg__ to estimate the risk of experiencing the main event using the 20 covariates in the data set. In other words, using __ensBagg__ we are going to estimate $P(T<26.5,\delta=1|X)$ using a bunch of machine learning algorithms.
+Before applying __ensBagg__, we need to make sure that the data set is in the appropiate format: time event is in the first column and the second column is the indicator event type. 
+
+#### Note: The first two columns of the data.frame data set must be in the following order: time and then status/event indicator
+
+````{r}
+ensBagg::ensBagg(train.data = train, test.data = test, xnam=c("X9","X18"),tao = 26.5,weighting = "CoxPH",folds = 5)
+
+````
+
 
