@@ -88,6 +88,13 @@ a matrix of predictions where each column is the prediction of each algorithm ba
 a list of Machine Learning functions
 
 a list with a grid of values for each hyperparameter
+ gam_param a vector containing degree of freedom 3 and 4
+ lasso_param a grid of values for the shrinkage term lambda
+ randomforest_param a two column matrix: first column denotes the num_trees parameter and the second column denotes the mtry parameter.
+ knn_param a grid of  positive integers values
+ svm_param a three column matrix:  first column denotes the cost parameter, second column the gamma and third column the kernel. kernel=1 denotes "radial" and kernel=2 denotes "linear".
+nn_param a grid of positive integers values for the neurons
+ bart_param a three column matrix:  first column denotes the num_tree parameter, second column the k parameter and third column the q parameter.
 }
 \description{
 Internal EnsBagg helper functions
