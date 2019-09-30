@@ -17,7 +17,8 @@ Description: Estimation the risk of an event at a specific time in the presence 
              the predictive performance and calibrating the ensemble and each single algorithm.
 Depends: 
     R (>= 3.4.0),
-    Matrix
+    Matrix,
+    gam
 Imports: 
     survival,
     CoxBoost,
