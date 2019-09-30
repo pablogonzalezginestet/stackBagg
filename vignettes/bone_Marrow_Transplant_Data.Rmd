@@ -1,0 +1,36 @@
+---
+title: "bone_Marrow_Transplant_Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{bone_Marrow_Transplant_Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ensBagg)
+```
+
+## Introduction
+
+We apply the package __ensBagg__ to a data set The Bone Marrow Transplant Data (bmt) which is in the package __timereg__ . Bone marrow transplants are a standard treatment for acute leukemia. In the recovery process patients can suffer from Infections, toxicity, and (after allogeneic HSCT only), graft-vs.-host disease (GVHD) being  the main causes of death. We are interested in predicting  the time to death related to treatment where the risk of relapse is a competing risk. 
+
+## Setup
+
+We load the package __ensBagg__ and __timereg__ and we load the data set bmt
+
+```{r, eval=FALSE}
+library(ensBagg)
+library(timereg)
+data(bmt)
+```
+
+
+
