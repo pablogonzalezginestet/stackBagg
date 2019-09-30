@@ -262,6 +262,8 @@ if(!missing(discard)){
     auc_native_weights=auc_native_weights,
     auc_survival=auc_survival,
     auc_discard=auc_discard,
+    wts_train=train.data$wts,
+    wts_test=test.data$wts,
     tuneparams=tuneparams
   ) )
 }
@@ -278,6 +280,8 @@ return(list(
     auc_ipcwBagg=auc_ipcwBagg,
     auc_native_weights=auc_native_weights,
     auc_survival=auc_survival,
+    wts_train=train.data$wts,
+    wts_test=test.data$wts,
     tuneparams=tuneparams
     ) )
 }
