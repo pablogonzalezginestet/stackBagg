@@ -9,7 +9,7 @@
 # B=10 bootstrap samples
 # folds=5 number of folds
 # tune parameters are those that are specified in the paper and were computed using the function EnsBagg::parametersSimulation(folds = 5,xnam,train.data,tao) that computes the default tune parameters.
-# Expected run time (standard desktop) of one simulation study (which is 4 scenarios) is  
+# Expected run time (standard desktop) of one simulation study (which is 4 scenarios and 500 simulated data sets) is 235 hours (9.8 days)  
 
 
 ### Functions ####
@@ -72,20 +72,16 @@ scenarios=list(1,2,3,4)
 
 #####    Weighting = CoxPH    ####
 
-start.time <- Sys.time()
 # Simulation 1
 res_simulation1=lapply(scenarios, function(s) simulation_all_scenarios(weighting = "CoxPH",d=1,s) )
-
-end.time <- Sys.time()
-time.taken <- end.time - start.time
-time.taken
-
 table1_sim1 <- table1_paper(res_simulation1,J,scenarios)
 row.names(table1_sim1)[1] <- "True"
+
 # Simulation 2
 res_simulation2=lapply(scenarios, function(s) simulation_all_scenarios(weighting = "CoxPH",d=2,s) )
 table1_sim2 <- table1_paper(res_simulation2,J,scenarios)
 row.names(table1_sim2)[1] <- "True"
+
 # Table 1: Average Estimated AUCs across 500 data sets for Simulation 1 and 2 and their four scenarios (A, B, C and D) using
 # all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set.
 
@@ -98,9 +94,12 @@ xtable::xtable(cbind(table1_sim1,table1_sim2),digits=c(0,rep(3,16)))
 # Simulation 1
 res_simulation1=lapply(scenarios, function(s) simulation1_all_scenarios(weighting = "CoxBoost",d=1,s) )
 table1_sim1 <- table1_paper(res_simulation1,J,scenarios)
+row.names(table1_sim1)[1] <- "True"
+
 # Simulation 2
 res_simulation2=lapply(scenarios, function(s) simulation1_all_scenarios(weighting = "CoxBoost",d=2,s) )
 table1_sim2 <- table1_paper(res_simulation2,J,scenarios)
+row.names(table1_sim2)[1] <- "True"
 
 # Table 2: Average Estimated AUCs across 500 data sets for Simulation 1 and 2 and their four scenarios (A, B, C and D) using
 # all available covariates and a CoxBoost model for censoring for predicting the event of interest in the test data set.
