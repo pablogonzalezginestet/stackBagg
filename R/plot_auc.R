@@ -6,13 +6,24 @@
 #' @param marker
 #' @param wts
 #' @param tao evaluation time point of interest 
+#' @param method IPCW or discard 
 #' @return a plot IPCW ROC curve
 #' @import ggplot2
 #' @export
 
 
 
-plot_ipcw_roc <- function(time,delta, marker, wts, tao){
+plot_roc <- function(time,delta, marker, wts=NULL, tao, method="ipcw"){
+    
+    if(method=="discard"){
+    E=as.factor(ifelse(time < tao & delta==1, 1 , ifelse(time < tao & delta==2 | time>tao, 0, NA) ) )
+    time <- time[!is.na(E)]
+    delta <- delta[!is.na(E)]
+    marker <- marker[!is.na(E)]
+    wts <- rep(1,length(time))
+    }
+    
+    
     cause <- 1
     n <- length(time)
     n_marker <- length(unique(marker))
