@@ -26,11 +26,23 @@ We apply the package __ensBagg__ to a data set The Bone Marrow Transplant Data (
 
 We load the package __ensBagg__ and __timereg__ and we load the data set bmt
 
-```{r, eval=FALSE}
+```{r}
 library(ensBagg)
 library(timereg)
-data(bmt)
+bmt.data <- data(bmt)
 ```
 
 
+````{r}
+summary(bmt)
+dim(bmt)
+train.set <- sample(1:nrow(bmt), floor(.9*nrow(bmt)), replace=FALSE) 
+test.set <- setdiff(1:nrow(bmt), train.set)
+bmt.train <- data.frame(bmt[train.set,])
+bmt.test <- data.frame(bmt[test.set,]) 
+tao=7
+````
 
+````{r,warning=FALSE}
+pred.bmt=ensBagg::ensBagg(train.data = bmt.train,test.data = bmt.test,xnam=names(bmt)[-(1:2)],tao=7,weighting ="CoxPH" ,folds =5 )
+````

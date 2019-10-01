@@ -30,7 +30,7 @@ Default values are the same used for the simulation.}
 \item{B}{number of bootstrap samples}
 }
 \value{
-a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
+a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients,the weights ,an indicator if the optimization procedure has converged and the value of penalization term chosen
 }
 \description{
 Main Algorithm

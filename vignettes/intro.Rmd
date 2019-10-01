@@ -144,6 +144,8 @@ pred$tuneparams
 
 The GAM is trained with two degree of freedom 3 and 4. The LASSO paremeter refers to the lambda penalization term. The parameters in the random forest refer to the number of trees (num_tree=500) and the umber of variables randomly sampled as candidates at each split (mtry=4). k chosen in the k-NN is 25. The SVM parameters are the cost, gamma and kernel (radial=1 and linear=2). Since the kernel is linear the gamma is NA since the linear kernel does not use the gamma parameter. The neurons is set to 1 in the neural network. The last values are the parameter number of trees, k that determines the prior probability that the average of the outcome falls into (-3,3) and q the quantile of the prior on the error variance.  
 
-
+````{r}
+ensBagg::plot_ipcw_roc(test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,5],wts=pred$wts_test,tao=26.5)
+````
 
 
