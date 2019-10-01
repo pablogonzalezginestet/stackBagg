@@ -22,7 +22,8 @@ Depends:
 Imports: 
     survival,
     CoxBoost,
-    boot
+    boot,
+    ggplot2
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

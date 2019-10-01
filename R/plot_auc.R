@@ -1,6 +1,18 @@
 
+#' Plot IPCW ROC curve
+#' @description Plot IPCW ROC curve for a prediction 
+#' @param time 
+#' @param delta
+#' @param marker
+#' @param wts
+#' @param tao evaluation time point of interest 
+#' @return a plot IPCW ROC curve
+#' @import ggplot2
+#' @export
 
-plot_auc <- function(time,delta, marker, wts, tao){
+
+
+plot_ipcw_roc <- function(time,delta, marker, wts, tao){
     cause <- 1
     n <- length(time)
     n_marker <- length(unique(marker))
@@ -38,7 +50,7 @@ plot_auc <- function(time,delta, marker, wts, tao){
     auc_temp <- as.data.frame(cbind(y=TP_t,x=FP_2_t))
     
     # This is the plot!!!
-    auc_plot <- ggplot(auc_temp, aes(x = x, y = y)) +
+    ipcw_roc_plot <- ggplot(auc_temp, aes(x = x, y = y)) +
     geom_line()+
     xlab("\n False Negative (1 - Sp)")+
     ylab("True Positive (Se) \n")+
@@ -51,7 +63,7 @@ plot_auc <- function(time,delta, marker, wts, tao){
     theme(aspect.ratio = 1)+
     geom_abline(slope =1,linetype="dotted")
     
-    return(auc_plot)
+    return(ipcw_roc_plot)
     
     }
 

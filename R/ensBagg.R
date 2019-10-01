@@ -14,7 +14,7 @@
 #' @param tuneparams a list of tune parameters for each machine learning procedure. Name them as gam_param, lasso_param, randomforest_param, svm_param, bart_param, knn_param, nn_param.
 #' Default values are the same used for the simulation.
 #' @param B number of bootstrap samples
-#' @return a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
+#' @return a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients,the weights ,an indicator if the optimization procedure has converged and the value of penalization term chosen
 #' @import survival
 #' @rdname ensbagg
 #' @export

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Parameter Values for the Simulation — parametersSimulation • ensBagg</title>
+<title>Plot IPCW ROC curve — plot_ipcw_roc • ensBagg</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,9 +32,9 @@
 
 
 
-<meta property="og:title" content="Parameter Values for the Simulation — parametersSimulation" />
+<meta property="og:title" content="Plot IPCW ROC curve — plot_ipcw_roc" />
 
-<meta property="og:description" content="Values for the hyperparameters used in the simulation setup" />
+<meta property="og:description" content="Plot IPCW ROC curve for a prediction" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -116,43 +116,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Parameter Values for the Simulation</h1>
+    <h1>Plot IPCW ROC curve</h1>
     
-    <div class="hidden name"><code>parametersSimulation.Rd</code></div>
+    <div class="hidden name"><code>plot_ipcw_roc.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Values for the hyperparameters used in the simulation setup</p>
+    <p>Plot IPCW ROC curve for a prediction</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>parametersSimulation</span>(<span class='no'>folds</span>, <span class='no'>xnam</span>, <span class='no'>data</span>, <span class='no'>tao</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_ipcw_roc</span>(<span class='no'>time</span>, <span class='no'>delta</span>, <span class='no'>marker</span>, <span class='no'>wts</span>, <span class='no'>tao</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>folds</th>
-      <td><p>number of folds</p></td>
+      <th>time</th>
+      <td></td>
     </tr>
     <tr>
-      <th>xnam</th>
-      <td><p>a vector with the covariates names considered in the modeling</p></td>
-    </tr>
-    <tr>
-      <th>data</th>
-      <td><p>a training data set</p></td>
-    </tr>
-    <tr>
-      <th>fmla</th>
-      <td><p>formula object ex. "E ~ x1+x2"</p></td>
+      <th>tao</th>
+      <td><p>evaluation time point of interest</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a list of values for each hyperparameter in each algorithm used in the simulation setup</p>
+    <p>a plot IPCW ROC curve</p>
     
 
   </div>
