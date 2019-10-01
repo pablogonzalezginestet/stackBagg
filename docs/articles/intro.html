@@ -54,7 +54,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/bone_Marrow_Transplant_Data.html">bone_Marrow_Transplant_Data</a>
+      <a href="../articles/bone_Marrow_Transplant_Data.html">Bone Marrow Transplant Data Set</a>
     </li>
     <li>
       <a href="../articles/intro.html">Introduction to ensBagg package</a>
@@ -256,62 +256,122 @@
 <a class="sourceLine" id="cb11-3" title="3"><span class="co">#&gt;  [1] "X1"  "X2"  "X3"  "X4"  "X5"  "X6"  "X7"  "X8"  "X9"  "X10" "X11"</span></a>
 <a class="sourceLine" id="cb11-4" title="4"><span class="co">#&gt; [12] "X12" "X13" "X14" "X15" "X16" "X17" "X18" "X19" "X20"</span></a></code></pre></div>
 <p>Another argument of the function <strong>ensBagg::ensBagg</strong> is a list of tune parameters for each machine learning procedure. If this argument is missing, the function uses as default values the same used for the simulation in the paper. For now, we are going to use the default values for the tune parameters. Additionally, we will use 5 folds and we are going to show the results computing the weights under a Cox proportional hazard model (CoxPH) and boosting Cox regression (Cox-Boost).</p>
-<p>Firstly, we model the weights under CoxPH and we train the different models and get their predictions on the test data set:</p>
+<p>Firstly, we model the weights under CoxPH and we train the different models and get their predictions on the test data set.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">pred &lt;-<span class="st"> </span>ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/ensBagg-package.html">ensBagg</a></span>(<span class="dt">train.data =</span> train,<span class="dt">test.data =</span> test,<span class="dt">xnam =</span> xnam,<span class="dt">tao =</span> <span class="fl">26.5</span>,<span class="dt">weighting =</span> <span class="st">"CoxPH"</span>,<span class="dt">folds =</span> <span class="dv">5</span>)</a></code></pre></div>
-<p>We show several output of pred. Let s take a look first at the IPCW Bagging prediction of the different algorithms and the ensemble IPCW Bagging on the test data set:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred<span class="op">$</span>prediction_ensBagg,<span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&gt;      LogisticReg      GAM.3      GAM.4     LASSO Random Forest       SVM</span></a>
-<a class="sourceLine" id="cb13-3" title="3"><span class="co">#&gt; [1,]  0.07597208 0.04504377 0.03628928 0.1397274     0.1420999 0.1829020</span></a>
-<a class="sourceLine" id="cb13-4" title="4"><span class="co">#&gt; [2,]  0.29002289 0.18404459 0.16395556 0.2415954     0.1954345 0.2516932</span></a>
-<a class="sourceLine" id="cb13-5" title="5"><span class="co">#&gt; [3,]  0.20978980 0.15756179 0.17437114 0.2578045     0.2016078 0.2464217</span></a>
-<a class="sourceLine" id="cb13-6" title="6"><span class="co">#&gt; [4,]  0.43542624 0.84407535 0.89158199 0.4041292     0.6427917 0.3326059</span></a>
-<a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt; [5,]  0.09408472 0.03137395 0.02930693 0.1396529     0.1321799 0.2091673</span></a>
-<a class="sourceLine" id="cb13-8" title="8"><span class="co">#&gt;            BART      k-NN Neural Network   Ensemble</span></a>
-<a class="sourceLine" id="cb13-9" title="9"><span class="co">#&gt; [1,] 0.04896598 0.1682336      0.1226726 0.07143966</span></a>
-<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt; [2,] 0.14618700 0.2962108      0.2375397 0.17116457</span></a>
-<a class="sourceLine" id="cb13-11" title="11"><span class="co">#&gt; [3,] 0.18177145 0.2523077      0.2456283 0.18555753</span></a>
-<a class="sourceLine" id="cb13-12" title="12"><span class="co">#&gt; [4,] 0.65163454 0.3186154      0.5521882 0.74456193</span></a>
-<a class="sourceLine" id="cb13-13" title="13"><span class="co">#&gt; [5,] 0.08818960 0.1083087      0.1226722 0.07389297</span></a></code></pre></div>
-<p>We can see the optimal coefficients used to get the ensemble IPCW Bagging:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">pred<span class="op">$</span>optimal_coefficients</a>
-<a class="sourceLine" id="cb14-2" title="2"><span class="co">#&gt; [1] -0.023655102  0.155634471  0.228580208  0.045453958  0.284102201</span></a>
-<a class="sourceLine" id="cb14-3" title="3"><span class="co">#&gt; [6] -0.082844263  0.296083219  0.000175518  0.096469791</span></a></code></pre></div>
-<p>We could check if convergence has been reached in the optimization problem of finding the optimal coefficients (0 denotes convergence, 1 otherwise) and the penalization term used:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">pred<span class="op">$</span>convergence</a>
-<a class="sourceLine" id="cb15-2" title="2"><span class="co">#&gt; [1] 0</span></a>
-<a class="sourceLine" id="cb15-3" title="3">pred<span class="op">$</span>penalization_term</a>
-<a class="sourceLine" id="cb15-4" title="4"><span class="co">#&gt; [1] 0.01</span></a></code></pre></div>
+<p>We show several output of pred. The machine learning algorithms in the library:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">pred<span class="op">$</span>library</a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&gt; [1] "LogisticReg"    "GAM.3"          "GAM.4"          "LASSO"         </span></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="co">#&gt; [5] "Random Forest"  "SVM"            "BART"           "k-NN"          </span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co">#&gt; [9] "Neural Network"</span></a></code></pre></div>
+<p>Let s take a look first at the IPCW Bagging prediction of the different algorithms and the ensemble IPCW Bagging on the test data set:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred<span class="op">$</span>prediction_ensBagg,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="co">#&gt;      LogisticReg      GAM.3      GAM.4     LASSO Random Forest       SVM</span></a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="co">#&gt; [1,]  0.06368773 0.02281959 0.01639431 0.1983001     0.1214175 0.1702633</span></a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="co">#&gt; [2,]  0.28151122 0.22251121 0.20025984 0.2359989     0.1848458 0.2429367</span></a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="co">#&gt; [3,]  0.19638382 0.11751242 0.11736704 0.2665686     0.1931682 0.2586913</span></a>
+<a class="sourceLine" id="cb14-6" title="6"><span class="co">#&gt; [4,]  0.45218887 0.87358626 0.90817177 0.4089973     0.6560181 0.3558624</span></a>
+<a class="sourceLine" id="cb14-7" title="7"><span class="co">#&gt; [5,]  0.13051632 0.03239237 0.02152780 0.2294021     0.1203706 0.2469279</span></a>
+<a class="sourceLine" id="cb14-8" title="8"><span class="co">#&gt;            BART      k-NN Neural Network  Ensemble</span></a>
+<a class="sourceLine" id="cb14-9" title="9"><span class="co">#&gt; [1,] 0.04074493 0.1217151      0.1489855 0.1056800</span></a>
+<a class="sourceLine" id="cb14-10" title="10"><span class="co">#&gt; [2,] 0.09870912 0.2648917      0.2762397 0.1909501</span></a>
+<a class="sourceLine" id="cb14-11" title="11"><span class="co">#&gt; [3,] 0.08464413 0.2398490      0.2192837 0.1773327</span></a>
+<a class="sourceLine" id="cb14-12" title="12"><span class="co">#&gt; [4,] 0.77674087 0.3445336      0.4660922 0.6402526</span></a>
+<a class="sourceLine" id="cb14-13" title="13"><span class="co">#&gt; [5,] 0.03244184 0.1099735      0.1123020 0.1143973</span></a></code></pre></div>
 <p>The assessment of predictive performance using the IPCW AUC is:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">pred<span class="op">$</span>auc_ipcwBagg</a>
-<a class="sourceLine" id="cb16-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3     GAM.4     LASSO Random Forest       SVM</span></a>
-<a class="sourceLine" id="cb16-3" title="3"><span class="co">#&gt; [1,]   0.5780822 0.6903629 0.7141512 0.5870321     0.6521394 0.6008888</span></a>
-<a class="sourceLine" id="cb16-4" title="4"><span class="co">#&gt;           BART    k-NN Neural Network  Ensemble</span></a>
-<a class="sourceLine" id="cb16-5" title="5"><span class="co">#&gt; [1,] 0.6735625 0.54292      0.5467967 0.6917586</span></a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">pred<span class="op">$</span>auc_ipcwBagg</a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3    GAM.4     LASSO Random Forest       SVM</span></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="co">#&gt; [1,]   0.6020599 0.7070141 0.730048 0.6108004      0.661151 0.6105021</span></a>
+<a class="sourceLine" id="cb15-4" title="4"><span class="co">#&gt;           BART      k-NN Neural Network  Ensemble</span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="co">#&gt; [1,] 0.6708652 0.5745682      0.6031102 0.6948729</span></a></code></pre></div>
+<p>The optimal coefficients used to get the ensemble IPCW Bagging:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">pred<span class="op">$</span>optimal_coefficients</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="co">#&gt; [1] 0.016164554 0.152755865 0.031491957 0.276862777 0.260442002 0.001098062</span></a>
+<a class="sourceLine" id="cb16-3" title="3"><span class="co">#&gt; [7] 0.221915152 0.035026100 0.004243530</span></a></code></pre></div>
+<p>We can note that the algorithms with the largest predictive performance weigh in more in the ensemble. We check if convergence has been reached in the optimization problem of finding the optimal coefficients (0 denotes convergence, 1 otherwise) and the penalization term used:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">pred<span class="op">$</span>convergence</a>
+<a class="sourceLine" id="cb17-2" title="2"><span class="co">#&gt; [1] 0</span></a>
+<a class="sourceLine" id="cb17-3" title="3">pred<span class="op">$</span>penalization_term</a>
+<a class="sourceLine" id="cb17-4" title="4"><span class="co">#&gt; [1] 1</span></a></code></pre></div>
 <p>We can check the tune parameters used to train the algorithms:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">pred<span class="op">$</span>tuneparams</a>
-<a class="sourceLine" id="cb17-2" title="2"><span class="co">#&gt; $gam_param</span></a>
-<a class="sourceLine" id="cb17-3" title="3"><span class="co">#&gt; [1] 3 4</span></a>
-<a class="sourceLine" id="cb17-4" title="4"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb17-5" title="5"><span class="co">#&gt; $lasso_param</span></a>
-<a class="sourceLine" id="cb17-6" title="6"><span class="co">#&gt; [1] 0.01474488</span></a>
-<a class="sourceLine" id="cb17-7" title="7"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb17-8" title="8"><span class="co">#&gt; $randomforest_param</span></a>
-<a class="sourceLine" id="cb17-9" title="9"><span class="co">#&gt; [1] 500   4</span></a>
-<a class="sourceLine" id="cb17-10" title="10"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb17-11" title="11"><span class="co">#&gt; $knn_param</span></a>
-<a class="sourceLine" id="cb17-12" title="12"><span class="co">#&gt; [1] 25</span></a>
-<a class="sourceLine" id="cb17-13" title="13"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb17-14" title="14"><span class="co">#&gt; $svm_param</span></a>
-<a class="sourceLine" id="cb17-15" title="15"><span class="co">#&gt; [1] 0.01   NA 2.00</span></a>
-<a class="sourceLine" id="cb17-16" title="16"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb17-17" title="17"><span class="co">#&gt; $nn_param</span></a>
-<a class="sourceLine" id="cb17-18" title="18"><span class="co">#&gt; [1] 1</span></a>
-<a class="sourceLine" id="cb17-19" title="19"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb17-20" title="20"><span class="co">#&gt; $bart_param</span></a>
-<a class="sourceLine" id="cb17-21" title="21"><span class="co">#&gt; [1] 50.0  1.0  0.9</span></a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">pred<span class="op">$</span>tuneparams</a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="co">#&gt; $gam_param</span></a>
+<a class="sourceLine" id="cb18-3" title="3"><span class="co">#&gt; [1] 3 4</span></a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb18-5" title="5"><span class="co">#&gt; $lasso_param</span></a>
+<a class="sourceLine" id="cb18-6" title="6"><span class="co">#&gt; [1] 0.03738364</span></a>
+<a class="sourceLine" id="cb18-7" title="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb18-8" title="8"><span class="co">#&gt; $randomforest_param</span></a>
+<a class="sourceLine" id="cb18-9" title="9"><span class="co">#&gt; [1] 500   4</span></a>
+<a class="sourceLine" id="cb18-10" title="10"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb18-11" title="11"><span class="co">#&gt; $knn_param</span></a>
+<a class="sourceLine" id="cb18-12" title="12"><span class="co">#&gt; [1] 25</span></a>
+<a class="sourceLine" id="cb18-13" title="13"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb18-14" title="14"><span class="co">#&gt; $svm_param</span></a>
+<a class="sourceLine" id="cb18-15" title="15"><span class="co">#&gt; [1] 0.01   NA 2.00</span></a>
+<a class="sourceLine" id="cb18-16" title="16"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb18-17" title="17"><span class="co">#&gt; $nn_param</span></a>
+<a class="sourceLine" id="cb18-18" title="18"><span class="co">#&gt; [1] 1</span></a>
+<a class="sourceLine" id="cb18-19" title="19"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb18-20" title="20"><span class="co">#&gt; $bart_param</span></a>
+<a class="sourceLine" id="cb18-21" title="21"><span class="co">#&gt; [1] 50.0  1.0  0.9</span></a></code></pre></div>
 <p>The GAM is trained with two degree of freedom 3 and 4. The LASSO paremeter refers to the lambda penalization term. The parameters in the random forest refer to the number of trees (num_tree=500) and the umber of variables randomly sampled as candidates at each split (mtry=4). k chosen in the k-NN is 25. The SVM parameters are the cost, gamma and kernel (radial=1 and linear=2). Since the kernel is linear the gamma is NA since the linear kernel does not use the gamma parameter. The neurons is set to 1 in the neural network. The last values are the parameter number of trees, k that determines the prior probability that the average of the outcome falls into (-3,3) and q the quantile of the prior on the error variance.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_ipcw_roc.html">plot_ipcw_roc</a></span>(test<span class="op">$</span>ttilde,<span class="dt">delta =</span> test<span class="op">$</span>delta,<span class="dt">marker =</span>pred<span class="op">$</span>prediction_ensBagg[,<span class="dv">5</span>],<span class="dt">wts=</span>pred<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="fl">26.5</span>)</a></code></pre></div>
-<p><img src="intro_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
+<p>Let s compare the ROC curve for the best and worst single algorithm and the ensemble. The ensemble ROC curve is</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>test<span class="op">$</span>ttilde,<span class="dt">delta =</span> test<span class="op">$</span>delta,<span class="dt">marker =</span>pred<span class="op">$</span>prediction_ensBagg[,<span class="st">"Ensemble"</span>],<span class="dt">wts=</span>pred<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="fl">26.5</span>)</a></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-20-1.png" width="700"> The GAM.4 ROC curve is</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>test<span class="op">$</span>ttilde,<span class="dt">delta =</span> test<span class="op">$</span>delta,<span class="dt">marker =</span>pred<span class="op">$</span>prediction_ensBagg[,<span class="st">"GAM.4"</span>],<span class="dt">wts=</span>pred<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="fl">26.5</span>)</a></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-21-1.png" width="700"> The k-NN ROC curve is</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>test<span class="op">$</span>ttilde,<span class="dt">delta =</span> test<span class="op">$</span>delta,<span class="dt">marker =</span>pred<span class="op">$</span>prediction_ensBagg[,<span class="st">"k-NN"</span>],<span class="dt">wts=</span>pred<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="fl">26.5</span>)</a></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
+<p>Now let s take a look at prediction of the algorithms that allows for weights natively:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred<span class="op">$</span>prediction_native_weights,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb22-2" title="2"><span class="co">#&gt;   LogisticReg      GAM.3      GAM.4     LASSO Random Forest</span></a>
+<a class="sourceLine" id="cb22-3" title="3"><span class="co">#&gt; 1  0.06515164 0.06515164 0.06515164 0.2024271    0.09343651</span></a>
+<a class="sourceLine" id="cb22-4" title="4"><span class="co">#&gt; 2  0.25510227 0.25510227 0.25510227 0.2279704    0.16058333</span></a>
+<a class="sourceLine" id="cb22-5" title="5"><span class="co">#&gt; 3  0.20201615 0.20201615 0.20201615 0.2625538    0.21330476</span></a>
+<a class="sourceLine" id="cb22-6" title="6"><span class="co">#&gt; 4  0.43986199 0.43986199 0.43986199 0.4229051    0.69562619</span></a>
+<a class="sourceLine" id="cb22-7" title="7"><span class="co">#&gt; 5  0.12499985 0.12499985 0.12499985 0.2474566    0.14881587</span></a></code></pre></div>
+<p>and their performance is:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">pred<span class="op">$</span>auc_native_weights</a>
+<a class="sourceLine" id="cb23-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3     GAM.4     LASSO Random Forest</span></a>
+<a class="sourceLine" id="cb23-3" title="3"><span class="co">#&gt; [1,]   0.6031226 0.6031226 0.6031226 0.6103651     0.6737821</span></a></code></pre></div>
+<p>Moreover, let s see the prediction of three survival based methods: a cause-specific Cox proportional hazard regression model, Cox-Boost and survival random forests for competing risk.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred<span class="op">$</span>prediction_survival,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb24-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
+<a class="sourceLine" id="cb24-3" title="3"><span class="co">#&gt; [1,] 0.1127220 0.0994056     0.1108289</span></a>
+<a class="sourceLine" id="cb24-4" title="4"><span class="co">#&gt; [2,] 0.1207505 0.1199515     0.1626778</span></a>
+<a class="sourceLine" id="cb24-5" title="5"><span class="co">#&gt; [3,] 0.2648474 0.2107714     0.1673594</span></a>
+<a class="sourceLine" id="cb24-6" title="6"><span class="co">#&gt; [4,] 0.3266303 0.3598332     0.4795242</span></a>
+<a class="sourceLine" id="cb24-7" title="7"><span class="co">#&gt; [5,] 0.2019521 0.2723971     0.1450085</span></a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">pred<span class="op">$</span>auc_survival</a>
+<a class="sourceLine" id="cb25-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
+<a class="sourceLine" id="cb25-3" title="3"><span class="co">#&gt; [1,] 0.6366799 0.6176013     0.6627473</span></a></code></pre></div>
+<p>Lastly, we could see the performance of the algorithms if we were to discard the censored observations</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">pred_discard &lt;-<span class="st"> </span>ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/prediction_discard.html">prediction_discard</a></span>(<span class="dt">train.data =</span> train,<span class="dt">test.data =</span> test,<span class="dt">xnam =</span> xnam,<span class="dt">tao =</span> <span class="fl">26.5</span>)</a>
+<a class="sourceLine" id="cb26-2" title="2"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
+<a class="sourceLine" id="cb26-3" title="3"><span class="co">#&gt; argument ignored</span></a>
+<a class="sourceLine" id="cb26-4" title="4"></a>
+<a class="sourceLine" id="cb26-5" title="5"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
+<a class="sourceLine" id="cb26-6" title="6"><span class="co">#&gt; argument ignored</span></a>
+<a class="sourceLine" id="cb26-7" title="7"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred_discard<span class="op">$</span>prediction_discard)</a>
+<a class="sourceLine" id="cb26-8" title="8"><span class="co">#&gt;   LogisticReg      GAM.3      GAM.4     LASSO Random Forest       SVM</span></a>
+<a class="sourceLine" id="cb26-9" title="9"><span class="co">#&gt; 1  0.06454572 0.02691724 0.02050142 0.1640402     0.1088571 0.2742047</span></a>
+<a class="sourceLine" id="cb26-10" title="10"><span class="co">#&gt; 2  0.25879185 0.16964078 0.14835985 0.2263639     0.1612556 0.2761243</span></a>
+<a class="sourceLine" id="cb26-11" title="11"><span class="co">#&gt; 3  0.22572062 0.14755887 0.15837638 0.2857482     0.2252190 0.2783271</span></a>
+<a class="sourceLine" id="cb26-12" title="12"><span class="co">#&gt; 6  0.10215265 0.11574933 0.14557574 0.1988396     0.2686405 0.2756813</span></a>
+<a class="sourceLine" id="cb26-13" title="13"><span class="co">#&gt; 7  0.56224708 0.62192293 0.60810967 0.4248765     0.4170302 0.2806252</span></a>
+<a class="sourceLine" id="cb26-14" title="14"><span class="co">#&gt; 8  0.23713833 0.27447448 0.21984137 0.2511530     0.2931754 0.2764430</span></a>
+<a class="sourceLine" id="cb26-15" title="15"><span class="co">#&gt;         BART k-NN Neural Network</span></a>
+<a class="sourceLine" id="cb26-16" title="16"><span class="co">#&gt; 1 0.05020316 0.20      0.2130902</span></a>
+<a class="sourceLine" id="cb26-17" title="17"><span class="co">#&gt; 2 0.11450685 0.32      0.2130902</span></a>
+<a class="sourceLine" id="cb26-18" title="18"><span class="co">#&gt; 3 0.18468910 0.28      0.2130902</span></a>
+<a class="sourceLine" id="cb26-19" title="19"><span class="co">#&gt; 6 0.29695671 0.48      0.2130902</span></a>
+<a class="sourceLine" id="cb26-20" title="20"><span class="co">#&gt; 7 0.55167569 0.40      0.2132628</span></a>
+<a class="sourceLine" id="cb26-21" title="21"><span class="co">#&gt; 8 0.42675562 0.32      0.2130902</span></a>
+<a class="sourceLine" id="cb26-22" title="22">pred_discard<span class="op">$</span>auc_discard</a>
+<a class="sourceLine" id="cb26-23" title="23"><span class="co">#&gt;    LogisticReg          GAM.3          GAM.4          LASSO  Random Forest </span></a>
+<a class="sourceLine" id="cb26-24" title="24"><span class="co">#&gt;      0.6220159      0.7270115      0.7458002      0.6390363      0.6832449 </span></a>
+<a class="sourceLine" id="cb26-25" title="25"><span class="co">#&gt;            SVM           BART           k-NN Neural Network </span></a>
+<a class="sourceLine" id="cb26-26" title="26"><span class="co">#&gt;      0.6268789      0.7201592      0.5870911      0.6030062</span></a></code></pre></div>
 </div>
 </div>
   </div>

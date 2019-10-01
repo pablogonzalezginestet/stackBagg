@@ -1,5 +1,5 @@
 ---
-title: "bone_Marrow_Transplant_Data"
+title: "Bone Marrow Transplant Data Set"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{bone_Marrow_Transplant_Data}
@@ -14,9 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(ensBagg)
-```
 
 ## Introduction
 
@@ -43,6 +40,64 @@ bmt.test <- data.frame(bmt[test.set,])
 tao=7
 ````
 
-````{r,warning=FALSE}
-pred.bmt=ensBagg::ensBagg(train.data = bmt.train,test.data = bmt.test,xnam=names(bmt)[-(1:2)],tao=7,weighting ="CoxPH" ,folds =5 )
+````{r, warning=FALSE}
+pred.bmt=ensBagg::ensBagg(train.data = bmt.train,test.data = bmt.test,xnam=names(bmt)[-(1:2)],tao=7,weighting ="CoxPH" ,folds =2 )
 ````
+
+The assessment of predictive performance using the IPCW AUC is:
+
+````{r}
+pred.bmt$auc_ipcwBagg
+````
+
+Now let s take a look at prediction of the algorithms that allows for weights natively:
+
+````{r}
+head(pred.bmt$prediction_native_weights,5)
+````
+
+and their performance is:
+
+````{r}
+pred.bmt$auc_native_weights
+````
+
+The prediction of the survival based methods
+````{r}
+head(pred.bmt$prediction_survival,5)
+
+````
+````{r}
+pred.bmt$auc_survival
+````
+
+Lastly, we could see the performance of the algorithms if we were to discard the censored observations
+
+````{r}
+pred.discard <- ensBagg::prediction_discard(train.data = bmt.train,test.data = bmt.test,xnam=names(bmt)[-(1:2)],tao=7)
+head(pred.discard$prediction_discard)
+pred.discard$auc_discard
+````
+
+The ensemble ROC curve is
+````{r}
+ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_ensBagg[,"Ensemble"],wts=pred.bmt$wts_test,tao=7)
+````
+
+The Random Forest ROC curve is
+````{r}
+ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_ensBagg[,"Random Forest"],wts=pred.bmt$wts_test,tao=7)
+````
+The Random Forest survival ROC curve is
+````{r}
+ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_survival[,"Random Forest"],wts=pred.bmt$wts_test,tao=7)
+````
+The Random Forest natively weighted ROC curve is
+````{r}
+ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_native_weights[,"Random Forest"],wts=pred.bmt$wts_test,tao=7)
+````
+The Random Forest discarding censored observations
+````{r}
+ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.discard$prediction_discard[,"Random Forest"],tao=7,method = "discard")
+````
+

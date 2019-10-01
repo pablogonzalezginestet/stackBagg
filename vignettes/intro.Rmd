@@ -107,33 +107,37 @@ Another argument of the function __ensBagg::ensBagg__ is a list of tune paramete
 Additionally, we will use 5 folds and we are going to show the results computing the weights under a Cox proportional hazard model (CoxPH) and boosting
 Cox regression (Cox-Boost).
 
-Firstly, we model the weights under CoxPH and we train the different models and get their predictions on the test data set:
+Firstly, we model the weights under CoxPH and we train the different models and get their predictions on the test data set.
+
 ````{r, warning=FALSE}
 pred <- ensBagg::ensBagg(train.data = train,test.data = test,xnam = xnam,tao = 26.5,weighting = "CoxPH",folds = 5)
 ````
 
 We show several output of pred.
+The machine learning algorithms in the library:
+````{r}
+pred$library
+````
 Let s take a look first at the IPCW Bagging prediction of the different algorithms and the ensemble IPCW Bagging on the test data set:
 ````{r}
 head(pred$prediction_ensBagg,5)
-````
-
-We can see the optimal coefficients used to get the ensemble IPCW Bagging:
-
-````{r}
-pred$optimal_coefficients
-````
-
-We could check if convergence has been reached in the optimization problem of finding the optimal coefficients (0 denotes convergence, 1 otherwise) and the penalization term used:
-````{r}
-pred$convergence
-pred$penalization_term
 ````
 
 The assessment of predictive performance using the IPCW AUC is:
 
 ````{r}
 pred$auc_ipcwBagg
+````
+
+The optimal coefficients used to get the ensemble IPCW Bagging:
+
+````{r}
+pred$optimal_coefficients
+````
+We can note that the algorithms with the largest predictive performance weigh in more in the ensemble. We check if convergence has been reached in the optimization problem of finding the optimal coefficients (0 denotes convergence, 1 otherwise) and the penalization term used:
+````{r}
+pred$convergence
+pred$penalization_term
 ````
 
 We can check the tune parameters used to train the algorithms:
@@ -144,8 +148,50 @@ pred$tuneparams
 
 The GAM is trained with two degree of freedom 3 and 4. The LASSO paremeter refers to the lambda penalization term. The parameters in the random forest refer to the number of trees (num_tree=500) and the umber of variables randomly sampled as candidates at each split (mtry=4). k chosen in the k-NN is 25. The SVM parameters are the cost, gamma and kernel (radial=1 and linear=2). Since the kernel is linear the gamma is NA since the linear kernel does not use the gamma parameter. The neurons is set to 1 in the neural network. The last values are the parameter number of trees, k that determines the prior probability that the average of the outcome falls into (-3,3) and q the quantile of the prior on the error variance.  
 
+
+Let s compare the ROC curve for the best and worst single algorithm and the ensemble.
+The ensemble ROC curve is
 ````{r}
-ensBagg::plot_ipcw_roc(test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,5],wts=pred$wts_test,tao=26.5)
+ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"Ensemble"],wts=pred$wts_test,tao=26.5)
+````
+The GAM.4 ROC curve is
+````{r}
+ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"GAM.4"],wts=pred$wts_test,tao=26.5)
+````
+The k-NN  ROC curve is
+````{r}
+ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"k-NN"],wts=pred$wts_test,tao=26.5)
+````
+
+Now let s take a look at prediction of the algorithms that allows for weights natively:
+
+````{r}
+head(pred$prediction_native_weights,5)
+````
+
+and their performance is:
+
+````{r}
+pred$auc_native_weights
+````
+
+Moreover, let s see the prediction of three survival based methods: a cause-specific Cox proportional hazard regression
+model, Cox-Boost and survival random forests for competing risk.
+
+````{r}
+head(pred$prediction_survival,5)
+
+````
+````{r}
+pred$auc_survival
+````
+
+Lastly, we could see the performance of the algorithms if we were to discard the censored observations
+
+````{r}
+pred_discard <- ensBagg::prediction_discard(train.data = train,test.data = test,xnam = xnam,tao = 26.5)
+head(pred_discard$prediction_discard)
+pred_discard$auc_discard
 ````
 
 

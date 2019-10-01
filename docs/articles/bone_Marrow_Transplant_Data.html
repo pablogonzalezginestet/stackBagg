@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>bone_Marrow_Transplant_Data • ensBagg</title>
+<title>Bone Marrow Transplant Data Set • ensBagg</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="bone_Marrow_Transplant_Data">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Bone Marrow Transplant Data Set">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -54,7 +54,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/bone_Marrow_Transplant_Data.html">bone_Marrow_Transplant_Data</a>
+      <a href="../articles/bone_Marrow_Transplant_Data.html">Bone Marrow Transplant Data Set</a>
     </li>
     <li>
       <a href="../articles/intro.html">Introduction to ensBagg package</a>
@@ -78,7 +78,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>bone_Marrow_Transplant_Data</h1>
+      <h1>Bone Marrow Transplant Data Set</h1>
             
       
       
@@ -88,12 +88,6 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ensBagg)</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co">#&gt; Loading required package: Matrix</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co">#&gt; Loading required package: gam</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co">#&gt; Loading required package: splines</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="co">#&gt; Loading required package: foreach</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co">#&gt; Loaded gam 1.16</span></a></code></pre></div>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
@@ -103,435 +97,106 @@
 <h2 class="hasAnchor">
 <a href="#setup" class="anchor"></a>Setup</h2>
 <p>We load the package <strong>ensBagg</strong> and <strong>timereg</strong> and we load the data set bmt</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ensBagg)</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(timereg)</a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="co">#&gt; Loading required package: survival</span></a>
-<a class="sourceLine" id="cb2-4" title="4">bmt.data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(bmt)</a></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(bmt)</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="co">#&gt;       time             cause           platelet           age         </span></a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt;  Min.   :  0.030   Min.   :0.0000   Min.   :0.0000   Min.   :-2.3493  </span></a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt;  1st Qu.:  2.426   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:-0.6336  </span></a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt;  Median :  7.862   Median :1.0000   Median :0.0000   Median : 0.2026  </span></a>
-<a class="sourceLine" id="cb3-6" title="6"><span class="co">#&gt;  Mean   : 22.237   Mean   :0.8211   Mean   :0.3137   Mean   : 0.0000  </span></a>
-<a class="sourceLine" id="cb3-7" title="7"><span class="co">#&gt;  3rd Qu.: 35.806   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.: 0.7875  </span></a>
-<a class="sourceLine" id="cb3-8" title="8"><span class="co">#&gt;  Max.   :110.625   Max.   :2.0000   Max.   :1.0000   Max.   : 1.9396  </span></a>
-<a class="sourceLine" id="cb3-9" title="9"><span class="co">#&gt;      tcell       </span></a>
-<a class="sourceLine" id="cb3-10" title="10"><span class="co">#&gt;  Min.   :0.0000  </span></a>
-<a class="sourceLine" id="cb3-11" title="11"><span class="co">#&gt;  1st Qu.:0.0000  </span></a>
-<a class="sourceLine" id="cb3-12" title="12"><span class="co">#&gt;  Median :0.0000  </span></a>
-<a class="sourceLine" id="cb3-13" title="13"><span class="co">#&gt;  Mean   :0.1324  </span></a>
-<a class="sourceLine" id="cb3-14" title="14"><span class="co">#&gt;  3rd Qu.:0.0000  </span></a>
-<a class="sourceLine" id="cb3-15" title="15"><span class="co">#&gt;  Max.   :1.0000</span></a>
-<a class="sourceLine" id="cb3-16" title="16"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(bmt)</a>
-<a class="sourceLine" id="cb3-17" title="17"><span class="co">#&gt; [1] 408   5</span></a>
-<a class="sourceLine" id="cb3-18" title="18">train.set &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(bmt), <span class="kw"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(.<span class="dv">9</span><span class="op">*</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(bmt)), <span class="dt">replace=</span><span class="ot">FALSE</span>) </a>
-<a class="sourceLine" id="cb3-19" title="19">test.set &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sets.html">setdiff</a></span>(<span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(bmt), train.set)</a>
-<a class="sourceLine" id="cb3-20" title="20">bmt.train &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(bmt[train.set,])</a>
-<a class="sourceLine" id="cb3-21" title="21">bmt.test &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(bmt[test.set,]) </a>
-<a class="sourceLine" id="cb3-22" title="22">tao=<span class="dv">7</span></a></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">pred.bmt=ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/ensBagg-package.html">ensBagg</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)],<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">weighting =</span><span class="st">"CoxPH"</span> ,<span class="dt">folds =</span><span class="dv">5</span> )</a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-4" title="4"></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-7" title="7"></a>
-<a class="sourceLine" id="cb4-8" title="8"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-9" title="9"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-10" title="10"></a>
-<a class="sourceLine" id="cb4-11" title="11"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-12" title="12"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-13" title="13"></a>
-<a class="sourceLine" id="cb4-14" title="14"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-15" title="15"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-16" title="16"></a>
-<a class="sourceLine" id="cb4-17" title="17"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-18" title="18"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-19" title="19"></a>
-<a class="sourceLine" id="cb4-20" title="20"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-21" title="21"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-22" title="22"></a>
-<a class="sourceLine" id="cb4-23" title="23"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-24" title="24"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-25" title="25"></a>
-<a class="sourceLine" id="cb4-26" title="26"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-27" title="27"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-28" title="28"></a>
-<a class="sourceLine" id="cb4-29" title="29"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-30" title="30"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-31" title="31"></a>
-<a class="sourceLine" id="cb4-32" title="32"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-33" title="33"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-34" title="34"></a>
-<a class="sourceLine" id="cb4-35" title="35"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-36" title="36"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-37" title="37"></a>
-<a class="sourceLine" id="cb4-38" title="38"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-39" title="39"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-40" title="40"></a>
-<a class="sourceLine" id="cb4-41" title="41"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-42" title="42"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-43" title="43"></a>
-<a class="sourceLine" id="cb4-44" title="44"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-45" title="45"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-46" title="46"></a>
-<a class="sourceLine" id="cb4-47" title="47"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-48" title="48"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-49" title="49"></a>
-<a class="sourceLine" id="cb4-50" title="50"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-51" title="51"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-52" title="52"></a>
-<a class="sourceLine" id="cb4-53" title="53"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-54" title="54"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-55" title="55"></a>
-<a class="sourceLine" id="cb4-56" title="56"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-57" title="57"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-58" title="58"></a>
-<a class="sourceLine" id="cb4-59" title="59"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-60" title="60"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-61" title="61"></a>
-<a class="sourceLine" id="cb4-62" title="62"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-63" title="63"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-64" title="64"></a>
-<a class="sourceLine" id="cb4-65" title="65"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-66" title="66"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-67" title="67"></a>
-<a class="sourceLine" id="cb4-68" title="68"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-69" title="69"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-70" title="70"></a>
-<a class="sourceLine" id="cb4-71" title="71"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-72" title="72"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-73" title="73"></a>
-<a class="sourceLine" id="cb4-74" title="74"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-75" title="75"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-76" title="76"></a>
-<a class="sourceLine" id="cb4-77" title="77"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-78" title="78"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-79" title="79"></a>
-<a class="sourceLine" id="cb4-80" title="80"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-81" title="81"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-82" title="82"></a>
-<a class="sourceLine" id="cb4-83" title="83"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-84" title="84"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-85" title="85"></a>
-<a class="sourceLine" id="cb4-86" title="86"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-87" title="87"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-88" title="88"></a>
-<a class="sourceLine" id="cb4-89" title="89"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-90" title="90"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-91" title="91"></a>
-<a class="sourceLine" id="cb4-92" title="92"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-93" title="93"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-94" title="94"></a>
-<a class="sourceLine" id="cb4-95" title="95"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-96" title="96"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-97" title="97"></a>
-<a class="sourceLine" id="cb4-98" title="98"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-99" title="99"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-100" title="100"></a>
-<a class="sourceLine" id="cb4-101" title="101"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-102" title="102"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-103" title="103"></a>
-<a class="sourceLine" id="cb4-104" title="104"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-105" title="105"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-106" title="106"></a>
-<a class="sourceLine" id="cb4-107" title="107"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-108" title="108"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-109" title="109"></a>
-<a class="sourceLine" id="cb4-110" title="110"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-111" title="111"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-112" title="112"></a>
-<a class="sourceLine" id="cb4-113" title="113"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-114" title="114"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-115" title="115"></a>
-<a class="sourceLine" id="cb4-116" title="116"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-117" title="117"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-118" title="118"></a>
-<a class="sourceLine" id="cb4-119" title="119"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-120" title="120"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-121" title="121"></a>
-<a class="sourceLine" id="cb4-122" title="122"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-123" title="123"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-124" title="124"></a>
-<a class="sourceLine" id="cb4-125" title="125"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-126" title="126"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-127" title="127"></a>
-<a class="sourceLine" id="cb4-128" title="128"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-129" title="129"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-130" title="130"></a>
-<a class="sourceLine" id="cb4-131" title="131"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-132" title="132"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-133" title="133"></a>
-<a class="sourceLine" id="cb4-134" title="134"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-135" title="135"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-136" title="136"></a>
-<a class="sourceLine" id="cb4-137" title="137"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-138" title="138"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-139" title="139"></a>
-<a class="sourceLine" id="cb4-140" title="140"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-141" title="141"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-142" title="142"></a>
-<a class="sourceLine" id="cb4-143" title="143"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-144" title="144"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-145" title="145"></a>
-<a class="sourceLine" id="cb4-146" title="146"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-147" title="147"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-148" title="148"></a>
-<a class="sourceLine" id="cb4-149" title="149"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-150" title="150"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-151" title="151"></a>
-<a class="sourceLine" id="cb4-152" title="152"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-153" title="153"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-154" title="154"></a>
-<a class="sourceLine" id="cb4-155" title="155"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-156" title="156"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-157" title="157"></a>
-<a class="sourceLine" id="cb4-158" title="158"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-159" title="159"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-160" title="160"></a>
-<a class="sourceLine" id="cb4-161" title="161"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-162" title="162"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-163" title="163"></a>
-<a class="sourceLine" id="cb4-164" title="164"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-165" title="165"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-166" title="166"></a>
-<a class="sourceLine" id="cb4-167" title="167"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-168" title="168"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-169" title="169"></a>
-<a class="sourceLine" id="cb4-170" title="170"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-171" title="171"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-172" title="172"></a>
-<a class="sourceLine" id="cb4-173" title="173"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-174" title="174"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-175" title="175"></a>
-<a class="sourceLine" id="cb4-176" title="176"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-177" title="177"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-178" title="178"></a>
-<a class="sourceLine" id="cb4-179" title="179"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-180" title="180"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-181" title="181"></a>
-<a class="sourceLine" id="cb4-182" title="182"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-183" title="183"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-184" title="184"></a>
-<a class="sourceLine" id="cb4-185" title="185"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-186" title="186"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-187" title="187"></a>
-<a class="sourceLine" id="cb4-188" title="188"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-189" title="189"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-190" title="190"></a>
-<a class="sourceLine" id="cb4-191" title="191"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-192" title="192"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-193" title="193"></a>
-<a class="sourceLine" id="cb4-194" title="194"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-195" title="195"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-196" title="196"></a>
-<a class="sourceLine" id="cb4-197" title="197"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-198" title="198"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-199" title="199"></a>
-<a class="sourceLine" id="cb4-200" title="200"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-201" title="201"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-202" title="202"></a>
-<a class="sourceLine" id="cb4-203" title="203"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-204" title="204"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-205" title="205"></a>
-<a class="sourceLine" id="cb4-206" title="206"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-207" title="207"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-208" title="208"></a>
-<a class="sourceLine" id="cb4-209" title="209"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-210" title="210"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-211" title="211"></a>
-<a class="sourceLine" id="cb4-212" title="212"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-213" title="213"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-214" title="214"></a>
-<a class="sourceLine" id="cb4-215" title="215"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-216" title="216"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-217" title="217"></a>
-<a class="sourceLine" id="cb4-218" title="218"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-219" title="219"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-220" title="220"></a>
-<a class="sourceLine" id="cb4-221" title="221"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-222" title="222"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-223" title="223"></a>
-<a class="sourceLine" id="cb4-224" title="224"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-225" title="225"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-226" title="226"></a>
-<a class="sourceLine" id="cb4-227" title="227"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-228" title="228"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-229" title="229"></a>
-<a class="sourceLine" id="cb4-230" title="230"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-231" title="231"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-232" title="232"></a>
-<a class="sourceLine" id="cb4-233" title="233"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-234" title="234"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-235" title="235"></a>
-<a class="sourceLine" id="cb4-236" title="236"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-237" title="237"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-238" title="238"></a>
-<a class="sourceLine" id="cb4-239" title="239"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-240" title="240"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-241" title="241"></a>
-<a class="sourceLine" id="cb4-242" title="242"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-243" title="243"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-244" title="244"></a>
-<a class="sourceLine" id="cb4-245" title="245"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-246" title="246"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-247" title="247"></a>
-<a class="sourceLine" id="cb4-248" title="248"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-249" title="249"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-250" title="250"></a>
-<a class="sourceLine" id="cb4-251" title="251"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-252" title="252"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-253" title="253"></a>
-<a class="sourceLine" id="cb4-254" title="254"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-255" title="255"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-256" title="256"></a>
-<a class="sourceLine" id="cb4-257" title="257"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-258" title="258"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-259" title="259"></a>
-<a class="sourceLine" id="cb4-260" title="260"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-261" title="261"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-262" title="262"></a>
-<a class="sourceLine" id="cb4-263" title="263"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-264" title="264"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-265" title="265"></a>
-<a class="sourceLine" id="cb4-266" title="266"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-267" title="267"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-268" title="268"></a>
-<a class="sourceLine" id="cb4-269" title="269"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-270" title="270"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-271" title="271"></a>
-<a class="sourceLine" id="cb4-272" title="272"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-273" title="273"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-274" title="274"></a>
-<a class="sourceLine" id="cb4-275" title="275"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-276" title="276"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-277" title="277"></a>
-<a class="sourceLine" id="cb4-278" title="278"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-279" title="279"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-280" title="280"></a>
-<a class="sourceLine" id="cb4-281" title="281"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-282" title="282"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-283" title="283"></a>
-<a class="sourceLine" id="cb4-284" title="284"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-285" title="285"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-286" title="286"></a>
-<a class="sourceLine" id="cb4-287" title="287"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-288" title="288"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-289" title="289"></a>
-<a class="sourceLine" id="cb4-290" title="290"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-291" title="291"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-292" title="292"></a>
-<a class="sourceLine" id="cb4-293" title="293"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-294" title="294"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-295" title="295"></a>
-<a class="sourceLine" id="cb4-296" title="296"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-297" title="297"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-298" title="298"></a>
-<a class="sourceLine" id="cb4-299" title="299"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-300" title="300"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-301" title="301"></a>
-<a class="sourceLine" id="cb4-302" title="302"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-303" title="303"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-304" title="304"></a>
-<a class="sourceLine" id="cb4-305" title="305"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-306" title="306"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-307" title="307"></a>
-<a class="sourceLine" id="cb4-308" title="308"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-309" title="309"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-310" title="310"></a>
-<a class="sourceLine" id="cb4-311" title="311"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-312" title="312"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-313" title="313"></a>
-<a class="sourceLine" id="cb4-314" title="314"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-315" title="315"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-316" title="316"></a>
-<a class="sourceLine" id="cb4-317" title="317"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-318" title="318"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-319" title="319"></a>
-<a class="sourceLine" id="cb4-320" title="320"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-321" title="321"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-322" title="322"></a>
-<a class="sourceLine" id="cb4-323" title="323"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-324" title="324"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-325" title="325"></a>
-<a class="sourceLine" id="cb4-326" title="326"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-327" title="327"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-328" title="328"></a>
-<a class="sourceLine" id="cb4-329" title="329"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-330" title="330"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-331" title="331"></a>
-<a class="sourceLine" id="cb4-332" title="332"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-333" title="333"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-334" title="334"></a>
-<a class="sourceLine" id="cb4-335" title="335"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-336" title="336"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-337" title="337"></a>
-<a class="sourceLine" id="cb4-338" title="338"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-339" title="339"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-340" title="340"></a>
-<a class="sourceLine" id="cb4-341" title="341"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-342" title="342"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-343" title="343"></a>
-<a class="sourceLine" id="cb4-344" title="344"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-345" title="345"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-346" title="346"></a>
-<a class="sourceLine" id="cb4-347" title="347"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-348" title="348"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-349" title="349"></a>
-<a class="sourceLine" id="cb4-350" title="350"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-351" title="351"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-352" title="352"></a>
-<a class="sourceLine" id="cb4-353" title="353"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-354" title="354"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-355" title="355"></a>
-<a class="sourceLine" id="cb4-356" title="356"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-357" title="357"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-358" title="358"></a>
-<a class="sourceLine" id="cb4-359" title="359"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-360" title="360"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-361" title="361"></a>
-<a class="sourceLine" id="cb4-362" title="362"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-363" title="363"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-364" title="364"></a>
-<a class="sourceLine" id="cb4-365" title="365"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-366" title="366"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-367" title="367"></a>
-<a class="sourceLine" id="cb4-368" title="368"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-369" title="369"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-370" title="370"></a>
-<a class="sourceLine" id="cb4-371" title="371"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-372" title="372"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-373" title="373"></a>
-<a class="sourceLine" id="cb4-374" title="374"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-375" title="375"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-376" title="376"></a>
-<a class="sourceLine" id="cb4-377" title="377"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-378" title="378"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-379" title="379"></a>
-<a class="sourceLine" id="cb4-380" title="380"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-381" title="381"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-382" title="382"></a>
-<a class="sourceLine" id="cb4-383" title="383"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-384" title="384"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-385" title="385"></a>
-<a class="sourceLine" id="cb4-386" title="386"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-387" title="387"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-388" title="388"></a>
-<a class="sourceLine" id="cb4-389" title="389"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-390" title="390"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-391" title="391"></a>
-<a class="sourceLine" id="cb4-392" title="392"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-393" title="393"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-394" title="394"></a>
-<a class="sourceLine" id="cb4-395" title="395"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-396" title="396"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-397" title="397"><span class="co">#&gt; Warning in eval(family$initialize): non-integer #successes in a binomial</span></a>
-<a class="sourceLine" id="cb4-398" title="398"><span class="co">#&gt; glm!</span></a>
-<a class="sourceLine" id="cb4-399" title="399"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-400" title="400"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb4-401" title="401"></a>
-<a class="sourceLine" id="cb4-402" title="402"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb4-403" title="403"><span class="co">#&gt; argument ignored</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ensBagg)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="co">#&gt; Loading required package: Matrix</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="co">#&gt; Loading required package: gam</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="co">#&gt; Loading required package: splines</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="co">#&gt; Loading required package: foreach</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="co">#&gt; Loaded gam 1.16</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(timereg)</a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="co">#&gt; Loading required package: survival</span></a>
+<a class="sourceLine" id="cb1-9" title="9">bmt.data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(bmt)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(bmt)</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="co">#&gt;       time             cause           platelet           age         </span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="co">#&gt;  Min.   :  0.030   Min.   :0.0000   Min.   :0.0000   Min.   :-2.3493  </span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="co">#&gt;  1st Qu.:  2.426   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:-0.6336  </span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt;  Median :  7.862   Median :1.0000   Median :0.0000   Median : 0.2026  </span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt;  Mean   : 22.237   Mean   :0.8211   Mean   :0.3137   Mean   : 0.0000  </span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt;  3rd Qu.: 35.806   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.: 0.7875  </span></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt;  Max.   :110.625   Max.   :2.0000   Max.   :1.0000   Max.   : 1.9396  </span></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt;      tcell       </span></a>
+<a class="sourceLine" id="cb2-10" title="10"><span class="co">#&gt;  Min.   :0.0000  </span></a>
+<a class="sourceLine" id="cb2-11" title="11"><span class="co">#&gt;  1st Qu.:0.0000  </span></a>
+<a class="sourceLine" id="cb2-12" title="12"><span class="co">#&gt;  Median :0.0000  </span></a>
+<a class="sourceLine" id="cb2-13" title="13"><span class="co">#&gt;  Mean   :0.1324  </span></a>
+<a class="sourceLine" id="cb2-14" title="14"><span class="co">#&gt;  3rd Qu.:0.0000  </span></a>
+<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt;  Max.   :1.0000</span></a>
+<a class="sourceLine" id="cb2-16" title="16"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(bmt)</a>
+<a class="sourceLine" id="cb2-17" title="17"><span class="co">#&gt; [1] 408   5</span></a>
+<a class="sourceLine" id="cb2-18" title="18">train.set &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(bmt), <span class="kw"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(.<span class="dv">9</span><span class="op">*</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(bmt)), <span class="dt">replace=</span><span class="ot">FALSE</span>) </a>
+<a class="sourceLine" id="cb2-19" title="19">test.set &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sets.html">setdiff</a></span>(<span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(bmt), train.set)</a>
+<a class="sourceLine" id="cb2-20" title="20">bmt.train &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(bmt[train.set,])</a>
+<a class="sourceLine" id="cb2-21" title="21">bmt.test &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(bmt[test.set,]) </a>
+<a class="sourceLine" id="cb2-22" title="22">tao=<span class="dv">7</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">pred.bmt=ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/ensBagg-package.html">ensBagg</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)],<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">weighting =</span><span class="st">"CoxPH"</span> ,<span class="dt">folds =</span><span class="dv">2</span> )</a></code></pre></div>
+<p>The assessment of predictive performance using the IPCW AUC is:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">pred.bmt<span class="op">$</span>auc_ipcwBagg</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3     GAM.4     LASSO Random Forest       SVM</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; [1,]   0.6820632 0.7079594 0.7052419 0.6794793     0.6735328 0.7589916</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt;           BART      k-NN Neural Network Ensemble</span></a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; [1,] 0.6740655 0.6351662      0.6918719  0.70029</span></a></code></pre></div>
+<p>Now let s take a look at prediction of the algorithms that allows for weights natively:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_native_weights,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt;   LogisticReg     GAM.3     GAM.4     LASSO Random Forest</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; 1   0.4851334 0.4851334 0.4851334 0.4845024     0.4355594</span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt; 2   0.2689924 0.2689925 0.2689925 0.2697906     0.3405816</span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt; 3   0.3293745 0.3293745 0.3293745 0.3293467     0.2687839</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; 4   0.3730756 0.3730756 0.3730756 0.3728807     0.4437819</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt; 5   0.5747227 0.5747227 0.5747227 0.5737802     0.5090903</span></a></code></pre></div>
+<p>and their performance is:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">pred.bmt<span class="op">$</span>auc_native_weights</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3     GAM.4     LASSO Random Forest</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt; [1,]   0.6901825 0.6901825 0.6901825 0.6901825     0.6921009</span></a></code></pre></div>
+<p>The prediction of the survival based methods</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_survival,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; [1,] 0.4684974 0.4455122     0.4412303</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; [2,] 0.2377479 0.2491378     0.3297873</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; [3,] 0.3286036 0.3249015     0.5179673</span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; [4,] 0.3666707 0.3577870     0.4549727</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; [5,] 0.5562531 0.5220934     0.4769640</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">pred.bmt<span class="op">$</span>auc_survival</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [1,] 0.7183878 0.7133051     0.6283145</span></a></code></pre></div>
+<p>Lastly, we could see the performance of the algorithms if we were to discard the censored observations</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">pred.discard &lt;-<span class="st"> </span>ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/prediction_discard.html">prediction_discard</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)],<span class="dt">tao=</span><span class="dv">7</span>)</a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="co">#&gt; argument ignored</span></a>
+<a class="sourceLine" id="cb9-4" title="4"></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; argument ignored</span></a>
+<a class="sourceLine" id="cb9-7" title="7"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.discard<span class="op">$</span>prediction_discard)</a>
+<a class="sourceLine" id="cb9-8" title="8"><span class="co">#&gt;   LogisticReg     GAM.3     GAM.4     LASSO Random Forest       SVM</span></a>
+<a class="sourceLine" id="cb9-9" title="9"><span class="co">#&gt; 1   0.4949581 0.4751971 0.4701461 0.4948908     0.4347088 0.3209016</span></a>
+<a class="sourceLine" id="cb9-10" title="10"><span class="co">#&gt; 2   0.2786727 0.3017238 0.2983748 0.2787586     0.3470967 0.3209323</span></a>
+<a class="sourceLine" id="cb9-11" title="11"><span class="co">#&gt; 3   0.3380697 0.3766361 0.3776336 0.3380666     0.2771458 0.3209418</span></a>
+<a class="sourceLine" id="cb9-12" title="12"><span class="co">#&gt; 4   0.3822814 0.4084859 0.4062814 0.3822603     0.4497129 0.3209300</span></a>
+<a class="sourceLine" id="cb9-13" title="13"><span class="co">#&gt; 5   0.5843307 0.5555530 0.5654194 0.5842310     0.5325901 0.3208794</span></a>
+<a class="sourceLine" id="cb9-14" title="14"><span class="co">#&gt; 6   0.1909048 0.2183534 0.2179736 0.1909443     0.1502846 0.3209357</span></a>
+<a class="sourceLine" id="cb9-15" title="15"><span class="co">#&gt;        BART k-NN Neural Network</span></a>
+<a class="sourceLine" id="cb9-16" title="16"><span class="co">#&gt; 1 0.4731339 0.44      0.4785119</span></a>
+<a class="sourceLine" id="cb9-17" title="17"><span class="co">#&gt; 2 0.2983072 0.32      0.2996394</span></a>
+<a class="sourceLine" id="cb9-18" title="18"><span class="co">#&gt; 3 0.3404819 0.28      0.3550150</span></a>
+<a class="sourceLine" id="cb9-19" title="19"><span class="co">#&gt; 4 0.3988867 0.40      0.3967544</span></a>
+<a class="sourceLine" id="cb9-20" title="20"><span class="co">#&gt; 5 0.5398108 0.52      0.5233212</span></a>
+<a class="sourceLine" id="cb9-21" title="21"><span class="co">#&gt; 6 0.2120831 0.24      0.1890969</span></a>
+<a class="sourceLine" id="cb9-22" title="22">pred.discard<span class="op">$</span>auc_discard</a>
+<a class="sourceLine" id="cb9-23" title="23"><span class="co">#&gt;    LogisticReg          GAM.3          GAM.4          LASSO  Random Forest </span></a>
+<a class="sourceLine" id="cb9-24" title="24"><span class="co">#&gt;      0.6875000      0.7057292      0.6979167      0.6875000      0.6809896 </span></a>
+<a class="sourceLine" id="cb9-25" title="25"><span class="co">#&gt;            SVM           BART           k-NN Neural Network </span></a>
+<a class="sourceLine" id="cb9-26" title="26"><span class="co">#&gt;      0.3437500      0.7122396      0.6432292      0.6848958</span></a></code></pre></div>
+<p>The ensemble ROC curve is</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_ensBagg[,<span class="st">"Ensemble"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+<p>The Random Forest ROC curve is</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_ensBagg[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-12-1.png" width="700"> The Random Forest survival ROC curve is</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_survival[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-13-1.png" width="700"> The Random Forest natively weighted ROC curve is</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_native_weights[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-14-1.png" width="700"> The Random Forest discarding censored observations</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.discard<span class="op">$</span>prediction_discard[,<span class="st">"Random Forest"</span>],<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">method =</span> <span class="st">"discard"</span>)</a></code></pre></div>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
 </div>
   </div>
 

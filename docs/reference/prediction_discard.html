@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ensBagg: Ensemble IPCW Bagging — ensBagg-package • ensBagg</title>
+<title>Prediction discarding censored observations — prediction_discard • ensBagg</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,14 +32,9 @@
 
 
 
-<meta property="og:title" content="ensBagg: Ensemble IPCW Bagging — ensBagg-package" />
+<meta property="og:title" content="Prediction discarding censored observations — prediction_discard" />
 
-<meta property="og:description" content="Estimation the risk of an event at a specific time in the presence of censored data with competing risk using a collection of 
-             machine learning algorithms.
-             Each algorithm is trained on a IPC-weighted bootstrap sample from the training set and predictions are obtained for the validation set.
-             The Ensemble IPCW Bagging prediction is given by the weighted linear combination of the prediction of each algorithm.
-             The area under the IPCW time-varying receiver operator curve (AUC) is used for evaluating
-             the predictive performance and calibrating the ensemble and each single algorithm." />
+<meta property="og:description" content="Ad-hoc technique that discards censored observations from the analysis" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -121,37 +116,62 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>ensBagg: Ensemble IPCW Bagging</h1>
+    <h1>Prediction discarding censored observations</h1>
     
-    <div class="hidden name"><code>ensBagg-package.Rd</code></div>
+    <div class="hidden name"><code>prediction_discard.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Estimation the risk of an event at a specific time in the presence of censored data with competing risk using a collection of 
-             machine learning algorithms.
-             Each algorithm is trained on a IPC-weighted bootstrap sample from the training set and predictions are obtained for the validation set.
-             The Ensemble IPCW Bagging prediction is given by the weighted linear combination of the prediction of each algorithm.
-             The area under the IPCW time-varying receiver operator curve (AUC) is used for evaluating
-             the predictive performance and calibrating the ensemble and each single algorithm.</p>
+    <p>Ad-hoc technique that discards censored observations from the analysis</p>
     
     </div>
 
-        
+    <pre class="usage"><span class='fu'>prediction_discard</span>(<span class='no'>train.data</span>, <span class='no'>test.data</span>, <span class='no'>xnam</span>, <span class='no'>tao</span>, <span class='kw'>tuneparams</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>train.data</th>
+      <td><p>a data.frame with at least the following variables: 
+event-times (censored) in the first column,
+event indicator in the second column and 
+covariates/features that the user potentially want to use in building the preodiction model.
+Censored observations must be denoted by the value 0. Main event of interest is denoted by 1.</p></td>
+    </tr>
+    <tr>
+      <th>test.data</th>
+      <td><p>a data.frame with the same variables and names that the train.data</p></td>
+    </tr>
+    <tr>
+      <th>xnam</th>
+      <td><p>vector with the names of the covariates to be included in the model</p></td>
+    </tr>
+    <tr>
+      <th>tao</th>
+      <td><p>evaluation time point of interest</p></td>
+    </tr>
+    <tr>
+      <th>tuneparams</th>
+      <td><p>a list of tune parameters for each machine learning procedure. Name them as gam_param, lasso_param, randomforest_param, svm_param, bart_param, knn_param, nn_param.
+Default values are the same used for the simulation.</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a list with the predictions of each machine learning algorithm and the AUC of each of them</p>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-                </ul>
-
-    <h2>Author</h2>
-    <p><strong>Maintainer</strong>: Pablo Gonzalez Ginestet <a href='mailto:pablo.gonzalez.ginestet@ki.se'>pablo.gonzalez.ginestet@ki.se</a> (https://staff.ki.se/people/pabgon)</p>
-<p>Authors:</p><ul>
-<li><p>Erin Gabriel <a href='mailto:erin.gabriel@ki.se'>erin.gabriel@ki.se</a> (https://staff.ki.se/people/erigab)</p></li>
-<li><p>Julian Wolfson <a href='mailto:julianw@umn.edu'>julianw@umn.edu</a> (https://sites.google.com/umn.edu/julianw)</p></li>
-</ul>
-
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+          </ul>
 
   </div>
 </div>
