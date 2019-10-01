@@ -162,14 +162,24 @@ The GAM is trained with two degree of freedom 3 and 4. The LASSO paremeter refer
 
 Let s compare the ROC curve for the best and worst single algorithm and the ensemble.
 The ensemble ROC curve is
+
+
 ````{r}
 ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"Ensemble"],wts=pred$wts_test,tao=26.5)
 ````
+
+
 The GAM.4 ROC curve is
+
+
 ````{r}
 ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"GAM.4"],wts=pred$wts_test,tao=26.5)
 ````
+
+
 The k-NN  ROC curve is
+
+
 ````{r}
 ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"k-NN"],wts=pred$wts_test,tao=26.5)
 ````
@@ -216,7 +226,7 @@ Lastly, we could see the performance of the algorithms if we were to discard the
 pred.discard <- ensBagg::prediction_discard(train.data = train,test.data = test,xnam = xnam,tao = 26.5)
 head(pred.discard$prediction_discard)
 pred.discard$auc_discard
-ensBagg::plot_roc(time=test.data$ttilde,delta = test.data$delta,marker =pred.discard$prediction_discard[,"GAM.4"],tao=7,method = "discard")
+ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred.discard$prediction_discard[,"GAM.4"],tao=26.5,method = "discard")
 
 ````
 

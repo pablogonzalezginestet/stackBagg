@@ -132,32 +132,32 @@
 <p>The assessment of predictive performance using the IPCW AUC is:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">pred.bmt<span class="op">$</span>auc_ipcwBagg</a>
 <a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3     GAM.4     LASSO Random Forest       SVM</span></a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; [1,]   0.6820632 0.7079594 0.7052419 0.6794793     0.6735328 0.7589916</span></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt;           BART      k-NN Neural Network Ensemble</span></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; [1,] 0.6740655 0.6351662      0.6918719  0.70029</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; [1,]   0.5352199 0.5485066 0.5404781 0.5352199     0.5058694 0.5407401</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt;           BART      k-NN Neural Network  Ensemble</span></a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; [1,] 0.5082281 0.4796174      0.5431381 0.5430997</span></a></code></pre></div>
 <p>Now let s take a look at prediction of the algorithms that allows for weights natively:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_native_weights,<span class="dv">5</span>)</a>
 <a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt;   LogisticReg     GAM.3     GAM.4     LASSO Random Forest</span></a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; 1   0.4851334 0.4851334 0.4851334 0.4845024     0.4355594</span></a>
-<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt; 2   0.2689924 0.2689925 0.2689925 0.2697906     0.3405816</span></a>
-<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt; 3   0.3293745 0.3293745 0.3293745 0.3293467     0.2687839</span></a>
-<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; 4   0.3730756 0.3730756 0.3730756 0.3728807     0.4437819</span></a>
-<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt; 5   0.5747227 0.5747227 0.5747227 0.5737802     0.5090903</span></a></code></pre></div>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; 1   0.5903804 0.5903804 0.5903804 0.5864611     0.4770342</span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt; 2   0.3822162 0.3822162 0.3822162 0.3813570     0.2581146</span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt; 3   0.3866296 0.3866296 0.3866296 0.3857011     0.2581146</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; 4   0.3041084 0.3041084 0.3041084 0.3044293     0.3217602</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt; 5   0.1916993 0.1916993 0.1916993 0.1933223     0.2985863</span></a></code></pre></div>
 <p>and their performance is:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">pred.bmt<span class="op">$</span>auc_native_weights</a>
 <a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3     GAM.4     LASSO Random Forest</span></a>
-<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt; [1,]   0.6901825 0.6901825 0.6901825 0.6901825     0.6921009</span></a></code></pre></div>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt; [1,]   0.5325476 0.5325476 0.5325476 0.5325476     0.5188321</span></a></code></pre></div>
 <p>The prediction of the survival based methods</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_survival,<span class="dv">5</span>)</a>
 <a class="sourceLine" id="cb7-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
-<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; [1,] 0.4684974 0.4455122     0.4412303</span></a>
-<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; [2,] 0.2377479 0.2491378     0.3297873</span></a>
-<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; [3,] 0.3286036 0.3249015     0.5179673</span></a>
-<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; [4,] 0.3666707 0.3577870     0.4549727</span></a>
-<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; [5,] 0.5562531 0.5220934     0.4769640</span></a></code></pre></div>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; [1,] 0.5890603 0.5566096     0.5663913</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; [2,] 0.3759298 0.3663328     0.3827811</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; [3,] 0.3801276 0.3700313     0.3887389</span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; [4,] 0.3032741 0.3021331     0.4824189</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; [5,] 0.2272210 0.2355466     0.2715417</span></a></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">pred.bmt<span class="op">$</span>auc_survival</a>
 <a class="sourceLine" id="cb8-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
-<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [1,] 0.7183878 0.7133051     0.6283145</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [1,] 0.5379449 0.5352885     0.4990542</span></a></code></pre></div>
 <p>Lastly, we could see the performance of the algorithms if we were to discard the censored observations</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">pred.discard &lt;-<span class="st"> </span>ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/prediction_discard.html">prediction_discard</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)],<span class="dt">tao=</span><span class="dv">7</span>)</a>
 <a class="sourceLine" id="cb9-2" title="2"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
@@ -166,35 +166,38 @@
 <a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
 <a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; argument ignored</span></a>
 <a class="sourceLine" id="cb9-7" title="7"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.discard<span class="op">$</span>prediction_discard)</a>
-<a class="sourceLine" id="cb9-8" title="8"><span class="co">#&gt;   LogisticReg     GAM.3     GAM.4     LASSO Random Forest       SVM</span></a>
-<a class="sourceLine" id="cb9-9" title="9"><span class="co">#&gt; 1   0.4949581 0.4751971 0.4701461 0.4948908     0.4347088 0.3209016</span></a>
-<a class="sourceLine" id="cb9-10" title="10"><span class="co">#&gt; 2   0.2786727 0.3017238 0.2983748 0.2787586     0.3470967 0.3209323</span></a>
-<a class="sourceLine" id="cb9-11" title="11"><span class="co">#&gt; 3   0.3380697 0.3766361 0.3776336 0.3380666     0.2771458 0.3209418</span></a>
-<a class="sourceLine" id="cb9-12" title="12"><span class="co">#&gt; 4   0.3822814 0.4084859 0.4062814 0.3822603     0.4497129 0.3209300</span></a>
-<a class="sourceLine" id="cb9-13" title="13"><span class="co">#&gt; 5   0.5843307 0.5555530 0.5654194 0.5842310     0.5325901 0.3208794</span></a>
-<a class="sourceLine" id="cb9-14" title="14"><span class="co">#&gt; 6   0.1909048 0.2183534 0.2179736 0.1909443     0.1502846 0.3209357</span></a>
-<a class="sourceLine" id="cb9-15" title="15"><span class="co">#&gt;        BART k-NN Neural Network</span></a>
-<a class="sourceLine" id="cb9-16" title="16"><span class="co">#&gt; 1 0.4731339 0.44      0.4785119</span></a>
-<a class="sourceLine" id="cb9-17" title="17"><span class="co">#&gt; 2 0.2983072 0.32      0.2996394</span></a>
-<a class="sourceLine" id="cb9-18" title="18"><span class="co">#&gt; 3 0.3404819 0.28      0.3550150</span></a>
-<a class="sourceLine" id="cb9-19" title="19"><span class="co">#&gt; 4 0.3988867 0.40      0.3967544</span></a>
-<a class="sourceLine" id="cb9-20" title="20"><span class="co">#&gt; 5 0.5398108 0.52      0.5233212</span></a>
-<a class="sourceLine" id="cb9-21" title="21"><span class="co">#&gt; 6 0.2120831 0.24      0.1890969</span></a>
+<a class="sourceLine" id="cb9-8" title="8"><span class="co">#&gt;   LogisticReg      GAM.3      GAM.4     LASSO Random Forest       SVM</span></a>
+<a class="sourceLine" id="cb9-9" title="9"><span class="co">#&gt; 1   0.5989595 0.58374036 0.59005978 0.5984162    0.48291438 0.3285268</span></a>
+<a class="sourceLine" id="cb9-10" title="10"><span class="co">#&gt; 2   0.3909372 0.41520235 0.41569697 0.3908156    0.28281210 0.3285257</span></a>
+<a class="sourceLine" id="cb9-11" title="11"><span class="co">#&gt; 3   0.3953806 0.41844828 0.41909886 0.3952492    0.28281210 0.3285257</span></a>
+<a class="sourceLine" id="cb9-12" title="12"><span class="co">#&gt; 4   0.3120517 0.34658191 0.35362540 0.3120965    0.31555361 0.3285253</span></a>
+<a class="sourceLine" id="cb9-13" title="13"><span class="co">#&gt; 5   0.2002696 0.22381641 0.22576030 0.2005023    0.32205758 0.2896893</span></a>
+<a class="sourceLine" id="cb9-14" title="14"><span class="co">#&gt; 6   0.1478896 0.07788325 0.05990361 0.1481670    0.07493662 0.3285240</span></a>
+<a class="sourceLine" id="cb9-15" title="15"><span class="co">#&gt;         BART k-NN Neural Network</span></a>
+<a class="sourceLine" id="cb9-16" title="16"><span class="co">#&gt; 1 0.59730580 0.60      0.5921091</span></a>
+<a class="sourceLine" id="cb9-17" title="17"><span class="co">#&gt; 2 0.35376016 0.32      0.3969362</span></a>
+<a class="sourceLine" id="cb9-18" title="18"><span class="co">#&gt; 3 0.36997944 0.32      0.4016511</span></a>
+<a class="sourceLine" id="cb9-19" title="19"><span class="co">#&gt; 4 0.32099237 0.28      0.3126839</span></a>
+<a class="sourceLine" id="cb9-20" title="20"><span class="co">#&gt; 5 0.24283393 0.24      0.1891284</span></a>
+<a class="sourceLine" id="cb9-21" title="21"><span class="co">#&gt; 6 0.08394575 0.16      0.1591199</span></a>
 <a class="sourceLine" id="cb9-22" title="22">pred.discard<span class="op">$</span>auc_discard</a>
 <a class="sourceLine" id="cb9-23" title="23"><span class="co">#&gt;    LogisticReg          GAM.3          GAM.4          LASSO  Random Forest </span></a>
-<a class="sourceLine" id="cb9-24" title="24"><span class="co">#&gt;      0.6875000      0.7057292      0.6979167      0.6875000      0.6809896 </span></a>
+<a class="sourceLine" id="cb9-24" title="24"><span class="co">#&gt;      0.5306667      0.5386667      0.5386667      0.5306667      0.5346667 </span></a>
 <a class="sourceLine" id="cb9-25" title="25"><span class="co">#&gt;            SVM           BART           k-NN Neural Network </span></a>
-<a class="sourceLine" id="cb9-26" title="26"><span class="co">#&gt;      0.3437500      0.7122396      0.6432292      0.6848958</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-26" title="26"><span class="co">#&gt;      0.4613333      0.5466667      0.4866667      0.5253333</span></a></code></pre></div>
 <p>The ensemble ROC curve is</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_ensBagg[,<span class="st">"Ensemble"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
 <p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 <p>The Random Forest ROC curve is</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_ensBagg[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
-<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-12-1.png" width="700"> The Random Forest survival ROC curve is</p>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<p>The Random Forest survival ROC curve is</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_survival[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
-<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-13-1.png" width="700"> The Random Forest natively weighted ROC curve is</p>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+<p>The Random Forest natively weighted ROC curve is</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_native_weights[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
-<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-14-1.png" width="700"> The Random Forest discarding censored observations</p>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<p>The Random Forest discarding censored observations</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.discard<span class="op">$</span>prediction_discard[,<span class="st">"Random Forest"</span>],<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">method =</span> <span class="st">"discard"</span>)</a></code></pre></div>
 <p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
 </div>
