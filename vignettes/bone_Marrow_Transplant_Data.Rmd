@@ -79,23 +79,31 @@ head(pred.discard$prediction_discard)
 pred.discard$auc_discard
 ````
 
+
 The ensemble ROC curve is
 ````{r}
 ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_ensBagg[,"Ensemble"],wts=pred.bmt$wts_test,tao=7)
 ````
 
+
 The Random Forest ROC curve is
 ````{r}
 ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_ensBagg[,"Random Forest"],wts=pred.bmt$wts_test,tao=7)
 ````
+
+
 The Random Forest survival ROC curve is
 ````{r}
 ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_survival[,"Random Forest"],wts=pred.bmt$wts_test,tao=7)
 ````
+
+
 The Random Forest natively weighted ROC curve is
 ````{r}
 ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_native_weights[,"Random Forest"],wts=pred.bmt$wts_test,tao=7)
 ````
+
+
 The Random Forest discarding censored observations
 ````{r}
 ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.discard$prediction_discard[,"Random Forest"],tao=7,method = "discard")
