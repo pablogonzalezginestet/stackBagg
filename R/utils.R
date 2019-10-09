@@ -107,7 +107,7 @@ ML_list <- list(
     pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
     return(pred)
   },
-  
+ 
   GAMfun = function(data,
                     testdata,
                     fmla,
@@ -116,35 +116,35 @@ ML_list <- list(
                     xnam.cont,
                     xnam.cont.gam,
                     param) {
-   
+  
         if (length(param)>1){
       
       newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),xnam[!xnam %in% xnam.cont.gam]) 
       newfmla=stats::reformulate(newterms,fmla[[2]])
       fit1 <- gam::gam(newfmla, data = data, family = 'quasibinomial')
       pred.df3 <- predict(fit1, newdata=testdata, type = "response", na.action=na.omit)
-      
+     
       newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),xnam[!xnam %in% xnam.cont.gam]) 
       newfmla=stats::reformulate(newterms,fmla[[2]])
       fit2 <- gam::gam(newfmla, data = data, family = 'quasibinomial')
       pred.df4 <- predict(fit2, newdata=testdata, type = "response", na.action=na.omit)
-      
       pred <- cbind(pred.df3,pred.df4)
+      return(pred)
       
-    }else{
-      
-    if (param==3){
+    }else if (param==3){
       newterms=c(paste0("s(",xnam.cont.gam, ",df=3)"),xnam[!xnam %in% xnam.cont.gam]) 
       newfmla=stats::reformulate(newterms,fmla[[2]])
-    }else{
+      fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
+      pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+      return(pred)
+      }else {
       newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),xnam[!xnam %in% xnam.cont.gam])
       newfmla=stats::reformulate(newterms,fmla[[2]]) 
-    }
-    fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
-    pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
-    }
-    
-    return(pred) 
+      fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
+      pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
+      return(pred)
+      }
+   
     }, 
   
   lassofun=function(data,testdata,fmla,xnam,xnam.factor,xnam.cont,param){
