@@ -113,7 +113,7 @@ for (i in 1:nrow(test.data) ){
   xnam2 <-names(test.data2)[-(1:2)] 
   for (i in 1:nrow(test.data2) ){
     tao_temp <- min(test.data2$ttilde[i],tao)
-    wts.boost<- c(wts.boost,as.numeric(!is.na(test.data$E[i])) / peperr::predictProb(fit.cboost, Surv(test.data$ttilde[i],test.data$deltac[i]), test.data2[xnam2],tao_temp,complexity = 300)[i])
+    wts.boost<- c(wts.boost,as.numeric(!is.na(test.data$E[i])) / peperr::predictProb(fit.cboost, Surv(test.data2$ttilde[i],test.data2$deltac[i]), test.data2[xnam2],tao_temp,complexity = 300)[i])
   }
   
 }
