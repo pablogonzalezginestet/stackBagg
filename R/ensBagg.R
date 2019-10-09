@@ -245,7 +245,7 @@ algorithm2<- ensBagg::ipcw_ensbagg( folds=folds,
 
 
  
-prediction_ipcwBagg<- ipcw_genbagg( fmla=fmla,
+prediction_ipcwBagg<- ensBagg::ipcw_genbagg( fmla=fmla,
                                    tuneparams=tuneparams,
                                    MLprocedures=MLprocedures,
                                    traindata = train.data,
@@ -290,7 +290,7 @@ colnames(prediction_native_weights) <- c(ml_names[1:A_native])
 fmla.cox <- as.formula(paste("Hist(ttilde,delta) ~ ", paste(xnam, collapse= "+")))
 coxfit <- riskRegression::CSC(formula = fmla.cox,data = train.data) 
 predcoxfit <- riskRegression::predictRisk(coxfit, newdata = test.data[xnam], cause = 1, times = tao)
-auc_survival1 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predcoxfit,cause=1,wts=test.data$wts,tao)
+auc_survival1 <- ensBagg::ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predcoxfit,cause=1,wts=test.data$wts,tao)
 
 #cox boost 
 
@@ -300,14 +300,14 @@ if(is.null(xnam.factor)){
   fitCoxboost <- CoxBoost::CoxBoost(time=train.data$ttilde,status=train.data$delta, x=X.coxboost,stepno=300,penalty=100)
   pred.coxboost <- predict(fitCoxboost,newdata=newX.coxboost,times=tao,type="CIF")
 
-  }else{
+}else{
 X.cboost.train <- train.data[xnam.cont]
-X.cboost.train<- cbind(X.cboost.train,predict(caret::dummyVars( ~ ., data =train.data[xnam.factor], levelsOnly = FALSE), newdata=train.data[xnam.factor]))
+X.cboost.train<- cbind(X.cboost.train,predict(caret::dummyVars( ~ ., data =train.data[xnam.factor], fullRank = TRUE), newdata=train.data[xnam.factor]))
 colnames(X.cboost.train)=c(paste("x", 1:(dim(X.cboost.train)[2]), sep=""))
 train.data2=cbind(ttilde=train.data$ttilde,delta=train.data$delta,X.cboost.train)
 
 X.cboost.test <- test.data[xnam.cont]
-X.cboost.test <- cbind(X.cboost.test,predict(caret::dummyVars( ~ ., data =test.data[xnam.factor], levelsOnly = FALSE), newdata=test.data[xnam.factor]))
+X.cboost.test <- cbind(X.cboost.test,predict(caret::dummyVars( ~ ., data =test.data[xnam.factor],fullRank = TRUE), newdata=test.data[xnam.factor]))
 colnames(X.cboost.test)=c(paste("x", 1:(dim(X.cboost.test)[2]), sep=""))
 test.data2=cbind(ttilde=test.data$ttilde,delta=test.data$delta,X.cboost.test)
 
