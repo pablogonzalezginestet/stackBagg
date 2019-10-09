@@ -16,6 +16,8 @@
 #' @param B number of bootstrap samples
 #' @return a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients,the weights ,an indicator if the optimization procedure has converged and the value of penalization term chosen
 #' @import survival
+#' @import gam
+#' @import Matrix
 #' @rdname ensbagg
 #' @export
 
@@ -59,27 +61,63 @@ fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
 if(weighting=="CoxBoost"){
 # CoxBoost Weights
 #train data
-X.boost <- as.matrix(train.data[xnam])
-fit.cboost <- peperr::fit.CoxBoost(Surv(train.data$ttilde,train.data$deltac), x=X.boost,cplx=300) 
-
-wts.boost=NULL
-for (i in 1:nrow(train.data) ){
-  tao_temp <- min(train.data$ttilde[i],tao)
-  wts.boost<- c(wts.boost,abs(train.data$deltac[i]-1) / peperr::predictProb(fit.cboost, Surv(train.data$ttilde[i],train.data$deltac[i]), train.data[xnam],tao_temp,complexity = 300)[i])
+if(is.null(xnam.factor)){
+  
+  X.boost <- as.matrix(train.data[xnam])
+  fit.cboost <- peperr::fit.CoxBoost(Surv(train.data$ttilde,train.data$deltac), x=X.boost,cplx=300) 
+  wts.boost=NULL
+  for (i in 1:nrow(train.data) ){
+    tao_temp <- min(train.data$ttilde[i],tao)
+    wts.boost<- c(wts.boost,as.numeric(!is.na(train.data$E[i])) / peperr::predictProb(fit.cboost, Surv(train.data$ttilde[i],train.data$deltac[i]), train.data[xnam],tao_temp,complexity = 300)[i])
+  }
+  
+  }else{
+    
+  X.boost <- train.data[xnam.cont]
+  X.boost <- cbind(X.boost,predict(caret::dummyVars( ~ ., data =train.data[xnam.factor], fullRank=TRUE), newdata=train.data[xnam.factor]))
+  colnames(X.boost)=c(paste("x", 1:(dim(X.boost)[2]), sep=""))
+  train.data2=as.data.frame(cbind(ttilde=train.data$ttilde,deltac=train.data$deltac,X.boost))
+  X.boost=as.matrix(train.data2[,-(1:2)])
+  fit.cboost <- peperr::fit.CoxBoost(Surv(train.data2$ttilde,train.data2$deltac), x=X.boost,cplx=300) 
+  wts.boost=NULL
+  xnam2 <-names(train.data2)[-(1:2)] 
+  for (i in 1:nrow(train.data2) ){
+    tao_temp <- min(train.data2$ttilde[i],tao)
+    wts.boost<- c(wts.boost,as.numeric(!is.na(train.data$E[i])) / peperr::predictProb(fit.cboost, Surv(train.data2$ttilde[i],train.data2$deltac[i]), train.data2[xnam2],tao_temp,complexity = 300)[i])
+  }
+  
   }
 
 train.data$wts <- wts.boost
 train.data$sum_wts_one <- wts.boost/sum(wts.boost)
 
 #test data
+if(is.null(xnam.factor)){
 X.boost <- as.matrix(test.data[xnam])
 fit.cboost <- peperr::fit.CoxBoost(Surv(test.data$ttilde,test.data$deltac), x=X.boost,cplx=300) 
 
 wts.boost=NULL
 for (i in 1:nrow(test.data) ){
   tao_temp <- min(test.data$ttilde[i],tao)
-  wts.boost<- c(wts.boost,abs(test.data$deltac[i]-1) / peperr::predictProb(fit.cboost, Surv(test.data$ttilde[i],test.data$deltac[i]), test.data[xnam],tao_temp,complexity = 300)[i])
+  wts.boost<- c(wts.boost,as.numeric(!is.na(test.data$E[i])) / peperr::predictProb(fit.cboost, Surv(test.data$ttilde[i],test.data$deltac[i]), test.data[xnam],tao_temp,complexity = 300)[i])
   }
+
+} else {
+  X.boost <- test.data[xnam.cont]
+  X.boost <- cbind(X.boost,predict(caret::dummyVars( ~ ., data =test.data[xnam.factor], fullRank=TRUE), newdata=test.data[xnam.factor]))
+  colnames(X.boost)=c(paste("x", 1:(dim(X.boost)[2]), sep=""))
+  test.data2=as.data.frame(cbind(ttilde=test.data$ttilde,deltac=test.data$deltac,X.boost))
+  X.boost=as.matrix(test.data2[,-(1:2)])
+  fit.cboost <- peperr::fit.CoxBoost(Surv(test.data2$ttilde,test.data2$deltac), x=X.boost,cplx=300) 
+  wts.boost=NULL
+  xnam2 <-names(test.data2)[-(1:2)] 
+  for (i in 1:nrow(test.data2) ){
+    tao_temp <- min(test.data2$ttilde[i],tao)
+    wts.boost<- c(wts.boost,as.numeric(!is.na(test.data$E[i])) / peperr::predictProb(fit.cboost, Surv(test.data$ttilde[i],test.data$deltac[i]), test.data2[xnam2],tao_temp,complexity = 300)[i])
+  }
+  
+}
+
 
 test.data$wts <- wts.boost
 test.data$sum_wts_one <- wts.boost/sum(wts.boost)
@@ -93,16 +131,37 @@ if(weighting=="CoxPH"){
   #train data set
   cox.C.train<- survival::coxph(fmla.c, data=train.data)
   newdata_zero <- train.data[1,]
-  newdata_zero[xnam] <- 0
+  
+  if(is.null(xnam.factor)){
+    
+    newdata_zero[xnam] <- 0
+    basel_surv <- survival::survfit(cox.C.train, newdata=newdata_zero[xnam])
+    beta.cox.train <-  cox.C.train$coef
+    
+    wts.coxph=NULL
+    for (i in 1:nrow(train.data)){
+      newdata <- train.data[i,]
+      newdata_cov <-  train.data[i,xnam]
+      G <- basel_surv$surv ^(exp(sum(newdata_cov * beta.cox.train )))
+      wts.coxph <- c(wts.coxph, as.numeric(!is.na(newdata$E)) / (G[ max(which(basel_surv$time <= min(newdata$ttilde, tao) ) ) ]  ) )
+    }
+    
+  }else{
+    
+  for(s in 1:length(xnam.factor)) {newdata_zero[xnam.factor[s]]=levels(train.data[xnam.factor][,s])[1]}
+  newdata_zero[xnam.cont] <- 0
   basel_surv <- survival::survfit(cox.C.train, newdata=newdata_zero[xnam])
   beta.cox.train <-  cox.C.train$coef
+  dummies.factor.train=as.data.frame(predict(caret::dummyVars( ~ ., data =train.data[xnam.factor],fullRank = TRUE), newdata=train.data[xnam.factor]))
+  beta.cox.train=c(beta.cox.train[xnam.cont],beta.cox.train[!names(beta.cox.train) %in% xnam.cont ])
   
   wts.coxph=NULL
   for (i in 1:nrow(train.data)){
     newdata <- train.data[i,]
-    newdata_cov <-  train.data[i,xnam]
+    newdata_cov = cbind(train.data[i,xnam.cont],dummies.factor.train[i,])
     G <- basel_surv$surv ^(exp(sum(newdata_cov * beta.cox.train )))
     wts.coxph <- c(wts.coxph, as.numeric(!is.na(newdata$E)) / (G[ max(which(basel_surv$time <= min(newdata$ttilde, tao) ) ) ]  ) )
+  }
   }
   
   train.data$wts <- wts.coxph
@@ -111,18 +170,37 @@ if(weighting=="CoxPH"){
   #test data set
   cox.C.test<- survival::coxph(fmla.c, data=test.data)
   newdata_zero <- test.data[1,]
-  newdata_zero[xnam]=0
+  
+  if(is.null(xnam.factor)){
+    
+    newdata_zero[xnam]=0
+    basel_surv <- survival::survfit(cox.C.test, newdata=newdata_zero[xnam])
+    beta.cox.test <-  cox.C.test$coef
+    
+    wts.coxph=NULL
+    for (i in 1:nrow(test.data)){
+      newdata <- test.data[i,]
+      newdata_cov <-  test.data[i,xnam]
+      G <- basel_surv$surv ^(exp(sum(newdata_cov * beta.cox.test )))
+      wts.coxph <- c(wts.coxph, as.numeric(!is.na(newdata$E)) / (G[ max(which(basel_surv$time <= min(newdata$ttilde, tao) ) ) ]  ) )
+    }
+  }else{
+    
+  for(s in 1:length(xnam.factor)) {newdata_zero[xnam.factor[s]]=levels(test.data[xnam.factor][,s])[1]}
+  newdata_zero[xnam.cont] <- 0
   basel_surv <- survival::survfit(cox.C.test, newdata=newdata_zero[xnam])
   beta.cox.test <-  cox.C.test$coef
+  dummies.factor.test=as.data.frame(predict(caret::dummyVars( ~ ., data =test.data[xnam.factor],fullRank = TRUE), newdata=test.data[xnam.factor]))
+  beta.cox.test=c(beta.cox.test[xnam.cont],beta.cox.test[!names(beta.cox.test) %in% xnam.cont ])
   
   wts.coxph=NULL
   for (i in 1:nrow(test.data)){
     newdata <- test.data[i,]
-    newdata_cov <-  test.data[i,xnam]
+    newdata_cov = cbind(test.data[i,xnam.cont],dummies.factor.test[i,])
     G <- basel_surv$surv ^(exp(sum(newdata_cov * beta.cox.test )))
     wts.coxph <- c(wts.coxph, as.numeric(!is.na(newdata$E)) / (G[ max(which(basel_surv$time <= min(newdata$ttilde, tao) ) ) ]  ) )
   }
-
+}
   test.data$wts <- wts.coxph
   test.data$sum_wts_one <- wts.coxph/sum(wts.coxph)
   
@@ -152,7 +230,7 @@ if(length(tuneparams$gam)>1){
 auc_ipcwBagg <- matrix(NA, nrow = 1 , ncol = A + 1 )
 auc_native_weights <- matrix(NA, nrow = 1 , ncol =A_native)
 
-algorithm2<- ipcw_ensbagg( folds=folds, 
+algorithm2<- ensBagg::ipcw_ensbagg( folds=folds, 
                           MLprocedures=MLprocedures,
                           fmla=fmla,
                           tuneparams=tuneparams,
@@ -215,11 +293,31 @@ predcoxfit <- riskRegression::predictRisk(coxfit, newdata = test.data[xnam], cau
 auc_survival1 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predcoxfit,cause=1,wts=test.data$wts,tao)
 
 #cox boost 
-X.coxboost=as.matrix(train.data[xnam])
-newX.coxboost <- as.matrix(as.data.frame(test.data)[xnam])
-fitCoxboost <- CoxBoost::CoxBoost(time=train.data$ttilde,status=train.data$delta, x=X.coxboost,stepno=300,penalty=100)
-predCoxboost <- predict(fitCoxboost,newdata=newX.coxboost,times=tao,type="CIF")
-auc_survival2 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predCoxboost,cause=1,wts=test.data$wts,tao)
+
+if(is.null(xnam.factor)){
+  X.coxboost=as.matrix(train.data[xnam])
+  newX.coxboost <- as.matrix(as.data.frame(test.data)[xnam])
+  fitCoxboost <- CoxBoost::CoxBoost(time=train.data$ttilde,status=train.data$delta, x=X.coxboost,stepno=300,penalty=100)
+  pred.coxboost <- predict(fitCoxboost,newdata=newX.coxboost,times=tao,type="CIF")
+
+  }else{
+X.cboost.train <- train.data[xnam.cont]
+X.cboost.train<- cbind(X.cboost.train,predict(caret::dummyVars( ~ ., data =train.data[xnam.factor], levelsOnly = FALSE), newdata=train.data[xnam.factor]))
+colnames(X.cboost.train)=c(paste("x", 1:(dim(X.cboost.train)[2]), sep=""))
+train.data2=cbind(ttilde=train.data$ttilde,delta=train.data$delta,X.cboost.train)
+
+X.cboost.test <- test.data[xnam.cont]
+X.cboost.test <- cbind(X.cboost.test,predict(caret::dummyVars( ~ ., data =test.data[xnam.factor], levelsOnly = FALSE), newdata=test.data[xnam.factor]))
+colnames(X.cboost.test)=c(paste("x", 1:(dim(X.cboost.test)[2]), sep=""))
+test.data2=cbind(ttilde=test.data$ttilde,delta=test.data$delta,X.cboost.test)
+
+X.coxboost=as.matrix(train.data2[c(-1,-2)])
+newX.coxboost <- as.matrix(as.data.frame(test.data2)[c(-1,-2)])
+fit.coxboost <-  CoxBoost::CoxBoost(time=train.data2$ttilde,status=train.data2$delta, x=X.coxboost,stepno=300,penalty=100)
+pred.coxboost <- predict(fit.coxboost,newdata=newX.coxboost,times=tao,type="CIF")
+}
+
+auc_survival2 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=pred.coxboost,cause=1,wts=test.data$wts,tao)
 
 #random forest
 fmla.rf <- as.formula(paste("Surv(ttilde,delta) ~ ", paste(xnam, collapse= "+")))
@@ -231,7 +329,7 @@ auc_survival3 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=cifRf,
 
 auc_survival<- cbind(auc_survival1,auc_survival2,auc_survival3)
 colnames(auc_survival) <- c("CoxPH","CoxBoost","Random Forest")
-prediction_survival <- cbind(predcoxfit,predCoxboost,cifRf)
+prediction_survival <- cbind(predcoxfit,pred.coxboost,cifRf)
 colnames(prediction_survival) <- c("CoxPH","CoxBoost","Random Forest")
 
 
