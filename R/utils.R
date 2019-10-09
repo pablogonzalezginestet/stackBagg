@@ -170,8 +170,8 @@ ML_list <- list(
       testdata <- as.data.frame(testdata)[xnam]
     }else{
       X=data[xnam.cont]
-      X=cbind(X,predict(caret::dummyVars( ~ ., data =data[xnam.factor], levelsOnly = FALSE), newdata=data[xnam.factor]))
-      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
+      X=cbind(X,predict(caret::dummyVars( ~ ., data =data[xnam.factor], fullRank=TRUE), newdata=data[xnam.factor]))
+      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor],  fullRank=TRUE), newdata=testdata[xnam.factor])))
     }
     
     X=X[!is.na(data$E),]
@@ -208,8 +208,8 @@ ML_list <- list(
       testdata <- as.data.frame(testdata)[xnam]
     }else{
       X=data[xnam.cont]
-      X=cbind(X,predict(caret::dummyVars( ~ ., data =data[xnam.factor], levelsOnly = FALSE), newdata=data[xnam.factor]))
-      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
+      X=cbind(X,predict(caret::dummyVars( ~ ., data =data[xnam.factor], fullRank=TRUE), newdata=data[xnam.factor]))
+      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor],  fullRank=TRUE), newdata=testdata[xnam.factor])))
     }
     X=X[!is.na(data$E),]
     
@@ -227,8 +227,8 @@ ML_list <- list(
       fmla=as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
     }else{
       X=traindata[xnam.cont]
-      X=cbind(X,predict(caret::dummyVars( ~ ., data =traindata[xnam.factor], levelsOnly = FALSE), newdata=traindata[xnam.factor]))
-      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor], levelsOnly = FALSE), newdata=testdata[xnam.factor])))
+      X=cbind(X,predict(caret::dummyVars( ~ ., data =traindata[xnam.factor], fullRank=TRUE), newdata=traindata[xnam.factor]))
+      testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor],  fullRank=TRUE), newdata=testdata[xnam.factor])))
       colnames(X)=c(paste("x", 1:(dim(X)[2]), sep=""))
       traindata=cbind(E=traindata$E,X)
       colnames(testdata)=c(paste("x", 1:(dim(testdata)[2]), sep=""))
