@@ -311,9 +311,12 @@ colnames(prediction_native_weights) <- c(ml_names[1:A_native])
 # cause specific Cox regression
 fmla.cox <- as.formula(paste("Hist(ttilde,delta) ~ ", paste(xnam, collapse= "+")))
 coxfit <- riskRegression::CSC(formula = fmla.cox,data = train.data,cause=1,surv.type="surv") 
-predcoxfit <- riskRegression::predictRisk(coxfit, newdata = test.data[xnam], cause = 1, times = tao)
+predcoxfit <- tryCatch( riskRegression::predictRisk(coxfit, newdata = test.data[xnam], cause = 1, times = tao), error=function(e) { e ; return(NA) } )
+if (!is.na(predcoxfit)) { 
 auc_survival1 <- ensBagg::ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predcoxfit,cause=1,wts=test.data$wts,tao)
-
+}else{
+  auc_survival1 <- NA
+}
 #cox boost 
 
 if(is.null(xnam.factor)){
