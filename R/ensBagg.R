@@ -31,7 +31,7 @@ if (missing(B)) {
 xnam.factor <- colnames(train.data[xnam])[sapply(train.data[xnam], class)=="factor"]
 if(length(xnam.factor)==0){ xnam.factor<- NULL}
 xnam.cont <- xnam[!(xnam %in% xnam.factor)]
-xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
+xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>10 | length(unique(z))<5 & sum(table(z)/dim(train.data)[1]>0.05)>=3)]
 
 # checking if the data was provided in the right form
 #if(names(train.data)[1]!="id" | names(train.data)[1]!="ID" | names(train.data)[1]!="Id" ){
@@ -55,6 +55,24 @@ train.data<- dplyr::mutate(train.data,id = 1:length(ttilde),E=as.factor(ifelse(t
                          deltac=ifelse(delta==0,1,0))
 test.data<- dplyr::mutate(test.data,id = 1:length(ttilde),E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
                            deltac=ifelse(delta==0,1,0))
+
+#check that there is no rare categories in each factor variable
+if(!is.null(xnam.factor)) {
+  for(s in 1:length(xnam.factor)) {
+    level_to_drop <-  table(train.data[xnam.factor][,s])/dim(train.data)[1]<.05
+    for(q in 1:length(level_to_drop)){
+      if(level_to_drop[q]==TRUE){  
+        train.data<- train.data[!train.data[xnam.factor][,s]==levels(train.data[xnam.factor][,s])[q],]
+        test.data<- test.data[!test.data[xnam.factor][,s]==levels(test.data[xnam.factor][,s])[q],]
+      }
+    }
+    if(any(level_to_drop==TRUE)){
+      train.data[xnam.factor][,s] <- droplevels(train.data[xnam.factor][,s])
+      test.data[xnam.factor][,s]=droplevels(test.data[xnam.factor][,s])}
+  }
+}
+
+
 
 fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
 
@@ -288,7 +306,7 @@ colnames(prediction_native_weights) <- c(ml_names[1:A_native])
 #survival
 # cause specific Cox regression
 fmla.cox <- as.formula(paste("Hist(ttilde,delta) ~ ", paste(xnam, collapse= "+")))
-coxfit <- riskRegression::CSC(formula = fmla.cox,data = train.data) 
+coxfit <- riskRegression::CSC(formula = fmla.cox,data = train.data,cause=1,surv.type="surv") 
 predcoxfit <- riskRegression::predictRisk(coxfit, newdata = test.data[xnam], cause = 1, times = tao)
 auc_survival1 <- ensBagg::ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predcoxfit,cause=1,wts=test.data$wts,tao)
 
