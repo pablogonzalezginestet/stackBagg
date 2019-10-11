@@ -84,6 +84,7 @@ MLprocedures <- function(traindata,
   
   
   sampledata<- as.data.frame(traindata[i, ])
+
   
   pred1 <- ML_list$logfun(sampledata,testdata,fmla, xnam,xnam.factor,xnam.cont)
   pred2 <- ML_list$GAMfun(sampledata,testdata,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param)
