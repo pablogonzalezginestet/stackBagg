@@ -31,7 +31,11 @@ if (missing(B)) {
 xnam.factor <- colnames(train.data[xnam])[sapply(train.data[xnam], class)=="factor"]
 if(length(xnam.factor)==0){ xnam.factor<- NULL}
 xnam.cont <- xnam[!(xnam %in% xnam.factor)]
-xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>10 | length(unique(z))<5 & sum(table(z)/dim(train.data)[1]>0.05)>=3)]
+# continous variables to be applied the smoothing function in the gam must have
+# 10 or more unique values or
+# have to have four values with more than 5%
+xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>10 | length(unique(z))<=10 & sum(table(z)/dim(train.data)[1]>0.05)>=4)]
+
 
 # checking if the data was provided in the right form
 #if(names(train.data)[1]!="id" | names(train.data)[1]!="ID" | names(train.data)[1]!="Id" ){
