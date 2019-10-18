@@ -11,6 +11,7 @@
 #' @param tao evaluation time point of interest
 #' @param weighting Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.
 #' @param folds Number of folds
+#' @param ens.library character vector of prediction algorithms. The prediction algorithms supported are: "ens.glm","ens.gam","ens.lasso","ens.randomForest","ens.svm","ens.bartMachine","ens.knn","ens.nn")
 #' @param tuneparams a list of tune parameters for each machine learning procedure. Name them as gam_param, lasso_param, randomforest_param, svm_param, bart_param, knn_param, nn_param.
 #' Default values are the same used for the simulation.
 #' @param B number of bootstrap samples
@@ -21,9 +22,10 @@
 #' @rdname ensbagg
 #' @export
 
-ensBagg <- function(train.data,test.data, xnam, tao , weighting , folds , tuneparams=NULL ,B=NULL ){
+ensBagg <- function(train.data,test.data, xnam, tao , weighting , folds ,ens.library, tuneparams=NULL ,B=NULL ){
 
-  
+ all.library <- ensBagg::ens.all.algorithms()
+
 if (missing(B)) {
   B <- 10
 }
@@ -237,47 +239,57 @@ if (missing(tuneparams)) {
   tuneparams <- ensBagg::parametersSimulation(folds = 5,xnam,train.data,tao)
 }  
 
-if(length(tuneparams$gam)>1){
-  A<- length(ML_list)+1 # if we consider gam with df=3 and df=4
-  A_native <- length(ML_list_natively)+1
-  ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
-}else{
-  A<- length(ML_list)
-  A_native <- length(ML_list_natively)
-  ml_names<- c("LogisticReg","GAM","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
-}
+all.natively<- c("ens.glm","ens.gam","ens.lasso","ens.randomForest")
+
+if("ens.gam" %in% ens.library & length(tuneparams$gam)>1){
+  A<- length(ens.library)+1 # if we consider gam with df=3 and df=4
+  A_native <- sum(all.natively %in% ens.library)+1
+  #ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
+  ml_names<- all.library[all.library %in% ens.library]
+  ml_names <- c(ml_names[1],"ens.gam.3","ens.gam.4",ml_names[-(1:2)])
+  ml_names_natively <- all.natively[all.natively %in% ens.library]
+  ml_names_natively <- c(ml_names_natively[1], "ens.gam.3","ens.gam.4",ml_names_natively[-(1:2)])
+  }else{
+  A<- length(ens.library)
+  A_native <- sum(all.natively %in% ens.library)
+  #ml_names<- c("LogisticReg","GAM","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
+  ml_names<- all.library[all.library %in% ens.library]
+  ml_names_natively <- all.natively[all.natively %in% ens.library]
+  }
 
 
 
 auc_ipcwBagg <- matrix(NA, nrow = 1 , ncol = A + 1 )
 auc_native_weights <- matrix(NA, nrow = 1 , ncol =A_native)
 
-algorithm2<- ensBagg::ipcw_ensbagg( folds=folds, 
+algorithm2<- ipcw_ensbagg( folds=folds, 
                           MLprocedures=MLprocedures,
                           fmla=fmla,
                           tuneparams=tuneparams,
                           tao,
                           B=B,
+                          A,
                           data=train.data ,
-                          A=A,
                           xnam=xnam,
                           xnam.factor=xnam.factor,
                           xnam.cont=xnam.cont,
-                          xnam.cont.gam=xnam.cont.gam )
+                          xnam.cont.gam=xnam.cont.gam,
+                          ens.library=ens.library)
 
 
  
-prediction_ipcwBagg<- ensBagg::ipcw_genbagg( fmla=fmla,
+prediction_ipcwBagg<- ipcw_genbagg( fmla=fmla,
                                    tuneparams=tuneparams,
                                    MLprocedures=MLprocedures,
                                    traindata = train.data,
                                    testdata = test.data ,
-                                   A=A,
                                    B=B,
+                                   A,
                                    xnam=xnam,
                                    xnam.factor=xnam.factor,
                                    xnam.cont=xnam.cont,
-                                   xnam.cont.gam=xnam.cont.gam )
+                                   xnam.cont.gam=xnam.cont.gam,
+                                   ens.library)
 
 
 prediction_ens_ipcwBagg <- as.matrix(prediction_ipcwBagg) %*% algorithm2$coefficients #combining predictions
@@ -302,8 +314,8 @@ prediction_native_weights <- MLprocedures_natively(   traindata = train.data,
   
 auc_native_weights[1,1:A_native] <- apply(prediction_native_weights,2, function(x) ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=crossprod(t(x),1),cause=1,wts=test.data$wts,tao))
 auc_native_weights <- as.matrix(auc_native_weights)
-colnames(auc_native_weights) <- c(ml_names[1:A_native])
-colnames(prediction_native_weights) <- c(ml_names[1:A_native])
+colnames(auc_native_weights) <- ml_names_natively
+colnames(prediction_native_weights) <- ml_names_natively
 
 # Survival Methods
 
@@ -312,7 +324,7 @@ colnames(prediction_native_weights) <- c(ml_names[1:A_native])
 fmla.cox <- as.formula(paste("Hist(ttilde,delta) ~ ", paste(xnam, collapse= "+")))
 coxfit <- riskRegression::CSC(formula = fmla.cox,data = train.data,cause=1,surv.type="surv") 
 predcoxfit <- tryCatch( riskRegression::predictRisk(coxfit, newdata = test.data[xnam], cause = 1, times = tao), error=function(e) { e ; return(NA) } )
-if (!is.na(predcoxfit)) { 
+if (all(!is.nan(predcoxfit))) { 
 auc_survival1 <- ensBagg::ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=predcoxfit,cause=1,wts=test.data$wts,tao)
 }else{
   auc_survival1 <- NA
