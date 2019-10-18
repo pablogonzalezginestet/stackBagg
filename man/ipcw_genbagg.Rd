@@ -4,8 +4,8 @@
 \alias{ipcw_genbagg}
 \title{Algorithm 1: General IPCW Bagging}
 \usage{
-ipcw_genbagg(fmla, tuneparams, MLprocedures, traindata, testdata, A, B,
-  xnam, xnam.factor, xnam.cont, xnam.cont.gam)
+ipcw_genbagg(fmla, tuneparams, MLprocedures, traindata, testdata, B, A,
+  xnam, xnam.factor, xnam.cont, xnam.cont.gam, ens.library)
 }
 \arguments{
 \item{fmla}{formula object ex. "E ~ x1+x2"}
@@ -18,8 +18,6 @@ ipcw_genbagg(fmla, tuneparams, MLprocedures, traindata, testdata, A, B,
 
 \item{testdata}{a test data set}
 
-\item{A}{number of algorithms in the library}
-
 \item{B}{number of bootstrap samples}
 
 \item{xnam}{all covariates in the model}
@@ -29,6 +27,8 @@ ipcw_genbagg(fmla, tuneparams, MLprocedures, traindata, testdata, A, B,
 \item{xnam.cont}{continous variables include in the model}
 
 \item{xnam.cont.gam}{continous variables to be included in the smoothing operator gam::s(,df=)}
+
+\item{ens.library}{algorithms in the library}
 }
 \value{
 a matrix with the predictions on the test data set of each machine learning algorithm considered in \link{MLprocedures}
