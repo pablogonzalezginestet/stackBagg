@@ -18,7 +18,7 @@ optimun_auc_coef(coef_init, lambda, data, Z, tao)
 risk_auc(par, lambda, Z, data, tao)
 
 MLprocedures(traindata, testdata, fmla, xnam, xnam.factor, xnam.cont,
-  xnam.cont.gam, tuneparams, i)
+  xnam.cont.gam, tuneparams, ens.library, i)
 
 ML_list
 
