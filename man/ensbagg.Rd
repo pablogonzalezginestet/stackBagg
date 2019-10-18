@@ -4,7 +4,7 @@
 \alias{ensBagg}
 \title{Ensemble IPCW Bagging}
 \usage{
-ensBagg(train.data, test.data, xnam, tao, weighting, folds,
+ensBagg(train.data, test.data, xnam, tao, weighting, folds, ens.library,
   tuneparams = NULL, B = NULL)
 }
 \arguments{
@@ -23,6 +23,8 @@ Censored observations must be denoted by the value 0. Main event of interest is 
 \item{weighting}{Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.}
 
 \item{folds}{Number of folds}
+
+\item{ens.library}{character vector of prediction algorithms. The prediction algorithms supported are: "ens.glm","ens.gam","ens.lasso","ens.randomForest","ens.svm","ens.bartMachine","ens.knn","ens.nn")}
 
 \item{tuneparams}{a list of tune parameters for each machine learning procedure. Name them as gam_param, lasso_param, randomforest_param, svm_param, bart_param, knn_param, nn_param.
 Default values are the same used for the simulation.}
