@@ -45,6 +45,17 @@ risk_auc<- function(par,lambda,Z,data,tao){
 
 ############### Machine Learning Procedures ############################
 
+
+#' @description  Library of Machine Learning procedures
+#' @return a character vector with all prediction algorithms  supported by ensBagg 
+#' @export
+
+ens.all.algorithms <- function(){
+  return(c("ens.glm","ens.gam","ens.lasso","ens.randomForest","ens.svm","ens.bartMachine","ens.knn","ens.nn"))
+}
+
+
+
 #' @description  Predictions based on a library of Machine Learning procedures
 #' @param traindata training data set
 #' @param testdata validation/test data set
@@ -80,23 +91,55 @@ MLprocedures <- function(traindata,
                          xnam.cont,
                          xnam.cont.gam,
                          tuneparams,
+                         ens.library,
                          i){ 
   
   
   sampledata<- as.data.frame(traindata[i, ])
-
+  pred <- NULL
+  if("ens.glm" %in% ens.library){
+    pred_temp <- ML_list$logfun(sampledata,testdata,fmla, xnam,xnam.factor,xnam.cont)
+    pred <- cbind(pred_temp,pred)
+  }
+  if("ens.gam" %in% ens.library){
+    pred_temp <- ML_list$GAMfun(sampledata,testdata,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param)
+    pred <- cbind(pred_temp,pred)
+  }
+  if("ens.lasso" %in% ens.library){
+    pred_temp <- ML_list$lassofun(sampledata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$lasso_param)
+    pred <- cbind(pred_temp,pred)
+  }
+  if("ens.randomForest" %in% ens.library){
+    pred_temp <- ML_list$rffun(sampledata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$randomforest_param)
+    pred <- cbind(pred_temp,pred)
+  }
+  if("ens.svm" %in% ens.library){
+    pred_temp <- ML_list$svmfun(sampledata,testdata,xnam,xnam.factor,xnam.cont,tuneparams$svm_param)
+    pred <- cbind(pred_temp,pred)
+  }
   
-  pred1 <- ML_list$logfun(sampledata,testdata,fmla, xnam,xnam.factor,xnam.cont)
-  pred2 <- ML_list$GAMfun(sampledata,testdata,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param)
-  pred3 <- ML_list$lassofun(sampledata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$lasso_param)
-  pred4 <- ML_list$rffun(sampledata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$randomforest_param)
-  pred5 <- ML_list$svmfun(sampledata,testdata,xnam,xnam.factor,xnam.cont,tuneparams$svm_param)
-  pred6 <- ML_list$bartfun(sampledata,testdata,xnam,xnam.factor,xnam.cont, tuneparams$bart_param)
-  pred7 <- ML_list$knnfun(sampledata,testdata,xnam,xnam.factor,xnam.cont, tuneparams$knn_param)
-  pred8 <- ML_list$nn(sampledata,testdata,xnam,xnam.factor,xnam.cont,tuneparams$nn_param)
-  return(cbind(pred1,pred2,pred3,pred4,pred5,pred6,pred7,pred8))
+  if("ens.bartMachine" %in% ens.library){
+    pred_temp <-  ML_list$bartfun(sampledata,testdata,xnam,xnam.factor,xnam.cont, tuneparams$bart_param)
+    pred <- cbind(pred_temp,pred)
+  }
+  
+  
+  if("ens.knn" %in% ens.library){
+    pred_temp <-  ML_list$knnfun(sampledata,testdata,xnam,xnam.factor,xnam.cont, tuneparams$knn_param)
+    pred <- cbind(pred_temp,pred)
+  }
+  
+  if("ens.nn" %in% ens.library){
+    pred_temp <- ML_list$nn(sampledata,testdata,xnam,xnam.factor,xnam.cont,tuneparams$nn_param)
+    pred <- cbind(pred_temp,pred)
+  }
+  
+  return(pred)  
+  
 }
 
+  
+  
 #' @description  Library of Machine Learning procedures
 #' @return a list of Machine Learning functions
 #' @rdname EnsBagg-internal
@@ -269,13 +312,30 @@ MLprocedures_natively <- function(
          xnam.cont.gam,
          tuneparams
          ){ 
-  wts <- traindata$wts
-  pred1 <- ML_list_natively$logfun(traindata,testdata,fmla, xnam,xnam.factor,xnam.cont,wts)
-  pred2 <- ML_list_natively$GAMfun(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param,wts)
-  pred3 <- ML_list_natively$lassofun(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$lasso_param,wts)
-  pred4 <- ML_list_natively$rffun(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$randomforest_param)
   
-  return(cbind(pred1,pred2,pred3,pred4))
+  wts <- traindata$wts
+  pred <- NULL
+  if("ens.glm" %in% ens.library){
+  pred_temp <- ML_list_natively$logfun(traindata,testdata,fmla, xnam,xnam.factor,xnam.cont,wts)
+  pred <- cbind(pred_temp,pred)
+  }
+
+  if("ens.gam" %in% ens.library){
+  pred_temp <- ML_list_natively$GAMfun(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param,wts)
+  pred <- cbind(pred_temp,pred)
+  }
+  
+  if("ens.lasso" %in% ens.library){
+  pred_temp <- ML_list_natively$lassofun(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$lasso_param,wts)
+  pred <- cbind(pred_temp,pred)
+  }
+  
+  if("ens.randomForest" %in% ens.library){
+  pred_temp <- ML_list_natively$rffun(traindata,testdata,fmla,xnam,xnam.factor,xnam.cont,tuneparams$randomforest_param)
+  pred <- cbind(pred_temp,pred)
+  }
+  
+  return(pred)
 }
 
 
