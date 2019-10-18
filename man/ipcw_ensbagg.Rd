@@ -4,8 +4,8 @@
 \alias{ipcw_ensbagg}
 \title{Algorithm 2: Ensemble IPCW Bagging}
 \usage{
-ipcw_ensbagg(folds, MLprocedures, fmla, tuneparams, tao, B = NULL, data,
-  A, xnam, xnam.factor, xnam.cont, xnam.cont.gam)
+ipcw_ensbagg(folds, MLprocedures, fmla, tuneparams, tao, B = NULL, A,
+  data, xnam, xnam.factor, xnam.cont, xnam.cont.gam, ens.library)
 }
 \arguments{
 \item{folds}{Number of folds}
@@ -22,8 +22,6 @@ ipcw_ensbagg(folds, MLprocedures, fmla, tuneparams, tao, B = NULL, data,
 
 \item{data}{a training data set}
 
-\item{A}{a number of machine learning algorithms in the library}
-
 \item{xnam}{all covariates in the model}
 
 \item{xnam.factor}{categorical variables include in the model}
@@ -31,6 +29,8 @@ ipcw_ensbagg(folds, MLprocedures, fmla, tuneparams, tao, B = NULL, data,
 \item{xnam.cont}{continous variables include in the model}
 
 \item{xnam.cont.gam}{continous variables to be included in the smoothing operator gam::s(,df)}
+
+\item{ens.library}{algorithms in the library}
 }
 \value{
 a list with the predictions of each machine learning algorithm (id, predictions), the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
