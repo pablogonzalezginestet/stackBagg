@@ -4,7 +4,8 @@
 \alias{prediction_discard}
 \title{Prediction discarding censored observations}
 \usage{
-prediction_discard(train.data, test.data, xnam, tao, tuneparams = NULL)
+prediction_discard(train.data, test.data, xnam, tao, ens.library,
+  tuneparams = NULL)
 }
 \arguments{
 \item{train.data}{a data.frame with at least the following variables: 

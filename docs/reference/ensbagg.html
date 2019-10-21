@@ -8,11 +8,13 @@
 
 <title>Ensemble IPCW Bagging — ensBagg • ensBagg</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -32,10 +34,11 @@
 
 
 
-<meta property="og:title" content="Ensemble IPCW Bagging — ensBagg" />
 
+<meta property="og:title" content="Ensemble IPCW Bagging — ensBagg" />
 <meta property="og:description" content="Main Algorithm" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -100,7 +103,6 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -122,14 +124,12 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Main Algorithm</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>ensBagg</span>(<span class='no'>train.data</span>, <span class='no'>test.data</span>, <span class='no'>xnam</span>, <span class='no'>tao</span>, <span class='no'>weighting</span>, <span class='no'>folds</span>,
+    <pre class="usage"><span class='fu'>ensBagg</span>(<span class='no'>train.data</span>, <span class='no'>test.data</span>, <span class='no'>xnam</span>, <span class='no'>tao</span>, <span class='no'>weighting</span>, <span class='no'>folds</span>, <span class='no'>ens.library</span>,
   <span class='kw'>tuneparams</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -162,6 +162,10 @@ Censored observations must be denoted by the value 0. Main event of interest is 
       <td><p>Number of folds</p></td>
     </tr>
     <tr>
+      <th>ens.library</th>
+      <td><p>character vector indicating the prediction algorithms to be consider in the analyisis. The prediction algorithms supported by this package are: "ens.glm","ens.gam","ens.lasso","ens.randomForest","ens.svm","ens.bartMachine","ens.knn","ens.nn"). See the function ensBagg::ens.all.algorithms().</p></td>
+    </tr>
+    <tr>
       <th>tuneparams</th>
       <td><p>a list of tune parameters for each machine learning procedure. Name them as gam_param, lasso_param, randomforest_param, svm_param, bart_param, knn_param, nn_param.
 Default values are the same used for the simulation.</p></td>
@@ -171,20 +175,18 @@ Default values are the same used for the simulation.</p></td>
       <td><p>number of bootstrap samples</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>a list with the predictions of each machine learning algorithm, the average AUC across folds for each of them, the optimal coefficients,the weights ,an indicator if the optimization procedure has converged and the value of penalization term chosen</p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-          </ul>
+    </ul>
 
   </div>
 </div>
@@ -192,11 +194,11 @@ Default values are the same used for the simulation.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Pablo Gonzalez Ginestet, Erin Gabriel, Julian Wolfson.</p>
+  <p>Developed by Pablo Gonzalez Ginestet.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

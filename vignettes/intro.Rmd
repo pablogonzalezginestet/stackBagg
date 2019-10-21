@@ -103,6 +103,13 @@ xnam <- names(train)[-(1:3)]
 xnam
 ````
 
+We have also to specify the library of algorithms that we want to use to predict the event of interest and to be used to form the ensemble. We could see all the algorithms that the user could potentially include in the analysis through __ensBagg::ens.all.algorithms()__. Let 's use all of them and we denote it as __ens.library__.
+
+````{r}
+ens.library <-ensBagg::ens.all.algorithms()
+ens.library
+````
+
 Another argument of the function __ensBagg::ensBagg__ is a list of tune parameters for each machine learning procedure. If this argument is missing, the function uses as default values the same used for the simulation in the paper. For now, we are going to use the default values for the tune parameters.
 Additionally, we will use 5 folds and we are going to show the results computing the weights under a Cox proportional hazard model (CoxPH) and boosting
 Cox regression (Cox-Boost).
@@ -110,7 +117,7 @@ Cox regression (Cox-Boost).
 Firstly, we model the weights under CoxPH and we train the different models and get their predictions on the test data set.
 
 ````{r, warning=FALSE}
-pred <- ensBagg::ensBagg(train.data = train,test.data = test,xnam = xnam,tao = 26.5,weighting = "CoxPH",folds = 5,ens.library = )
+pred <- ensBagg::ensBagg(train.data = train,test.data = test,xnam = xnam,tao = 26.5,weighting = "CoxPH",folds = 5,ens.library = ens.library )
 ````
 
 We show several output of pred.
@@ -165,7 +172,7 @@ The ensemble ROC curve is
 
 
 ````{r}
-ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"Ensemble"],wts=pred$wts_test,tao=26.5)
+ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"Ensemble"],wts=pred$wts_test,tao=26.5,method = "ipcw")
 ````
 
 
@@ -173,7 +180,7 @@ The GAM.4 ROC curve is
 
 
 ````{r}
-ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"GAM.4"],wts=pred$wts_test,tao=26.5)
+ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"ens.gam.4"],wts=pred$wts_test,tao=26.5,method = "ipcw")
 ````
 
 
@@ -181,7 +188,7 @@ The k-NN  ROC curve is
 
 
 ````{r}
-ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"k-NN"],wts=pred$wts_test,tao=26.5)
+ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"ens.knn"],wts=pred$wts_test,tao=26.5,method = "ipcw")
 ````
 
 
@@ -223,10 +230,10 @@ Lastly, we could see the performance of the algorithms if we were to discard the
 
 ````{r}
 
-pred.discard <- ensBagg::prediction_discard(train.data = train,test.data = test,xnam = xnam,tao = 26.5)
+pred.discard <- ensBagg::prediction_discard(train.data = train,test.data = test,xnam = xnam,tao = 26.5,ens.library=ens.library)
 head(pred.discard$prediction_discard)
 pred.discard$auc_discard
-ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred.discard$prediction_discard[,"GAM.4"],tao=26.5,method = "discard")
+ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred.discard$prediction_discard[,"ens.gam.4"],tao=26.5,method = "discard")
 
 ````
 
