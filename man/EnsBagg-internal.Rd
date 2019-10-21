@@ -27,7 +27,7 @@ MLprocedures_natively(traindata, testdata, fmla, xnam, xnam.factor,
 
 ML_list_natively
 
-grid_parametersDataHIV(fmla, xnam, data)
+grid_parametersDataHIV(xnam, data, tao)
 }
 \arguments{
 \item{coef_init}{starting values for the coefficients}
@@ -70,9 +70,9 @@ grid_parametersDataHIV(fmla, xnam, data)
 
 \item{tuneparams}{a list of tune parameters for each machine learning procedure}
 
-\item{fmla}{formula object ex. "E ~ x1+x2"}
-
 \item{data}{a training data set}
+
+\item{tao}{time point of interest}
 }
 \value{
 a vector with the optimal AUC value and the optimal coefficient
