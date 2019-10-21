@@ -27,8 +27,13 @@ tune_params_ml <- function( gam_param,
                             xnam,
                             tao,
                             data ) {
-
   
+data<- dplyr::mutate(data,id = 1:length(ttilde),E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))) )
+
+xnam.factor <- colnames(data[xnam])[sapply(data[xnam], class)=="factor"]
+if(length(xnam.factor)==0){ xnam.factor<- NULL}
+xnam.cont <- xnam[!(xnam %in% xnam.factor)]
+xnam.cont.gam <- xnam.cont[apply(data[xnam.cont],2, function(z) length(unique(z))>10 | length(unique(z))<=10 & sum(table(z)/dim(data)[1]>0.05)>=4)]
 fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
   
 pred.test.gam=NULL
@@ -57,25 +62,68 @@ for (k in 1:folds) {
   
   train.set=train.set[!is.na(train.set$E),]
   
-  pred.gam=ML_list$GAMfun(data=train.set,testdata=test.set,fmla,gam_param)
+  pred.gam=ML_list$GAMfun(data=train.set,
+                          testdata=test.set,
+                          fmla,
+                          xnam,
+                          xnam.factor,
+                          xnam.cont,
+                          xnam.cont.gam,
+                          param=gam_param)
   pred.test.gam<-rbind(pred.test.gam, pred.gam )
   
-  pred.lasso=apply(as.matrix(lasso_param),1,function(x) ML_list$lassofun(data=train.set,testdata=test.set,fmla,x) ) 
+  pred.lasso=apply(as.matrix(lasso_param),1,function(x) ML_list$lassofun(data=train.set,
+                                                                         testdata=test.set,
+                                                                         fmla,
+                                                                         xnam,
+                                                                         xnam.factor,
+                                                                         xnam.cont,
+                                                                         param=x) ) 
   pred.test.lasso=rbind(pred.test.lasso, pred.lasso )
   
-  pred.rf=apply(as.matrix(randomforest_param),1,function(x) ML_list$rffun(data=train.set,testdata=test.set,fmla,x) ) 
+  pred.rf=apply(as.matrix(randomforest_param),1,function(x) ML_list$rffun(data=train.set,
+                                                                          testdata=test.set,
+                                                                          fmla,
+                                                                          xnam,
+                                                                          xnam.factor,
+                                                                          xnam.cont,
+                                                                          param=x) ) 
   pred.test.rf=rbind(pred.test.rf, pred.rf ) 
   
-  pred.knn=apply(as.matrix(knn_param),1,function(x) ML_list$knnfun(data=train.set,testdata=test.set, x) ) 
+  pred.knn=apply(as.matrix(knn_param),1,function(x) ML_list$knnfun(data=train.set,
+                                                                   testdata=test.set,
+                                                                   xnam,
+                                                                   xnam.factor,
+                                                                   xnam.cont,
+                                                                   param=x)
+                                                                   ) 
   pred.test.knn<-rbind(pred.test.knn, pred.knn )
   
-  pred.svm=apply(as.matrix(svm_param),1,function(x) ML_list$svmfun(data=train.set,testdata=test.set, x) )
+  pred.svm=apply(as.matrix(svm_param),1,function(x) ML_list$svmfun(data=train.set,
+                                                                   testdata=test.set,
+                                                                   xnam,
+                                                                   xnam.factor,
+                                                                   xnam.cont,
+                                                                   param=x)
+                                                                   )
   pred.test.svm=rbind(pred.test.svm, pred.svm )
   
-  pred.nn=apply(as.matrix(nn_param),1,function(x)  ML_list$nn(data=train.set,testdata=test.set,x) ) 
+  pred.nn=apply(as.matrix(nn_param),1,function(x)  ML_list$nnfun(data=train.set,
+                                                              testdata=test.set,
+                                                              xnam,
+                                                              xnam.factor,
+                                                              xnam.cont,
+                                                              param=x)
+                                                              ) 
   pred.test.nn=rbind(pred.test.nn, pred.nn )
   
-  pred.bart=apply(as.matrix(bart_param),1,function(x) ML_list$bartfun(data=train.set,testdata=test.set, x) ) 
+  pred.bart=apply(as.matrix(bart_param),1,function(x) ML_list$bartfun(data=train.set,
+                                                                      testdata=test.set,
+                                                                      xnam,
+                                                                      xnam.factor,
+                                                                      xnam.cont,
+                                                                      param=x)
+                                                                      ) 
   pred.test.bart=rbind(pred.test.bart, pred.bart )
   
   
