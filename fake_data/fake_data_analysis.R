@@ -1,11 +1,25 @@
 
 
+################################################
+#
+# R script that runs the analysis of the fake data set. It is the same as used for the real data analysis. Analysis results cannot be exactly reproduced.
+# We select the tuning parameters as it is described in the appendix of the paper  Gonzalez Ginestet et al. (2019+). "Ensemble IPCW Bagging bagging: a case study in the HIV care registry".
+# The tuning parameter is done using the function ensBagg::tune_params_ml based on a grid values of each of the hyperparameter considered. 
+# We consider the following hyperparameters:
+# GAM: degree of freedom (df). we only consider df equal to 3 and 4
+# LASSO: lambda
+# Random Forest:  num_trees and mtry parameters.
+# k-NN:  number of neighbours considered
+# SVM: the cost parameter,  the gamma and the kernel. kernel=1 denotes "radial" and kernel=2 denotes "linear".
+# Neural Network: number of neurons
+# BartMachine:  num_tree parameter,  k parameter and  q parameter.
+###############################################
 
 rm(list = ls())
 library(dplyr)
 library(ensBagg)
 
-#  we load the fake data set
+#  we load the fake data set which lies in this folder
 load("fake_data_train.RData")
 load("fake_data_test.RData")
 

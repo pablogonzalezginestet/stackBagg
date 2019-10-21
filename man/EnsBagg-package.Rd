@@ -16,11 +16,5 @@ Estimation the risk of an event at a specific time in the presence of censored d
 \author{
 \strong{Maintainer}: Pablo Gonzalez Ginestet \email{pablo.gonzalez.ginestet@ki.se} (https://staff.ki.se/people/pabgon)
 
-Authors:
-\itemize{
-  \item Erin Gabriel \email{erin.gabriel@ki.se} (https://staff.ki.se/people/erigab)
-  \item Julian Wolfson \email{julianw@umn.edu} (https://sites.google.com/umn.edu/julianw)
-}
-
 }
 \keyword{internal}
