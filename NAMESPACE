@@ -3,6 +3,7 @@
 export(datagenPaper)
 export(ens.all.algorithms)
 export(ensBagg)
+export(grid_parametersDataHIV)
 export(ipcw_auc)
 export(ipcw_brier)
 export(ipcw_crossentropy)
