@@ -110,7 +110,7 @@ Cox regression (Cox-Boost).
 Firstly, we model the weights under CoxPH and we train the different models and get their predictions on the test data set.
 
 ````{r, warning=FALSE}
-pred <- ensBagg::ensBagg(train.data = train,test.data = test,xnam = xnam,tao = 26.5,weighting = "CoxPH",folds = 5)
+pred <- ensBagg::ensBagg(train.data = train,test.data = test,xnam = xnam,tao = 26.5,weighting = "CoxPH",folds = 5,ens.library = )
 ````
 
 We show several output of pred.
