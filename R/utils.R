@@ -263,23 +263,23 @@ ML_list <- list(
   } ,
   
   
-  nnfun=function(traindata,testdata,xnam,xnam.factor,xnam.cont,param){
+  nnfun=function(data,testdata,xnam,xnam.factor,xnam.cont,param){
   
    
     if(is.null(xnam.factor)){
       testdata <- as.data.frame(testdata)[xnam]
       fmla=as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
     }else{
-      X=traindata[xnam.cont]
-      X=cbind(X,predict(caret::dummyVars( ~ ., data =traindata[xnam.factor], fullRank=TRUE), newdata=traindata[xnam.factor]))
+      X=data[xnam.cont]
+      X=cbind(X,predict(caret::dummyVars( ~ ., data =data[xnam.factor], fullRank=TRUE), newdata=data[xnam.factor]))
       testdata=as.data.frame(cbind(testdata[xnam.cont],predict(caret::dummyVars( ~ ., data =testdata[xnam.factor],  fullRank=TRUE), newdata=testdata[xnam.factor])))
       colnames(X)=c(paste("x", 1:(dim(X)[2]), sep=""))
-      traindata=cbind(E=traindata$E,X)
+      data=cbind(E=data$E,X)
       colnames(testdata)=c(paste("x", 1:(dim(testdata)[2]), sep=""))
       fmla=as.formula(paste("E ~ ", paste(names(X), collapse= "+")))
     }
     
-    traindata=traindata[!is.na(traindata$E),]
+    traindata=data[!is.na(data$E),]
     
     fit=neuralnet::neuralnet(fmla,traindata,hidden =as.numeric(param) ,threshold = 0.1,act.fct ="logistic" ,linear.output = FALSE,err.fct = "ce", stepmax=1e+08)
     pred=predict(fit, testdata)[,2]
@@ -412,9 +412,9 @@ ML_list_natively <- list(
 #########    Tuning Parameter    #################
 #' Grid of values for the Real Data Application: InfCareHIV Register
 #' @description  A grid of values for hyperparameters used in the Real Data Application: InfCareHIV Register. This grid of values isan argument in the tuning parameter function tune_parameter_ml.R 
-#' @param fmla formula object ex. "E ~ x1+x2"
 #' @param xnam a vector with the covariates names considered in the modeling
 #' @param data a training data set
+#' @param tao time point of interest
 #' @return a list with a grid of values for each hyperparameter
 #'  gam_param a vector containing degree of freedom 3 and 4
 #'  lasso_param a grid of values for the shrinkage term lambda
@@ -423,11 +423,15 @@ ML_list_natively <- list(
 #'  svm_param a three column matrix:  first column denotes the cost parameter, second column the gamma and third column the kernel. kernel=1 denotes "radial" and kernel=2 denotes "linear".
 #' nn_param a grid of positive integers values for the neurons
 #'  bart_param a three column matrix:  first column denotes the num_tree parameter, second column the k parameter and third column the q parameter.
-
+#' @export
 #' @rdname EnsBagg-internal
 
 
-grid_parametersDataHIV <- function(fmla,xnam,data){
+grid_parametersDataHIV <- function(xnam,data,tao){
+  
+  data<- dplyr::mutate(data,E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))) )
+  
+  fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
   
   gam_param=c(3,4)
   
