@@ -24,7 +24,7 @@ Censored observations must be denoted by the value 0. Main event of interest is 
 
 \item{folds}{Number of folds}
 
-\item{ens.library}{character vector of prediction algorithms. The prediction algorithms supported are: "ens.glm","ens.gam","ens.lasso","ens.randomForest","ens.svm","ens.bartMachine","ens.knn","ens.nn")}
+\item{ens.library}{character vector indicating the prediction algorithms to be consider in the analyisis. The prediction algorithms supported by this package are: "ens.glm","ens.gam","ens.lasso","ens.randomForest","ens.svm","ens.bartMachine","ens.knn","ens.nn"). See the function ensBagg::ens.all.algorithms().}
 
 \item{tuneparams}{a list of tune parameters for each machine learning procedure. Name them as gam_param, lasso_param, randomforest_param, svm_param, bart_param, knn_param, nn_param.
 Default values are the same used for the simulation.}
