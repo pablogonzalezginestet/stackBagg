@@ -19,6 +19,7 @@ prediction_discard <- function( train.data,
                                 test.data ,
                                 xnam,
                                 tao,
+                                ens.library,
                                 tuneparams=NULL ) {
   
   
@@ -26,6 +27,8 @@ prediction_discard <- function( train.data,
   if(length(xnam.factor)==0){ xnam.factor<- NULL}
   xnam.cont <- xnam[!(xnam %in% xnam.factor)]
   xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
+  
+  all.library <- ensBagg::ens.all.algorithms()
   
   names(train.data)[1] <- "ttilde"
   names(train.data)[2] <- "delta"
@@ -53,26 +56,50 @@ prediction_discard <- function( train.data,
     tuneparams <- ensBagg::parametersSimulation(folds = 5,xnam,train.data,tao)
   }  
   
-  if(length(tuneparams$gam)>1){
-    A<- length(ML_list)+1 # if we consider gam with df=3 and df=4
-    A_native <- length(ML_list_natively)+1
-    ml_names<- c("LogisticReg","GAM.3","GAM.4","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
-  }else{
-    A<- length(ML_list)
-    A_native <- length(ML_list_natively)
-    ml_names<- c("LogisticReg","GAM","LASSO","Random Forest","SVM","BART","k-NN","Neural Network")
-  }
-
-  pred1 <- ML_list$logfun(train.data,test.data,fmla, xnam,xnam.factor,xnam.cont)
-  pred2 <- ML_list$GAMfun(train.data,test.data,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param)
-  pred3 <- ML_list$lassofun(train.data,test.data,fmla,xnam,xnam.factor,xnam.cont,tuneparams$lasso_param)
-  pred4 <- ML_list$rffun(train.data,test.data,fmla,xnam,xnam.factor,xnam.cont,tuneparams$randomforest_param)
-  pred5 <- ML_list$svmfun(train.data,test.data,xnam,xnam.factor,xnam.cont,tuneparams$svm_param)
-  pred6 <- ML_list$bartfun(train.data,test.data,xnam,xnam.factor,xnam.cont, tuneparams$bart_param)
-  pred7 <- ML_list$knnfun(train.data,test.data,xnam,xnam.factor,xnam.cont, tuneparams$knn_param)
-  pred8 <- ML_list$nn(train.data,test.data,xnam,xnam.factor,xnam.cont,tuneparams$nn_param)
   
-  prediction_discard<- as.matrix(cbind(pred1,pred2,pred3,pred4,pred5,pred6,pred7,pred8))
+  if("ens.gam" %in% ens.library & length(tuneparams$gam)>1){
+    ml_names<- all.library[all.library %in% ens.library]
+    ml_names <- c(ml_names[1],"ens.gam.3","ens.gam.4",ml_names[-(1:2)])
+   
+  }else{
+    ml_names<- all.library[all.library %in% ens.library]
+  }
+  
+  pred <- NULL
+  if("ens.glm" %in% ens.library){
+  pred_temp <- ML_list$logfun(train.data,test.data,fmla, xnam,xnam.factor,xnam.cont)
+  pred <- cbind(pred_temp,pred)
+  }
+  if("ens.gam" %in% ens.library){
+  pred_temp <- ML_list$GAMfun(train.data,test.data,fmla,xnam,xnam.factor,xnam.cont,xnam.cont.gam,tuneparams$gam_param)
+  pred <- cbind(pred_temp,pred)
+   }
+  if("ens.lasso" %in% ens.library){
+  pred_temp <- ML_list$lassofun(train.data,test.data,fmla,xnam,xnam.factor,xnam.cont,tuneparams$lasso_param)
+  pred <- cbind(pred_temp,pred)
+  }
+  if("ens.randomForest" %in% ens.library){
+  pred_temp <- ML_list$rffun(train.data,test.data,fmla,xnam,xnam.factor,xnam.cont,tuneparams$randomforest_param)
+  pred <- cbind(pred_temp,pred)
+  }
+  if("ens.svm" %in% ens.library){
+  pred_temp <- ML_list$svmfun(train.data,test.data,xnam,xnam.factor,xnam.cont,tuneparams$svm_param)
+  pred <- cbind(pred_temp,pred)
+  }
+  if("ens.bartMachine" %in% ens.library){
+  pred_temp <- ML_list$bartfun(train.data,test.data,xnam,xnam.factor,xnam.cont, tuneparams$bart_param)
+  pred <- cbind(pred_temp,pred)
+  }
+  if("ens.knn" %in% ens.library){
+  pred_temp <- ML_list$knnfun(train.data,test.data,xnam,xnam.factor,xnam.cont, tuneparams$knn_param)
+  pred <- cbind(pred_temp,pred)
+  }
+  if("ens.nn" %in% ens.library){
+  pred_temp <- ML_list$nn(train.data,test.data,xnam,xnam.factor,xnam.cont,tuneparams$nn_param)
+  pred <- cbind(pred_temp,pred)
+  }
+  
+  prediction_discard<- as.matrix(pred)
   colnames(prediction_discard) <- ml_names
   auc_discard <- apply(prediction_discard,2, function(x) cvAUC::AUC(predictions = x,labels =test.data$E) )
   
