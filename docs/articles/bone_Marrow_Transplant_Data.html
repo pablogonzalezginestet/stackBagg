@@ -102,7 +102,7 @@
 <a class="sourceLine" id="cb1-3" title="3"><span class="co">#&gt; Loading required package: gam</span></a>
 <a class="sourceLine" id="cb1-4" title="4"><span class="co">#&gt; Loading required package: splines</span></a>
 <a class="sourceLine" id="cb1-5" title="5"><span class="co">#&gt; Loading required package: foreach</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co">#&gt; Loaded gam 1.16</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="co">#&gt; Loaded gam 1.16.1</span></a>
 <a class="sourceLine" id="cb1-7" title="7"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(timereg)</a>
 <a class="sourceLine" id="cb1-8" title="8"><span class="co">#&gt; Loading required package: survival</span></a>
 <a class="sourceLine" id="cb1-9" title="9">bmt.data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(bmt)</a></code></pre></div>
@@ -128,82 +128,93 @@
 <a class="sourceLine" id="cb2-20" title="20">bmt.train &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(bmt[train.set,])</a>
 <a class="sourceLine" id="cb2-21" title="21">bmt.test &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(bmt[test.set,]) </a>
 <a class="sourceLine" id="cb2-22" title="22">tao=<span class="dv">7</span></a></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">pred.bmt=ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/ensBagg-package.html">ensBagg</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)],<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">weighting =</span><span class="st">"CoxPH"</span> ,<span class="dt">folds =</span><span class="dv">2</span> )</a></code></pre></div>
+<p>Let’s define the library of algorithms:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">ens.library &lt;-ensBagg<span class="op">::</span><span class="kw">ens.all.algorithms</span>()</a></code></pre></div>
+<p>We set the covariates that we include in the models:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">xnam &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a>
+<a class="sourceLine" id="cb4-2" title="2">xnam</a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; [1] "platelet" "age"      "tcell"</span></a></code></pre></div>
+<p>Now, we are ready to predict the outcome of interest using all the algorithms:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">pred.bmt=ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/ensBagg-package.html">ensBagg</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span>xnam,<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">weighting =</span><span class="st">"CoxPH"</span> ,<span class="dt">folds =</span><span class="dv">5</span>,<span class="dt">ens.library =</span> ens.library )</a></code></pre></div>
 <p>The assessment of predictive performance using the IPCW AUC is:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">pred.bmt<span class="op">$</span>auc_ipcwBagg</a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3     GAM.4     LASSO Random Forest       SVM</span></a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; [1,]   0.5352199 0.5485066 0.5404781 0.5352199     0.5058694 0.5407401</span></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt;           BART      k-NN Neural Network  Ensemble</span></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; [1,] 0.5082281 0.4796174      0.5431381 0.5430997</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">pred.bmt<span class="op">$</span>auc_ipcwBagg</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt;        ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest   ens.svm</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt; [1,] 0.7248677 0.6957672 0.7050265 0.7222222        0.6613757 0.7222222</span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;      ens.bartMachine   ens.knn    ens.nn  Ensemble</span></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt; [1,]       0.7222222 0.7248677 0.7222222 0.7301587</span></a></code></pre></div>
 <p>Now let s take a look at prediction of the algorithms that allows for weights natively:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_native_weights,<span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt;   LogisticReg     GAM.3     GAM.4     LASSO Random Forest</span></a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; 1   0.5903804 0.5903804 0.5903804 0.5864611     0.4770342</span></a>
-<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt; 2   0.3822162 0.3822162 0.3822162 0.3813570     0.2581146</span></a>
-<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt; 3   0.3866296 0.3866296 0.3866296 0.3857011     0.2581146</span></a>
-<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; 4   0.3041084 0.3041084 0.3041084 0.3044293     0.3217602</span></a>
-<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt; 5   0.1916993 0.1916993 0.1916993 0.1933223     0.2985863</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_native_weights,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="co">#&gt;     ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; 1 0.5956704 0.4125311 0.4128488 0.4128488        0.4128488</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; 2 0.4121633 0.4571054 0.4575744 0.4575744        0.4575744</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; 3 0.4419367 0.5023271 0.5029441 0.5029441        0.5029441</span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; 4 0.4564145 0.5078086 0.5084429 0.5084429        0.5084429</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; 5 0.3128909 0.3485262 0.3486268 0.3486268        0.3486268</span></a></code></pre></div>
 <p>and their performance is:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">pred.bmt<span class="op">$</span>auc_native_weights</a>
-<a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt;      LogisticReg     GAM.3     GAM.4     LASSO Random Forest</span></a>
-<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt; [1,]   0.5325476 0.5325476 0.5325476 0.5325476     0.5188321</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">pred.bmt<span class="op">$</span>auc_native_weights</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co">#&gt;        ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [1,] 0.7063492 0.7195767 0.7195767 0.7195767        0.7195767</span></a></code></pre></div>
 <p>The prediction of the survival based methods</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_survival,<span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb7-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
-<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; [1,] 0.5890603 0.5566096     0.5663913</span></a>
-<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; [2,] 0.3759298 0.3663328     0.3827811</span></a>
-<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; [3,] 0.3801276 0.3700313     0.3887389</span></a>
-<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; [4,] 0.3032741 0.3021331     0.4824189</span></a>
-<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; [5,] 0.2272210 0.2355466     0.2715417</span></a></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">pred.bmt<span class="op">$</span>auc_survival</a>
-<a class="sourceLine" id="cb8-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
-<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [1,] 0.5379449 0.5352885     0.4990542</span></a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_survival,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="co">#&gt; [1,] 0.4068569 0.3898961     0.5495447</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt; [2,] 0.4523071 0.4269443     0.4841129</span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; [3,] 0.5008058 0.4659567     0.4653547</span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; [4,] 0.5068707 0.4708004     0.5020590</span></a>
+<a class="sourceLine" id="cb9-7" title="7"><span class="co">#&gt; [5,] 0.3448420 0.3384637     0.5042701</span></a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">pred.bmt<span class="op">$</span>auc_survival</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="co">#&gt; [1,] 0.7248677 0.7248677     0.6812169</span></a></code></pre></div>
 <p>Lastly, we could see the performance of the algorithms if we were to discard the censored observations</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">pred.discard &lt;-<span class="st"> </span>ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/prediction_discard.html">prediction_discard</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)],<span class="dt">tao=</span><span class="dv">7</span>)</a>
-<a class="sourceLine" id="cb9-2" title="2"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb9-3" title="3"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb9-4" title="4"></a>
-<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb9-7" title="7"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.discard<span class="op">$</span>prediction_discard)</a>
-<a class="sourceLine" id="cb9-8" title="8"><span class="co">#&gt;   LogisticReg      GAM.3      GAM.4     LASSO Random Forest       SVM</span></a>
-<a class="sourceLine" id="cb9-9" title="9"><span class="co">#&gt; 1   0.5989595 0.58374036 0.59005978 0.5984162    0.48291438 0.3285268</span></a>
-<a class="sourceLine" id="cb9-10" title="10"><span class="co">#&gt; 2   0.3909372 0.41520235 0.41569697 0.3908156    0.28281210 0.3285257</span></a>
-<a class="sourceLine" id="cb9-11" title="11"><span class="co">#&gt; 3   0.3953806 0.41844828 0.41909886 0.3952492    0.28281210 0.3285257</span></a>
-<a class="sourceLine" id="cb9-12" title="12"><span class="co">#&gt; 4   0.3120517 0.34658191 0.35362540 0.3120965    0.31555361 0.3285253</span></a>
-<a class="sourceLine" id="cb9-13" title="13"><span class="co">#&gt; 5   0.2002696 0.22381641 0.22576030 0.2005023    0.32205758 0.2896893</span></a>
-<a class="sourceLine" id="cb9-14" title="14"><span class="co">#&gt; 6   0.1478896 0.07788325 0.05990361 0.1481670    0.07493662 0.3285240</span></a>
-<a class="sourceLine" id="cb9-15" title="15"><span class="co">#&gt;         BART k-NN Neural Network</span></a>
-<a class="sourceLine" id="cb9-16" title="16"><span class="co">#&gt; 1 0.59730580 0.60      0.5921091</span></a>
-<a class="sourceLine" id="cb9-17" title="17"><span class="co">#&gt; 2 0.35376016 0.32      0.3969362</span></a>
-<a class="sourceLine" id="cb9-18" title="18"><span class="co">#&gt; 3 0.36997944 0.32      0.4016511</span></a>
-<a class="sourceLine" id="cb9-19" title="19"><span class="co">#&gt; 4 0.32099237 0.28      0.3126839</span></a>
-<a class="sourceLine" id="cb9-20" title="20"><span class="co">#&gt; 5 0.24283393 0.24      0.1891284</span></a>
-<a class="sourceLine" id="cb9-21" title="21"><span class="co">#&gt; 6 0.08394575 0.16      0.1591199</span></a>
-<a class="sourceLine" id="cb9-22" title="22">pred.discard<span class="op">$</span>auc_discard</a>
-<a class="sourceLine" id="cb9-23" title="23"><span class="co">#&gt;    LogisticReg          GAM.3          GAM.4          LASSO  Random Forest </span></a>
-<a class="sourceLine" id="cb9-24" title="24"><span class="co">#&gt;      0.5306667      0.5386667      0.5386667      0.5306667      0.5346667 </span></a>
-<a class="sourceLine" id="cb9-25" title="25"><span class="co">#&gt;            SVM           BART           k-NN Neural Network </span></a>
-<a class="sourceLine" id="cb9-26" title="26"><span class="co">#&gt;      0.4613333      0.5466667      0.4866667      0.5253333</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">pred.discard &lt;-<span class="st"> </span>ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/prediction_discard.html">prediction_discard</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)],<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">ens.library=</span>ens.library)</a>
+<a class="sourceLine" id="cb11-2" title="2"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="co">#&gt; argument ignored</span></a>
+<a class="sourceLine" id="cb11-4" title="4"></a>
+<a class="sourceLine" id="cb11-5" title="5"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="co">#&gt; argument ignored</span></a>
+<a class="sourceLine" id="cb11-7" title="7"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.discard<span class="op">$</span>prediction_discard)</a>
+<a class="sourceLine" id="cb11-8" title="8"><span class="co">#&gt;     ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest   ens.svm</span></a>
+<a class="sourceLine" id="cb11-9" title="9"><span class="co">#&gt; 1 0.4299596      0.52 0.5007793 0.3125244        0.6152551 0.4220660</span></a>
+<a class="sourceLine" id="cb11-10" title="10"><span class="co">#&gt; 2 0.4693977      0.36 0.4126562 0.3125242        0.4148773 0.4663835</span></a>
+<a class="sourceLine" id="cb11-11" title="11"><span class="co">#&gt; 3 0.5054614      0.52 0.5236659 0.3125240        0.4610573 0.5111884</span></a>
+<a class="sourceLine" id="cb11-12" title="12"><span class="co">#&gt; 4 0.5095629      0.56 0.5287442 0.3125240        0.4696675 0.5166094</span></a>
+<a class="sourceLine" id="cb11-13" title="13"><span class="co">#&gt; 5 0.3670706      0.40 0.3875206 0.3125247        0.3271141 0.3581300</span></a>
+<a class="sourceLine" id="cb11-14" title="14"><span class="co">#&gt; 6 0.2404683      0.24 0.2709003 0.3125245        0.2550291 0.2453296</span></a>
+<a class="sourceLine" id="cb11-15" title="15"><span class="co">#&gt;   ens.bartMachine   ens.knn    ens.nn</span></a>
+<a class="sourceLine" id="cb11-16" title="16"><span class="co">#&gt; 1       0.4401732 0.4412198 0.4226678</span></a>
+<a class="sourceLine" id="cb11-17" title="17"><span class="co">#&gt; 2       0.4604404 0.4539102 0.4672660</span></a>
+<a class="sourceLine" id="cb11-18" title="18"><span class="co">#&gt; 3       0.4893697 0.4841809 0.5123436</span></a>
+<a class="sourceLine" id="cb11-19" title="19"><span class="co">#&gt; 4       0.4934462 0.4886338 0.5177964</span></a>
+<a class="sourceLine" id="cb11-20" title="20"><span class="co">#&gt; 5       0.3980712 0.4008340 0.3583254</span></a>
+<a class="sourceLine" id="cb11-21" title="21"><span class="co">#&gt; 6       0.2682885 0.2710893 0.2447854</span></a>
+<a class="sourceLine" id="cb11-22" title="22">pred.discard<span class="op">$</span>auc_discard</a>
+<a class="sourceLine" id="cb11-23" title="23"><span class="co">#&gt;          ens.glm        ens.gam.3        ens.gam.4        ens.lasso </span></a>
+<a class="sourceLine" id="cb11-24" title="24"><span class="co">#&gt;        0.7142857        0.6931217        0.7103175        0.4021164 </span></a>
+<a class="sourceLine" id="cb11-25" title="25"><span class="co">#&gt; ens.randomForest          ens.svm  ens.bartMachine          ens.knn </span></a>
+<a class="sourceLine" id="cb11-26" title="26"><span class="co">#&gt;        0.7142857        0.7195767        0.7275132        0.7301587 </span></a>
+<a class="sourceLine" id="cb11-27" title="27"><span class="co">#&gt;           ens.nn </span></a>
+<a class="sourceLine" id="cb11-28" title="28"><span class="co">#&gt;        0.7195767</span></a></code></pre></div>
 <p>The ensemble ROC curve is</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_ensBagg[,<span class="st">"Ensemble"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
-<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
-<p>The Random Forest ROC curve is</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_ensBagg[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
-<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
-<p>The Random Forest survival ROC curve is</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_survival[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_ensBagg[,<span class="st">"Ensemble"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">method =</span> <span class="st">"ipcw"</span>)</a></code></pre></div>
 <p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
-<p>The Random Forest natively weighted ROC curve is</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_native_weights[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>)</a></code></pre></div>
+<p>The Random Forest ROC curve is</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_ensBagg[,<span class="st">"ens.randomForest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">method =</span> <span class="st">"ipcw"</span>)</a></code></pre></div>
 <p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
-<p>The Random Forest discarding censored observations</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.discard<span class="op">$</span>prediction_discard[,<span class="st">"Random Forest"</span>],<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">method =</span> <span class="st">"discard"</span>)</a></code></pre></div>
+<p>The Random Forest survival ROC curve is</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_survival[,<span class="st">"Random Forest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">method =</span> <span class="st">"ipcw"</span>)</a></code></pre></div>
 <p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
+<p>The Random Forest natively weighted ROC curve is</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_native_weights[,<span class="st">"ens.randomForest"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">method =</span> <span class="st">"ipcw"</span>)</a></code></pre></div>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
+<p>The Random Forest discarding censored observations</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.discard<span class="op">$</span>prediction_discard[,<span class="st">"ens.randomForest"</span>],<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">method =</span> <span class="st">"discard"</span>)</a></code></pre></div>
+<p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
+<pre><code>#&gt; NULL</code></pre>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
@@ -219,11 +230,11 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Pablo Gonzalez Ginestet, Erin Gabriel, Julian Wolfson.</p>
+  <p>Developed by Pablo Gonzalez Ginestet.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>
