@@ -433,33 +433,33 @@ grid_parametersDataHIV <- function(xnam,data,tao){
   
   fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
   
-  gam_param=c(3,4)
+  gam_param <- c(3,4)
   
-  grid.lasso=glmnet(fmla,data=data[!is.na(data$E),],family="binomial")$lambda
+  grid.lasso <-glmnetUtils::glmnet(fmla,data=data[!is.na(data$E),],family="binomial")$lambda
   lambda_max <- max(grid.lasso)
   epsilon <- .0001
   K <- 100
   lambdapath <- round(exp(seq(log(lambda_max), log(lambda_max*epsilon), length.out = K)), digits = 10)
-  lasso_param=lambdapath
+  lasso_param <- lambdapath
   
   
-  num.trees = c(50,100,250,500,750,1000)
-  mtry=c(1,floor(sqrt(ncol(data[xnam]))),floor(ncol(data[xnam])/3),floor(ncol(data[xnam])/3),seq(floor(ncol(data[xnam])/3)+1,19,by=2)) 
-  randomforest_param=cbind(rep(num.trees,times=rep(length(mtry),length(num.trees))),rep(mtry,length(num.trees)))
+  num.trees <-  c(50,100,250,500,750,1000)
+  mtry <- c(1,floor(sqrt(ncol(data[xnam]))),floor(ncol(data[xnam])/3),floor(ncol(data[xnam])/3),seq(floor(ncol(data[xnam])/3)+1,19,by=2)) 
+  randomforest_param <- cbind(rep(num.trees,times=rep(length(mtry),length(num.trees))),rep(mtry,length(num.trees)))
   
-  knn_param=seq(1,50,by=1)
+  knn_param <- seq(1,50,by=1)
   
-  cost=c(10^3, 10^2, 10, 1)
-  gamma=c(10^(-5), 10^(-4), 10^(-3), 10^(-2), 10^(-1))
-  svm_param=rbind(cbind(cost=rep(cost, times=rep(length(gamma),length(cost))),gamma=rep(gamma,length(cost)),kernel=1 ), cbind(cost=c(10,1,0.1,.01),gamma=NA,kernel=2) )
+  cost <- c(10^3, 10^2, 10, 1)
+  gamma <- c(10^(-5), 10^(-4), 10^(-3), 10^(-2), 10^(-1))
+  svm_param <- rbind(cbind(cost=rep(cost, times=rep(length(gamma),length(cost))),gamma=rep(gamma,length(cost)),kernel=1 ), cbind(cost=c(10,1,0.1,.01),gamma=NA,kernel=2) )
   
-  nn_param=c(1,2,3,4,5)
+  nn_param <- c(1,2,3,4,5)
   
-  num_tree = c(50, 200)
-  k = c(1,2,3,5)
-  q=c(0.9,0.99,0.75)
-  grid.temp=cbind( rep(num_tree,times=rep(length(k),length(num_tree))), rep(k,length(num_tree))  )
-  bart_param= cbind(rep(grid.temp[,1],times=rep(length(q),length(grid.temp[,1]))),rep(grid.temp[,2],times=rep(length(q),length(grid.temp[,2]))), 
+  num_tree <-  c(50, 200)
+  k <-  c(1,2,3,5)
+  q <- c(0.9,0.99,0.75)
+  grid.temp <- cbind( rep(num_tree,times=rep(length(k),length(num_tree))), rep(k,length(num_tree))  )
+  bart_param <-  cbind(rep(grid.temp[,1],times=rep(length(q),length(grid.temp[,1]))),rep(grid.temp[,2],times=rep(length(q),length(grid.temp[,2]))), 
                     rep(q,length(grid.temp[,1]))  )
   
   return( list(
