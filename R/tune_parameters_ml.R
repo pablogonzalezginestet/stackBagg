@@ -263,22 +263,22 @@ loss.function.bart=apply(pred.test.bart,2,function(x) ipcw_auc(T=data$ttilde,del
 loss.function.lasso=apply(pred.test.lasso,2,function(x) ipcw_auc(T=data$ttilde,delta=data$delta,marker=crossprod(t(x),1),cause=1,wts=data$wts,tao))
 
 tuneparams=list(
-  gam=gam_param[which.max(loss.function.gam)],
-  knn=knn_param[which.max(loss.function.knn)],
-  svm=svm_param[which.max(loss.function.svm),],
-  nn=nn_param[which.max(loss.function.nn)],
-  rf=randomforest_param[which.max(loss.function.rf),],
-  bart=bart_param[which.max(loss.function.bart),],
-  lasso=lasso_param[which.max(loss.function.lasso)]
+  gam_param=gam_param[which.max(loss.function.gam)],
+  knn_param=knn_param[which.max(loss.function.knn)],
+  svm_param=svm_param[which.max(loss.function.svm),],
+  nn_param=nn_param[which.max(loss.function.nn)],
+  randomforest_param=randomforest_param[which.max(loss.function.rf),],
+  bart_param=bart_param[which.max(loss.function.bart),],
+  lasso_param=lasso_param[which.max(loss.function.lasso)]
 )
 
-  names(tuneparams$lasso)=c("lambda")
-  names(tuneparams$knn)=c("k")
-  names(tuneparams$gam)=c("df")
-  names(tuneparams$nn)=c("neurons")
-  names(tuneparams$rf)=c("num_trees","mtry")
-  names(tuneparams$svm)=c("cost","gamma")
-  names(tuneparams$bart)=c("num_tree","k","q")
+  names(tuneparams$lasso_param)=c("lambda")
+  names(tuneparams$knn_param)=c("k")
+  names(tuneparams$gam_param)=c("df")
+  names(tuneparams$nn_param)=c("neurons")
+  names(tuneparams$randomforest_param)=c("num_trees","mtry")
+  names(tuneparams$svm_param)=c("cost","gamma","kernel")
+  names(tuneparams$bart_param)=c("num_tree","k","q")
 
   return(tuneparams)
   
