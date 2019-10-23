@@ -11,6 +11,7 @@
 #' @param xnam vector with the names of the covariates to be included in the model
 #' @param tao evaluation time point of interest 
 #' @param data data set that contains at least id, E , ttilde, delta, wts and covariates
+#' @param weighting Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.
 #' @return a list with the tune parameters selected using the IPCW AUC loss function.
 #' @export
 
@@ -26,15 +27,136 @@ tune_params_ml <- function( gam_param,
                             folds,
                             xnam,
                             tao,
-                            data ) {
-  
-data<- dplyr::mutate(data,id = 1:length(ttilde),E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))) )
+                            data,
+                            weighting) {
 
-xnam.factor <- colnames(data[xnam])[sapply(data[xnam], class)=="factor"]
-if(length(xnam.factor)==0){ xnam.factor<- NULL}
-xnam.cont <- xnam[!(xnam %in% xnam.factor)]
-xnam.cont.gam <- xnam.cont[apply(data[xnam.cont],2, function(z) length(unique(z))>10 | length(unique(z))<=10 & sum(table(z)/dim(data)[1]>0.05)>=4)]
-fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
+  xnam.factor <- colnames(data[xnam])[sapply(data[xnam], class)=="factor"]
+  if(length(xnam.factor)==0){ xnam.factor<- NULL}
+  xnam.cont <- xnam[!(xnam %in% xnam.factor)]
+  # continous variables to be applied the smoothing function in the gam must have
+  # 10 or more unique values or
+  # have to have four values with more than 5%
+  xnam.cont.gam <- xnam.cont[apply(data[xnam.cont],2, function(z) length(unique(z))>10 | length(unique(z))<=10 & sum(table(z)/dim(data)[1]>0.05)>=4)]
+  
+  
+  # checking if the data was provided in the right form
+  #if(names(train.data)[1]!="id" | names(train.data)[1]!="ID" | names(train.data)[1]!="Id" ){
+  #  stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
+  #}
+  #if(names(test.data)[1]!="id" | names(test.data)[1]!="ID" | names(test.data)[1]!="Id" ){
+  # stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
+  #}
+  # rename second and third column
+  #names(data)[1] <- "id"
+  names(data)[1] <- "ttilde"
+  names(data)[2] <- "delta"
+ 
+  
+  
+  # create binary outcome,E, was created by dichotomizing the time to failure at tao
+  # and we create id: unique identifiers of each subject
+  data<- dplyr::mutate(data,id = 1:length(ttilde),E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
+                             deltac=ifelse(delta==0,1,0))
+  
+  #check that there is no rare categories in each factor variable
+  if(!is.null(xnam.factor)) {
+    for(s in 1:length(xnam.factor)) {
+      level_to_drop <-  table(data[xnam.factor][,s])/dim(data)[1]<.05
+      for(q in 1:length(level_to_drop)){
+        if(level_to_drop[q]==TRUE){  
+          data<- data[!data[xnam.factor][,s]==levels(data[xnam.factor][,s])[q],]
+         
+        }
+      }
+      if(any(level_to_drop==TRUE)){
+        data[xnam.factor][,s] <- droplevels(data[xnam.factor][,s])
+       }
+    }
+  }
+  
+  
+  
+  if(weighting=="CoxBoost"){
+    # CoxBoost Weights
+    #train data
+    if(is.null(xnam.factor)){
+      
+      X.boost <- as.matrix(data[xnam])
+      fit.cboost <- peperr::fit.CoxBoost(Surv(data$ttilde,data$deltac), x=X.boost,cplx=300) 
+      wts.boost=NULL
+      for (i in 1:nrow(data) ){
+        tao_temp <- min(data$ttilde[i],tao)
+        wts.boost<- c(wts.boost,as.numeric(!is.na(data$E[i])) / peperr::predictProb(fit.cboost, Surv(data$ttilde[i],data$deltac[i]), data[xnam],tao_temp,complexity = 300)[i])
+      }
+      
+    }else{
+      
+      X.boost <- data[xnam.cont]
+      X.boost <- cbind(X.boost,predict(caret::dummyVars( ~ ., data =data[xnam.factor], fullRank=TRUE), newdata=data[xnam.factor]))
+      colnames(X.boost)=c(paste("x", 1:(dim(X.boost)[2]), sep=""))
+      data2=as.data.frame(cbind(ttilde=data$ttilde,deltac=data$deltac,X.boost))
+      X.boost=as.matrix(data2[,-(1:2)])
+      fit.cboost <- peperr::fit.CoxBoost(Surv(data2$ttilde,data2$deltac), x=X.boost,cplx=300) 
+      wts.boost=NULL
+      xnam2 <-names(data2)[-(1:2)] 
+      for (i in 1:nrow(data2) ){
+        tao_temp <- min(data2$ttilde[i],tao)
+        wts.boost<- c(wts.boost,as.numeric(!is.na(data$E[i])) / peperr::predictProb(fit.cboost, Surv(data2$ttilde[i],data2$deltac[i]), data2[xnam2],tao_temp,complexity = 300)[i])
+      }
+      
+    }
+    
+    data$wts <- wts.boost
+    }
+  
+  
+  if(weighting=="CoxPH"){
+    #Cox PH weights
+    
+    fmla.c <- as.formula(paste("Surv(ttilde,deltac) ~ ", paste(xnam, collapse= "+")))
+    #train data set
+    cox.C.train<- survival::coxph(fmla.c, data=data)
+    newdata_zero <- data[1,]
+    
+    if(is.null(xnam.factor)){
+      
+      newdata_zero[xnam] <- 0
+      basel_surv <- survival::survfit(cox.C.train, newdata=newdata_zero[xnam])
+      beta.cox.train <-  cox.C.train$coef
+      
+      wts.coxph=NULL
+      for (i in 1:nrow(data)){
+        newdata <- data[i,]
+        newdata_cov <-  data[i,xnam]
+        G <- basel_surv$surv ^(exp(sum(newdata_cov * beta.cox.train )))
+        wts.coxph <- c(wts.coxph, as.numeric(!is.na(newdata$E)) / (G[ max(which(basel_surv$time <= min(newdata$ttilde, tao) ) ) ]  ) )
+      }
+      
+    }else{
+      
+      for(s in 1:length(xnam.factor)) {newdata_zero[xnam.factor[s]]=levels(data[xnam.factor][,s])[1]}
+      newdata_zero[xnam.cont] <- 0
+      basel_surv <- survival::survfit(cox.C.train, newdata=newdata_zero[xnam])
+      beta.cox.train <-  cox.C.train$coef
+      dummies.factor.train=as.data.frame(predict(caret::dummyVars( ~ ., data =data[xnam.factor],fullRank = TRUE), newdata=data[xnam.factor]))
+      beta.cox.train=c(beta.cox.train[xnam.cont],beta.cox.train[!names(beta.cox.train) %in% xnam.cont ])
+      
+      wts.coxph=NULL
+      for (i in 1:nrow(data)){
+        newdata <- data[i,]
+        newdata_cov = cbind(data[i,xnam.cont],dummies.factor.train[i,])
+        G <- basel_surv$surv ^(exp(sum(newdata_cov * beta.cox.train )))
+        wts.coxph <- c(wts.coxph, as.numeric(!is.na(newdata$E)) / (G[ max(which(basel_surv$time <= min(newdata$ttilde, tao) ) ) ]  ) )
+      }
+    }
+    
+    data$wts <- wts.coxph
+    }
+  
+  
+  data <- data[c("id","E","wts","ttilde","delta",xnam)]
+
+  fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
   
 pred.test.gam=NULL
 pred.test.knn=NULL
