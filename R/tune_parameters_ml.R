@@ -39,20 +39,10 @@ tune_params_ml <- function( gam_param,
   xnam.cont.gam <- xnam.cont[apply(data[xnam.cont],2, function(z) length(unique(z))>10 | length(unique(z))<=10 & sum(table(z)/dim(data)[1]>0.05)>=4)]
   
   
-  # checking if the data was provided in the right form
-  #if(names(train.data)[1]!="id" | names(train.data)[1]!="ID" | names(train.data)[1]!="Id" ){
-  #  stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
-  #}
-  #if(names(test.data)[1]!="id" | names(test.data)[1]!="ID" | names(test.data)[1]!="Id" ){
-  # stop("column id is missing. Column id must be the first column. Check appropiate format in the help file")
-  #}
-  # rename second and third column
-  #names(data)[1] <- "id"
   names(data)[1] <- "ttilde"
   names(data)[2] <- "delta"
  
-  
-  
+
   # create binary outcome,E, was created by dichotomizing the time to failure at tao
   # and we create id: unique identifiers of each subject
   data<- dplyr::mutate(data,id = 1:length(ttilde),E=as.factor(ifelse(ttilde < tao & delta==1, 1 , ifelse(ttilde < tao & delta==2 | ttilde>tao, 0, NA))),
