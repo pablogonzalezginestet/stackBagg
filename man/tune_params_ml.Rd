@@ -5,7 +5,7 @@
 \title{Tuning parameter selection}
 \usage{
 tune_params_ml(gam_param, lasso_param, randomforest_param, knn_param,
-  svm_param, nn_param, bart_param, folds, xnam, tao, data)
+  svm_param, nn_param, bart_param, folds, xnam, tao, data, weighting)
 }
 \arguments{
 \item{gam_param}{a vector containing degree of freedom 3 and 4}
@@ -29,6 +29,8 @@ tune_params_ml(gam_param, lasso_param, randomforest_param, knn_param,
 \item{tao}{evaluation time point of interest}
 
 \item{data}{data set that contains at least id, E , ttilde, delta, wts and covariates}
+
+\item{weighting}{Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.}
 }
 \value{
 a list with the tune parameters selected using the IPCW AUC loss function.
