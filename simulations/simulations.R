@@ -16,7 +16,7 @@
 sim <- function(simdata,weighting,j){
   sim.data.train=simdata[[1]][[j]][,-(1:2)] # remove the first two columns: id and E so to have the appropiate format
   sim.data.test=simdata[[2]][[j]][,-(1:2)] # remove the first two columns: id and E
-  res <- ensBagg(train.data=sim.data.train,test.data=sim.data.test, xnam, tao=26.5 , weighting=weighting , folds=5,B=10 )
+  res <- ensBagg(train.data=sim.data.train,test.data=sim.data.test, xnam, tao=26.5 , weighting=weighting , folds=5,ens.library=ens.library ,B=10 )
   true_ens <- apply(res$prediction_ensBagg,2, function(x) cvAUC::AUC(predictions =x,labels = sim.data.test$trueT))
   true_native <- apply(res$prediction_native_weights,2, function(x) cvAUC::AUC(predictions =x,labels = sim.data.test$trueT))
   true_survival <- apply(res$prediction_survival,2, function(x) cvAUC::AUC(predictions =x,labels = sim.data.test$trueT))
@@ -69,7 +69,7 @@ table1_paper<- function(res,J,scenarios){
 J <- 500# number of simulations
 xnam <- paste("X", 1:20, sep="") # names of the covariates 
 scenarios=list(1,2,3,4)
-
+ens.library <- ensBagg::ens.all.algorithms()
 #####    Weighting = CoxPH    ####
 
 # Simulation 1
