@@ -38,7 +38,7 @@ ipcw_ensbagg <- function(folds,
   result_id <- vector("list")
   test.id_temp=1:nrow(data)
   # create progress bar
-  pb= txtProgressBar(min = 0, max = parts, style = 3, char=":)")
+  pb= txtProgressBar(min = 0, max = folds, style = 3, char=":)")
   for (k in 1:folds) {
     if (k==folds){
       test.id=test.id_temp
