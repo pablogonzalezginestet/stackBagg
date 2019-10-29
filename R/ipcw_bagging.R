@@ -37,6 +37,8 @@ ipcw_ensbagg <- function(folds,
   AUC.train <- vector("list", A)
   result_id <- vector("list")
   test.id_temp=1:nrow(data)
+  # create progress bar
+  pb= txtProgressBar(min = 0, max = parts, style = 3, char=":)")
   for (k in 1:folds) {
     if (k==folds){
       test.id=test.id_temp
@@ -49,10 +51,7 @@ ipcw_ensbagg <- function(folds,
     test.set <- data.frame(data[test.id,])
     n_test.set <- nrow(test.set)
     
-    #boot
-   # b <-boot::boot(data=train.set, statistic=MLprocedures, R=B, fmla=fmla,tuneparams=tuneparams,
-    #              testdata=test.set, weights = train.set$sum_wts_one )
-   
+  #boot
    b <-boot::boot(data=train.set,
                   testdata=test.set,
                   fmla=fmla,
@@ -81,7 +80,7 @@ ipcw_ensbagg <- function(folds,
     result_id[[k]]<- test.set$id
     
     # update progress bar
-   # print(k)
+    setTxtProgressBar(pb, k)
   }
   
   matrix = do.call(cbind, result)
