@@ -11,6 +11,8 @@ registry".
 
 ![](figure/boxplot_coxph_sim2.png)
 
+AUCs of each algorithm relative to the AUC of the ensemble based on 500 simulated data sets under the four scenarios (A=orange, B=green, C=blue and D=violet) using all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set. The horizontal line denotes the ensemble.
+
 ## Important Note
 
 The real data application in the paper relies on Swedish HIV care register (InfCareHIV) that cannot be openly shared. The data available on the folder fake_data is based on a fake, simulated  data that mimics the data used for the analysis. The R script which run the analysis of the data set is the same as the used for the analysis, but analysis results cannot be exactly reproduced. 
