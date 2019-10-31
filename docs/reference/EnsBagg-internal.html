@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Internal EnsBagg functions — EnsBagg-internal • ensBagg</title>
+<title>Algorithm 2: Ensemble IPCW Bagging — ipcw_ensbagg • ensBagg</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,13 @@
 
 
 
-<meta property="og:title" content="Internal EnsBagg functions — EnsBagg-internal" />
-<meta property="og:description" content="Internal EnsBagg helper functions
+<meta property="og:title" content="Algorithm 2: Ensemble IPCW Bagging — ipcw_ensbagg" />
+<meta property="og:description" content="Obtain predictions
+Obtain predictions
+Compute weighted Brier Loss function for a single marker or a linear weighted combination of markers
+Compute weighted Cross Entropy Loss function for a single marker or a linear weighted combination of markers
+Obtain the lambda hyparameter for the LASSO using cross-validation
+Internal EnsBagg helper functions
 Compute the risk of missclassifying an individual using as a marker a single prediction or weighted linear combination of several predictions (1-AUC)
 Predictions based on a library of Machine Learning procedures
 Library of Machine Learning procedures
@@ -124,13 +129,18 @@ A grid of values for hyperparameters used in the Real Data Application: InfCareH
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Internal EnsBagg functions</h1>
+    <h1>Algorithm 2: Ensemble IPCW Bagging</h1>
     
     <div class="hidden name"><code>EnsBagg-internal.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Internal EnsBagg helper functions</p>
+    <p>Obtain predictions</p>
+<p>Obtain predictions</p>
+<p>Compute weighted Brier Loss function for a single marker or a linear weighted combination of markers</p>
+<p>Compute weighted Cross Entropy Loss function for a single marker or a linear weighted combination of markers</p>
+<p>Obtain the lambda hyparameter for the LASSO using cross-validation</p>
+<p>Internal EnsBagg helper functions</p>
 <p>Compute the risk of missclassifying an individual using as a marker a single prediction or weighted linear combination of several predictions (1-AUC)</p>
 <p>Predictions based on a library of Machine Learning procedures</p>
 <p>Library of Machine Learning procedures</p>
@@ -139,7 +149,19 @@ A grid of values for hyperparameters used in the Real Data Application: InfCareH
 <p>A grid of values for hyperparameters used in the Real Data Application: InfCareHIV Register. This grid of values isan argument in the tuning parameter function tune_parameter_ml.R</p>
     </div>
 
-    <pre class="usage"><span class='fu'>optimun_auc_coef</span>(<span class='no'>coef_init</span>, <span class='no'>lambda</span>, <span class='no'>data</span>, <span class='no'>Z</span>, <span class='no'>tao</span>)
+    <pre class="usage"><span class='fu'>ipcw_ensbagg</span>(<span class='no'>folds</span>, <span class='no'>MLprocedures</span>, <span class='no'>fmla</span>, <span class='no'>tuneparams</span>, <span class='no'>tao</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>A</span>,
+  <span class='no'>data</span>, <span class='no'>xnam</span>, <span class='no'>xnam.factor</span>, <span class='no'>xnam.cont</span>, <span class='no'>xnam.cont.gam</span>, <span class='no'>ens.library</span>)
+
+<span class='fu'>ipcw_genbagg</span>(<span class='no'>fmla</span>, <span class='no'>tuneparams</span>, <span class='no'>MLprocedures</span>, <span class='no'>traindata</span>, <span class='no'>testdata</span>, <span class='no'>B</span>, <span class='no'>A</span>,
+  <span class='no'>xnam</span>, <span class='no'>xnam.factor</span>, <span class='no'>xnam.cont</span>, <span class='no'>xnam.cont.gam</span>, <span class='no'>ens.library</span>)
+
+<span class='fu'>ipcw_brier</span>(<span class='no'>par</span>, <span class='no'>Z</span>, <span class='no'>y</span>, <span class='no'>wts</span>)
+
+<span class='fu'>ipcw_crossentropy</span>(<span class='no'>par</span>, <span class='no'>Z</span>, <span class='no'>y</span>, <span class='no'>wts</span>)
+
+<span class='fu'>tune_lasso</span>(<span class='no'>folds</span>, <span class='no'>fmla</span>, <span class='no'>tao</span>, <span class='no'>data</span>, <span class='no'>xnam</span>)
+
+<span class='fu'>optimun_auc_coef</span>(<span class='no'>coef_init</span>, <span class='no'>lambda</span>, <span class='no'>data</span>, <span class='no'>Z</span>, <span class='no'>tao</span>)
 
 <span class='fu'>risk_auc</span>(<span class='no'>par</span>, <span class='no'>lambda</span>, <span class='no'>Z</span>, <span class='no'>data</span>, <span class='no'>tao</span>)
 
@@ -159,12 +181,156 @@ A grid of values for hyperparameters used in the Real Data Application: InfCareH
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>folds</th>
+      <td><p>Number of folds</p></td>
+    </tr>
+    <tr>
+      <th>MLprocedures</th>
+      <td><p>MLprocedures</p></td>
+    </tr>
+    <tr>
+      <th>fmla</th>
+      <td><p>formula object ex. "E ~ x1+x2"</p></td>
+    </tr>
+    <tr>
+      <th>tuneparams</th>
+      <td><p>a list of tune parameters for each machine learning procedure</p></td>
+    </tr>
+    <tr>
+      <th>tao</th>
+      <td><p>time point of interest</p></td>
+    </tr>
+    <tr>
+      <th>B</th>
+      <td><p>number of bootstrap samples</p></td>
+    </tr>
+    <tr>
+      <th>data</th>
+      <td><p>a training data set</p></td>
+    </tr>
+    <tr>
+      <th>xnam</th>
+      <td><p>all covariates in the model</p></td>
+    </tr>
+    <tr>
+      <th>xnam.factor</th>
+      <td><p>categorical variables include in the model</p></td>
+    </tr>
+    <tr>
+      <th>xnam.cont</th>
+      <td><p>continous variables include in the model</p></td>
+    </tr>
+    <tr>
+      <th>xnam.cont.gam</th>
+      <td><p>continous variables to be included in the smoothing operator gam::s(,df)</p></td>
+    </tr>
+    <tr>
+      <th>ens.library</th>
+      <td><p>algorithms in the library</p></td>
+    </tr>
+    <tr>
+      <th>traindata</th>
+      <td><p>a training data set</p></td>
+    </tr>
+    <tr>
+      <th>testdata</th>
+      <td><p>a test data set</p></td>
+    </tr>
+    <tr>
+      <th>par</th>
+      <td><p>a vector of weights. Its length must be equal to the number of predictions included in Z</p></td>
+    </tr>
+    <tr>
+      <th>Z</th>
+      <td><p>a matrix that contains the predictions. Each column represents a single marker.</p></td>
+    </tr>
+    <tr>
+      <th>y</th>
+      <td><p>vector of response variable (binary).</p></td>
+    </tr>
+    <tr>
+      <th>wts</th>
+      <td><p>IPC weights</p></td>
+    </tr>
+    <tr>
       <th>coef_init</th>
       <td><p>starting values for the coefficients</p></td>
     </tr>
     <tr>
       <th>lambda</th>
       <td><p>penalization term. It is a positive scalar.</p></td>
+    </tr>
+    <tr>
+      <th>i</th>
+      <td><p>sample selected by bootstrap</p></td>
+    </tr>
+    <tr>
+      <th>fmla</th>
+      <td><p>formula object ex. "E ~ x1+x2"</p></td>
+    </tr>
+    <tr>
+      <th>tuneparams</th>
+      <td><p>a list of tune parameters for each machine learning procedure</p></td>
+    </tr>
+    <tr>
+      <th>MLprocedures</th>
+      <td><p>MLprocedures</p></td>
+    </tr>
+    <tr>
+      <th>B</th>
+      <td><p>number of bootstrap samples</p></td>
+    </tr>
+    <tr>
+      <th>xnam</th>
+      <td><p>all covariates in the model</p></td>
+    </tr>
+    <tr>
+      <th>xnam.factor</th>
+      <td><p>categorical variables include in the model</p></td>
+    </tr>
+    <tr>
+      <th>xnam.cont</th>
+      <td><p>continous variables include in the model</p></td>
+    </tr>
+    <tr>
+      <th>xnam.cont.gam</th>
+      <td><p>continous variables to be included in the smoothing operator gam::s(,df=)</p></td>
+    </tr>
+    <tr>
+      <th>ens.library</th>
+      <td><p>algorithms in the library</p></td>
+    </tr>
+    <tr>
+      <th>par</th>
+      <td><p>a vector of weights. Its length must be equal to the number of predictions included in Z</p></td>
+    </tr>
+    <tr>
+      <th>Z</th>
+      <td><p>a matrix that contains the predictions. Each column represents a single marker.</p></td>
+    </tr>
+    <tr>
+      <th>y</th>
+      <td><p>vector of response variable (binary).</p></td>
+    </tr>
+    <tr>
+      <th>wts</th>
+      <td><p>IPC weights</p></td>
+    </tr>
+    <tr>
+      <th>folds</th>
+      <td><p>number of folds</p></td>
+    </tr>
+    <tr>
+      <th>fmla</th>
+      <td><p>formula object ex. "E ~ x1+x2"</p></td>
+    </tr>
+    <tr>
+      <th>tao</th>
+      <td><p>time point of interest</p></td>
+    </tr>
+    <tr>
+      <th>data</th>
+      <td><p>a training data set</p></td>
     </tr>
     <tr>
       <th>data</th>
@@ -181,30 +347,6 @@ A grid of values for hyperparameters used in the Real Data Application: InfCareH
     <tr>
       <th>par</th>
       <td><p>a vector of coefficients/weights. Its length must be equal to the number of predictions included in Z</p></td>
-    </tr>
-    <tr>
-      <th>traindata</th>
-      <td><p>training data set</p></td>
-    </tr>
-    <tr>
-      <th>testdata</th>
-      <td><p>validation/test data set</p></td>
-    </tr>
-    <tr>
-      <th>fmla</th>
-      <td><p>formula object ex. "E ~ x1+x2"</p></td>
-    </tr>
-    <tr>
-      <th>xnam</th>
-      <td><p>a vector with the covariates names considered in the modeling</p></td>
-    </tr>
-    <tr>
-      <th>tuneparams</th>
-      <td><p>a list of tune parameters for each machine learning procedure</p></td>
-    </tr>
-    <tr>
-      <th>i</th>
-      <td><p>sample selected by bootstrap</p></td>
     </tr>
     <tr>
       <th>lambda</th>
@@ -239,6 +381,26 @@ A grid of values for hyperparameters used in the Real Data Application: InfCareH
       <td><p>a list of tune parameters for each machine learning procedure</p></td>
     </tr>
     <tr>
+      <th>traindata</th>
+      <td><p>training data set</p></td>
+    </tr>
+    <tr>
+      <th>testdata</th>
+      <td><p>validation/test data set</p></td>
+    </tr>
+    <tr>
+      <th>fmla</th>
+      <td><p>formula object ex. "E ~ x1+x2"</p></td>
+    </tr>
+    <tr>
+      <th>tuneparams</th>
+      <td><p>a list of tune parameters for each machine learning procedure</p></td>
+    </tr>
+    <tr>
+      <th>xnam</th>
+      <td><p>a vector with the covariates names considered in the modeling</p></td>
+    </tr>
+    <tr>
       <th>data</th>
       <td><p>a training data set</p></td>
     </tr>
@@ -253,7 +415,10 @@ A grid of values for hyperparameters used in the Real Data Application: InfCareH
     <p>An object of class <code>list</code> of length 8.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a vector with the optimal AUC value and the optimal coefficient</p>
+    <p>a list with the predictions of each machine learning algorithm (id, predictions), the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen</p>
+<p>a matrix with the predictions on the test data set of each machine learning algorithm considered in MLprocedures</p>
+<p>lambda to be used in the glmnet function</p>
+<p>a vector with the optimal AUC value and the optimal coefficient</p>
 <p>1-AUC</p>
 <p>a matrix of predictions where each column is the prediction of each algorithm based on the testdata</p>
 <p>a list of Machine Learning functions</p>
