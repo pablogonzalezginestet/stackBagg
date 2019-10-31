@@ -260,6 +260,7 @@ if("ens.gam" %in% ens.library & length(tuneparams$gam)>1){
 
 
 auc_ipcwBagg <- matrix(NA, nrow = 1 , ncol = A + 1 )
+auc_ipcwBagg_training <- matrix(NA, nrow = 1 , ncol = A + 1 )
 auc_native_weights <- matrix(NA, nrow = 1 , ncol =A_native)
 
 algorithm2<- ipcw_ensbagg( folds=folds, 
@@ -300,6 +301,28 @@ auc_ipcwBagg[1,A+1] <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=
 colnames(prediction_ipcwBagg) <- ml_names
 colnames(prediction_ens_ipcwBagg) <- c("Ensemble")
 colnames(auc_ipcwBagg) <- c(ml_names,"Ensemble")
+
+# auc in the training set
+prediction_ipcwBagg_training<- ipcw_genbagg( fmla=fmla,
+                                             tuneparams=tuneparams,
+                                             MLprocedures=MLprocedures,
+                                             traindata = train.data,
+                                             testdata = train.data ,
+                                             B=B,
+                                             A,
+                                             xnam=xnam,
+                                             xnam.factor=xnam.factor,
+                                             xnam.cont=xnam.cont,
+                                             xnam.cont.gam=xnam.cont.gam,
+                                             ens.library)
+
+prediction_ens_ipcwBagg_training <- as.matrix(prediction_ipcwBagg_training) %*% algorithm2$coefficients #combining predictions
+
+auc_ipcwBagg_training[1,1:A] <- apply(prediction_ipcwBagg_training,2, function(x) ipcw_auc(T=train.data$ttilde,delta=train.data$delta,marker=crossprod(t(x),1),cause=1,wts=train.data$wts,tao))
+auc_ipcwBagg_training[1,A+1] <- ipcw_auc(T=train.data$ttilde,delta=train.data$delta,marker=prediction_ens_ipcwBagg_training,cause=1,wts=train.data$wts,tao)
+
+colnames(auc_ipcwBagg_training) <- c(ml_names,"Ensemble")
+
 
 # Native Weights
 prediction_native_weights <- MLprocedures_natively(   traindata = train.data,
@@ -369,6 +392,11 @@ colnames(auc_survival) <- c("CoxPH","CoxBoost","Random Forest")
 prediction_survival <- cbind(predcoxfit,pred.coxboost,cifRf)
 colnames(prediction_survival) <- c("CoxPH","CoxBoost","Random Forest")
 
+auc_survival<- cbind(auc_survival1,auc_survival2)
+colnames(auc_survival) <- c("CoxPH","CoxBoost")
+prediction_survival <- cbind(predcoxfit,pred.coxboost)
+colnames(prediction_survival) <- c("CoxPH","CoxBoost")
+
 
 return(list( 
   library=ml_names,
@@ -378,6 +406,7 @@ return(list(
     optimal_coefficients=algorithm2$coefficients,
     convergence=algorithm2$convergence_indicator,
     penalization_term=algorithm2$penalization_term,
+    auc_ipcwBagg_training=auc_ipcwBagg_training,
     auc_ipcwBagg=auc_ipcwBagg,
     auc_native_weights=auc_native_weights,
     auc_survival=auc_survival,

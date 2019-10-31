@@ -7,7 +7,7 @@
 ipcw_auc(T, delta, marker, cause, wts, tao)
 }
 \arguments{
-\item{T}{vector of censored event-times}
+\item{T}{vector of (censored) event-times}
 
 \item{delta}{vector of event indicators at the corresponding value of the vector T. Censored observations must be denoted by the value 0.}
 

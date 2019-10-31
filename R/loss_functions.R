@@ -1,7 +1,7 @@
 
 #' IPC Weighted AUC Loss Function
 #' @description Compute time-varying IPCW AUC to account for censoring and competing risks.
-#' @param T  vector of censored event-times
+#' @param T  vector of (censored) event-times
 #' @param delta  vector of event indicators at the corresponding value of the vector T. Censored observations must be denoted by the value 0. 
 #' @param marker   vector of the marker values for which we want to compute the time-dependent ROC curve. the function assumes that larger values of the marker are associated with higher risks of events
 #' @param cause  value of the event indicator (the non-censored observation) that represents the event of interest for which we aim to compute the time-dependent ROC curve.

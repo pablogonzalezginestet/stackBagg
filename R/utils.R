@@ -45,7 +45,7 @@ risk_auc<- function(par,lambda,Z,data,tao){
 
 ############### Machine Learning Procedures ############################
 
-
+#' Library of Machine learning procedures
 #' @description  Library of Machine Learning procedures
 #' @return a character vector with all prediction algorithms  supported by ensBagg 
 #' @export

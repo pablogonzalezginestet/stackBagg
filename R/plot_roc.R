@@ -1,10 +1,10 @@
 
 #' Plot IPCW ROC curve
 #' @description Plot IPCW ROC curve for a prediction 
-#' @param time 
-#' @param delta
-#' @param marker
-#' @param wts
+#' @param time vector of (censored) event-times
+#' @param delta vector of event indicators at the corresponding value of the vector time. Censored observations must be denoted by the value 0. 
+#' @param marker vector of the marker values for which we want to compute the time-dependent ROC curve. the function assumes that larger values of the marker are associated with higher risks of events
+#' @param wts IPC weights
 #' @param tao evaluation time point of interest 
 #' @param method IPCW or discard 
 #' @return a plot IPCW ROC curve
