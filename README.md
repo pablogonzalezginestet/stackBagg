@@ -9,7 +9,7 @@ without competing risk.
 * Gonzalez Ginestet, P. et al. (2019). "Ensemble IPCW bagging: a case study in the HIV care
 registry".
 
-![](man/figures/boxplot_coxph_sim2.png)
+<img src=https://github.com/pablogonzalezginestet/ensBagg/tree/master/figure/boxplot_coxph_sim2.png width=50%/>
 
 ## Important Note
 
