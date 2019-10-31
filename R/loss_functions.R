@@ -69,7 +69,7 @@ ipcw_auc <- function (T,delta, marker,cause, wts, tao){
 #' @param Z  a matrix that contains the predictions. Each column represents a single marker.
 #' @param y vector of response variable (binary).
 #' @param wts IPC weights
-#' @rdname wBrierScore
+#' @rdname EnsBagg-internal
 
 
 ipcw_brier<- function(par,Z,y,wts){
@@ -87,7 +87,7 @@ ipcw_brier<- function(par,Z,y,wts){
 #' @param Z  a matrix that contains the predictions. Each column represents a single marker.
 #' @param y vector of response variable (binary).
 #' @param wts IPC weights
-#' @rdname wCrossEntropy
+#' @rdname EnsBagg-internal
 
 
 

@@ -14,8 +14,7 @@
 #' @param xnam.cont.gam continous variables to be included in the smoothing operator gam::s(,df)
 #' @param ens.library  algorithms in the library
 #' @return a list with the predictions of each machine learning algorithm (id, predictions), the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
-#' @rdname ipcw_ensbagg
-
+#' @rdname EnsBagg-internal
 
 
 ipcw_ensbagg <- function(folds,
@@ -126,7 +125,7 @@ ipcw_ensbagg <- function(folds,
 #' @param xnam.cont.gam continous variables to be included in the smoothing operator gam::s(,df=)
 #' @param ens.library  algorithms in the library
 #' @return a matrix with the predictions on the test data set of each machine learning algorithm considered in \link{MLprocedures}
-#' @rdname ipcw_genbagg
+#' @rdname EnsBagg-internal
 
 
 ipcw_genbagg <- function(fmla,

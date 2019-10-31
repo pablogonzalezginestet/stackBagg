@@ -52,7 +52,7 @@ parametersSimulation <- function(folds,xnam,data,tao){
 #' @param tao time point of interest
 #' @param data a training data set
 #' @return lambda to be used in the glmnet function 
-#' @export
+#' @rdname EnsBagg-internal
 
 
 
