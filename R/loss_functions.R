@@ -70,7 +70,7 @@ ipcw_auc <- function (T,delta, marker,cause, wts, tao){
 #' @param y vector of response variable (binary).
 #' @param wts IPC weights
 #' @rdname wBrierScore
-#' @export
+
 
 ipcw_brier<- function(par,Z,y,wts){
   no.na <- !is.na(y)
@@ -88,7 +88,7 @@ ipcw_brier<- function(par,Z,y,wts){
 #' @param y vector of response variable (binary).
 #' @param wts IPC weights
 #' @rdname wCrossEntropy
-#' @export
+
 
 
 ipcw_crossentropy <- function(par,Z,y,wts){
