@@ -129,71 +129,79 @@
 <a class="sourceLine" id="cb2-21" title="21">bmt.test &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(bmt[test.set,]) </a>
 <a class="sourceLine" id="cb2-22" title="22">tao=<span class="dv">7</span></a></code></pre></div>
 <p>Let’s define the library of algorithms:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">ens.library &lt;-ensBagg<span class="op">::</span><span class="kw">ens.all.algorithms</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">ens.library &lt;-ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/ens.all.algorithms.html">ens.all.algorithms</a></span>()</a></code></pre></div>
 <p>We set the covariates that we include in the models:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">xnam &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a>
 <a class="sourceLine" id="cb4-2" title="2">xnam</a>
 <a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; [1] "platelet" "age"      "tcell"</span></a></code></pre></div>
 <p>Now, we are ready to predict the outcome of interest using all the algorithms:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">pred.bmt=ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/ensBagg-package.html">ensBagg</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span>xnam,<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">weighting =</span><span class="st">"CoxPH"</span> ,<span class="dt">folds =</span><span class="dv">5</span>,<span class="dt">ens.library =</span> ens.library )</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">pred.bmt=ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/ensBagg-package.html">ensBagg</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span>xnam,<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">weighting =</span><span class="st">"CoxPH"</span> ,<span class="dt">folds =</span><span class="dv">5</span>,<span class="dt">ens.library =</span> ens.library )</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-3" title="3">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="st">  </span><span class="er">|</span><span class="st">                                                                </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb5-5" title="5">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span>                                                    <span class="op">|</span><span class="st">  </span><span class="dv">20</span>%</a>
+<a class="sourceLine" id="cb5-7" title="7">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb5-8" title="8"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span>                                      <span class="op">|</span><span class="st">  </span><span class="dv">40</span>%</a>
+<a class="sourceLine" id="cb5-9" title="9">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span>                          <span class="op">|</span><span class="st">  </span><span class="dv">60</span>%</a>
+<a class="sourceLine" id="cb5-11" title="11">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb5-12" title="12"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span>            <span class="op">|</span><span class="st">  </span><span class="dv">80</span>%</a>
+<a class="sourceLine" id="cb5-13" title="13">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb5-14" title="14"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">|</span><span class="st"> </span><span class="dv">100</span>%</a></code></pre></div>
 <p>The assessment of predictive performance using the IPCW AUC is:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">pred.bmt<span class="op">$</span>auc_ipcwBagg</a>
 <a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt;        ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest   ens.svm</span></a>
-<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt; [1,] 0.7248677 0.6957672 0.7050265 0.7222222        0.6613757 0.7222222</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt; [1,] 0.6667653 0.6155511 0.5812817 0.6447716        0.5042285 0.6632924</span></a>
 <a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;      ens.bartMachine   ens.knn    ens.nn  Ensemble</span></a>
-<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt; [1,]       0.7222222 0.7248677 0.7222222 0.7301587</span></a></code></pre></div>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt; [1,]       0.6807207 0.6865372 0.6632924 0.6166887</span></a></code></pre></div>
 <p>Now let s take a look at prediction of the algorithms that allows for weights natively:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_native_weights,<span class="dv">5</span>)</a>
 <a class="sourceLine" id="cb7-2" title="2"><span class="co">#&gt;     ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest</span></a>
-<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; 1 0.5956704 0.4125311 0.4128488 0.4128488        0.4128488</span></a>
-<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; 2 0.4121633 0.4571054 0.4575744 0.4575744        0.4575744</span></a>
-<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; 3 0.4419367 0.5023271 0.5029441 0.5029441        0.5029441</span></a>
-<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; 4 0.4564145 0.5078086 0.5084429 0.5084429        0.5084429</span></a>
-<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; 5 0.3128909 0.3485262 0.3486268 0.3486268        0.3486268</span></a></code></pre></div>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; 1 0.4940572 0.4936263 0.4936636 0.4936636        0.4936636</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; 2 0.2565626 0.2094454 0.2094270 0.2094270        0.2094270</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; 3 0.3003604 0.3367436 0.3367478 0.3367478        0.3367478</span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; 4 0.4702724 0.4253351 0.4253582 0.4253582        0.4253582</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; 5 0.1507463 0.2938757 0.2938714 0.2938714        0.2938714</span></a></code></pre></div>
 <p>and their performance is:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">pred.bmt<span class="op">$</span>auc_native_weights</a>
 <a class="sourceLine" id="cb8-2" title="2"><span class="co">#&gt;        ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest</span></a>
-<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [1,] 0.7063492 0.7195767 0.7195767 0.7195767        0.7195767</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [1,] 0.5126904 0.6747969 0.6747969 0.6747969        0.6747969</span></a></code></pre></div>
 <p>The prediction of the survival based methods</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.bmt<span class="op">$</span>prediction_survival,<span class="dv">5</span>)</a>
 <a class="sourceLine" id="cb9-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
-<a class="sourceLine" id="cb9-3" title="3"><span class="co">#&gt; [1,] 0.4068569 0.3898961     0.5495447</span></a>
-<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt; [2,] 0.4523071 0.4269443     0.4841129</span></a>
-<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; [3,] 0.5008058 0.4659567     0.4653547</span></a>
-<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; [4,] 0.5068707 0.4708004     0.5020590</span></a>
-<a class="sourceLine" id="cb9-7" title="7"><span class="co">#&gt; [5,] 0.3448420 0.3384637     0.5042701</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-3" title="3"><span class="co">#&gt; [1,] 0.5025264 0.4672928     0.4964385</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt; [2,] 0.2238200 0.2341370     0.2518760</span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; [3,] 0.3411348 0.3360941     0.4694196</span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; [4,] 0.4288573 0.4085592     0.4793455</span></a>
+<a class="sourceLine" id="cb9-7" title="7"><span class="co">#&gt; [5,] 0.3008815 0.3018285     0.4474693</span></a></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">pred.bmt<span class="op">$</span>auc_survival</a>
-<a class="sourceLine" id="cb10-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
-<a class="sourceLine" id="cb10-3" title="3"><span class="co">#&gt; [1,] 0.7248677 0.7248677     0.6812169</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-2" title="2"><span class="co">#&gt;         CoxPH  CoxBoost Random Forest</span></a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="co">#&gt; [1,] 0.652645 0.6468587     0.6057702</span></a></code></pre></div>
 <p>Lastly, we could see the performance of the algorithms if we were to discard the censored observations</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">pred.discard &lt;-<span class="st"> </span>ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/prediction_discard.html">prediction_discard</a></span>(<span class="dt">train.data =</span> bmt.train,<span class="dt">test.data =</span> bmt.test,<span class="dt">xnam=</span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(bmt)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)],<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">ens.library=</span>ens.library)</a>
-<a class="sourceLine" id="cb11-2" title="2"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb11-3" title="3"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb11-4" title="4"></a>
-<a class="sourceLine" id="cb11-5" title="5"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
-<a class="sourceLine" id="cb11-6" title="6"><span class="co">#&gt; argument ignored</span></a>
-<a class="sourceLine" id="cb11-7" title="7"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.discard<span class="op">$</span>prediction_discard)</a>
-<a class="sourceLine" id="cb11-8" title="8"><span class="co">#&gt;     ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest   ens.svm</span></a>
-<a class="sourceLine" id="cb11-9" title="9"><span class="co">#&gt; 1 0.4299596      0.52 0.5007793 0.3125244        0.6152551 0.4220660</span></a>
-<a class="sourceLine" id="cb11-10" title="10"><span class="co">#&gt; 2 0.4693977      0.36 0.4126562 0.3125242        0.4148773 0.4663835</span></a>
-<a class="sourceLine" id="cb11-11" title="11"><span class="co">#&gt; 3 0.5054614      0.52 0.5236659 0.3125240        0.4610573 0.5111884</span></a>
-<a class="sourceLine" id="cb11-12" title="12"><span class="co">#&gt; 4 0.5095629      0.56 0.5287442 0.3125240        0.4696675 0.5166094</span></a>
-<a class="sourceLine" id="cb11-13" title="13"><span class="co">#&gt; 5 0.3670706      0.40 0.3875206 0.3125247        0.3271141 0.3581300</span></a>
-<a class="sourceLine" id="cb11-14" title="14"><span class="co">#&gt; 6 0.2404683      0.24 0.2709003 0.3125245        0.2550291 0.2453296</span></a>
-<a class="sourceLine" id="cb11-15" title="15"><span class="co">#&gt;   ens.bartMachine   ens.knn    ens.nn</span></a>
-<a class="sourceLine" id="cb11-16" title="16"><span class="co">#&gt; 1       0.4401732 0.4412198 0.4226678</span></a>
-<a class="sourceLine" id="cb11-17" title="17"><span class="co">#&gt; 2       0.4604404 0.4539102 0.4672660</span></a>
-<a class="sourceLine" id="cb11-18" title="18"><span class="co">#&gt; 3       0.4893697 0.4841809 0.5123436</span></a>
-<a class="sourceLine" id="cb11-19" title="19"><span class="co">#&gt; 4       0.4934462 0.4886338 0.5177964</span></a>
-<a class="sourceLine" id="cb11-20" title="20"><span class="co">#&gt; 5       0.3980712 0.4008340 0.3583254</span></a>
-<a class="sourceLine" id="cb11-21" title="21"><span class="co">#&gt; 6       0.2682885 0.2710893 0.2447854</span></a>
-<a class="sourceLine" id="cb11-22" title="22">pred.discard<span class="op">$</span>auc_discard</a>
-<a class="sourceLine" id="cb11-23" title="23"><span class="co">#&gt;          ens.glm        ens.gam.3        ens.gam.4        ens.lasso </span></a>
-<a class="sourceLine" id="cb11-24" title="24"><span class="co">#&gt;        0.7142857        0.6931217        0.7103175        0.4021164 </span></a>
-<a class="sourceLine" id="cb11-25" title="25"><span class="co">#&gt; ens.randomForest          ens.svm  ens.bartMachine          ens.knn </span></a>
-<a class="sourceLine" id="cb11-26" title="26"><span class="co">#&gt;        0.7142857        0.7195767        0.7275132        0.7301587 </span></a>
-<a class="sourceLine" id="cb11-27" title="27"><span class="co">#&gt;           ens.nn </span></a>
-<a class="sourceLine" id="cb11-28" title="28"><span class="co">#&gt;        0.7195767</span></a></code></pre></div>
+<a class="sourceLine" id="cb11-2" title="2"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.discard<span class="op">$</span>prediction_discard)</a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="co">#&gt;     ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest   ens.svm</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="co">#&gt; 1 0.4825916      0.56 0.5143330 0.4868580        0.4842826 0.5010808</span></a>
+<a class="sourceLine" id="cb11-5" title="5"><span class="co">#&gt; 2 0.2096715      0.28 0.1893924 0.2632505        0.2601249 0.2167109</span></a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="co">#&gt; 3 0.3613134      0.40 0.3393827 0.3678207        0.2914215 0.3449633</span></a>
+<a class="sourceLine" id="cb11-7" title="7"><span class="co">#&gt; 4 0.4374240      0.44 0.4778217 0.4356021        0.4821885 0.4333410</span></a>
+<a class="sourceLine" id="cb11-8" title="8"><span class="co">#&gt; 5 0.3158915      0.28 0.2964249 0.3339009        0.1421386 0.3019592</span></a>
+<a class="sourceLine" id="cb11-9" title="9"><span class="co">#&gt; 6 0.4202086      0.48 0.4360688 0.4186360        0.3479636 0.4110122</span></a>
+<a class="sourceLine" id="cb11-10" title="10"><span class="co">#&gt;   ens.bartMachine   ens.knn    ens.nn</span></a>
+<a class="sourceLine" id="cb11-11" title="11"><span class="co">#&gt; 1       0.4871966 0.4870914 0.5028567</span></a>
+<a class="sourceLine" id="cb11-12" title="12"><span class="co">#&gt; 2       0.1928729 0.1979618 0.2158492</span></a>
+<a class="sourceLine" id="cb11-13" title="13"><span class="co">#&gt; 3       0.3870408 0.3870407 0.3451896</span></a>
+<a class="sourceLine" id="cb11-14" title="14"><span class="co">#&gt; 4       0.4508984 0.4483748 0.4344530</span></a>
+<a class="sourceLine" id="cb11-15" title="15"><span class="co">#&gt; 5       0.3388686 0.3425455 0.3017783</span></a>
+<a class="sourceLine" id="cb11-16" title="16"><span class="co">#&gt; 6       0.4389058 0.4389242 0.4118990</span></a>
+<a class="sourceLine" id="cb11-17" title="17">pred.discard<span class="op">$</span>auc_discard</a>
+<a class="sourceLine" id="cb11-18" title="18"><span class="co">#&gt;          ens.glm        ens.gam.3        ens.gam.4        ens.lasso </span></a>
+<a class="sourceLine" id="cb11-19" title="19"><span class="co">#&gt;        0.6648352        0.6469780        0.6057692        0.5494505 </span></a>
+<a class="sourceLine" id="cb11-20" title="20"><span class="co">#&gt; ens.randomForest          ens.svm  ens.bartMachine          ens.knn </span></a>
+<a class="sourceLine" id="cb11-21" title="21"><span class="co">#&gt;        0.5054945        0.6758242        0.6895604        0.6895604 </span></a>
+<a class="sourceLine" id="cb11-22" title="22"><span class="co">#&gt;           ens.nn </span></a>
+<a class="sourceLine" id="cb11-23" title="23"><span class="co">#&gt;        0.6758242</span></a></code></pre></div>
 <p>The ensemble ROC curve is</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">ensBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ensBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>bmt.test<span class="op">$</span>time,<span class="dt">delta =</span> bmt.test<span class="op">$</span>cause,<span class="dt">marker =</span>pred.bmt<span class="op">$</span>prediction_ensBagg[,<span class="st">"Ensemble"</span>],<span class="dt">wts=</span>pred.bmt<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="dv">7</span>,<span class="dt">method =</span> <span class="st">"ipcw"</span>)</a></code></pre></div>
 <p><img src="bone_Marrow_Transplant_Data_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>

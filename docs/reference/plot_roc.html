@@ -134,7 +134,19 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>time</th>
-      <td></td>
+      <td><p>vector of (censored) event-times</p></td>
+    </tr>
+    <tr>
+      <th>delta</th>
+      <td><p>vector of event indicators at the corresponding value of the vector time. Censored observations must be denoted by the value 0.</p></td>
+    </tr>
+    <tr>
+      <th>marker</th>
+      <td><p>vector of the marker values for which we want to compute the time-dependent ROC curve. the function assumes that larger values of the marker are associated with higher risks of events</p></td>
+    </tr>
+    <tr>
+      <th>wts</th>
+      <td><p>IPC weights</p></td>
     </tr>
     <tr>
       <th>tao</th>

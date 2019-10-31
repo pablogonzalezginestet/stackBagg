@@ -87,7 +87,7 @@ pred.bmt$auc_survival
 
 Lastly, we could see the performance of the algorithms if we were to discard the censored observations
 
-````{r}
+````{r,warning=FALSE}
 pred.discard <- ensBagg::prediction_discard(train.data = bmt.train,test.data = bmt.test,xnam=names(bmt)[-(1:2)],tao=7,ens.library=ens.library)
 head(pred.discard$prediction_discard)
 pred.discard$auc_discard

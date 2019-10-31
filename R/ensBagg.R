@@ -392,11 +392,6 @@ colnames(auc_survival) <- c("CoxPH","CoxBoost","Random Forest")
 prediction_survival <- cbind(predcoxfit,pred.coxboost,cifRf)
 colnames(prediction_survival) <- c("CoxPH","CoxBoost","Random Forest")
 
-auc_survival<- cbind(auc_survival1,auc_survival2)
-colnames(auc_survival) <- c("CoxPH","CoxBoost")
-prediction_survival <- cbind(predcoxfit,pred.coxboost)
-colnames(prediction_survival) <- c("CoxPH","CoxBoost")
-
 
 return(list( 
   library=ml_names,

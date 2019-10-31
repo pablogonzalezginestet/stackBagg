@@ -2,6 +2,6 @@ pandoc: 2.7.2
 pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
-  bone_Marrow_Transplant_Data: ../../../../../../../../../Z:/Project 1/Program/git/ensBagg/vignettes/bone_Marrow_Transplant_Data.html
-  intro: ../../../../../../../../../Z:/Project 1/Program/git/ensBagg/vignettes/intro.html
+  bone_Marrow_Transplant_Data: ../../../../../../../../../Z:/Project 1/Program/git/EnsBagg/vignettes/bone_Marrow_Transplant_Data.html
+  intro: ../../../../../../../../../Z:/Project 1/Program/git/EnsBagg/vignettes/intro.html
 

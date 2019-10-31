@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tuning parameter selection — tune_params_ml • ensBagg</title>
+<title>Library of Machine learning procedures — ens.all.algorithms • ensBagg</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Tuning parameter selection — tune_params_ml" />
-<meta property="og:description" content="Tuning parameter selection" />
+<meta property="og:title" content="Library of Machine learning procedures — ens.all.algorithms" />
+<meta property="og:description" content="Library of Machine Learning procedures" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -118,80 +118,26 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Tuning parameter selection</h1>
+    <h1>Library of Machine learning procedures</h1>
     
-    <div class="hidden name"><code>tune_params_ml.Rd</code></div>
+    <div class="hidden name"><code>ens.all.algorithms.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Tuning parameter selection</p>
+    <p>Library of Machine Learning procedures</p>
     </div>
 
-    <pre class="usage"><span class='fu'>tune_params_ml</span>(<span class='no'>gam_param</span>, <span class='no'>lasso_param</span>, <span class='no'>randomforest_param</span>, <span class='no'>knn_param</span>,
-  <span class='no'>svm_param</span>, <span class='no'>nn_param</span>, <span class='no'>bart_param</span>, <span class='no'>folds</span>, <span class='no'>xnam</span>, <span class='no'>tao</span>, <span class='no'>data</span>, <span class='no'>weighting</span>)</pre>
+    <pre class="usage"><span class='fu'>ens.all.algorithms</span>()</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>gam_param</th>
-      <td><p>a vector containing degree of freedom 3 and 4</p></td>
-    </tr>
-    <tr>
-      <th>lasso_param</th>
-      <td><p>a grid of values for the shrinkage term</p></td>
-    </tr>
-    <tr>
-      <th>randomforest_param</th>
-      <td><p>a two column matrix: first column denotes the num_trees parameter and the second column denotes the mtry parameter.</p></td>
-    </tr>
-    <tr>
-      <th>knn_param</th>
-      <td><p>a grid of  positive integers values</p></td>
-    </tr>
-    <tr>
-      <th>svm_param</th>
-      <td><p>a three column matrix:  first column denotes the cost parameter, second column the gamma and third column the kernel. kernel=1 denotes "radial" and kernel=2 denotes "linear".</p></td>
-    </tr>
-    <tr>
-      <th>nn_param</th>
-      <td><p>a grid of positive integers values for the neurons</p></td>
-    </tr>
-    <tr>
-      <th>bart_param</th>
-      <td><p>a three column matrix:  first column denotes the num_tree parameter, second column the k parameter and third column the q parameter.</p></td>
-    </tr>
-    <tr>
-      <th>folds</th>
-      <td><p>number of folds</p></td>
-    </tr>
-    <tr>
-      <th>xnam</th>
-      <td><p>vector with the names of the covariates to be included in the model</p></td>
-    </tr>
-    <tr>
-      <th>tao</th>
-      <td><p>evaluation time point of interest</p></td>
-    </tr>
-    <tr>
-      <th>data</th>
-      <td><p>data set that contains at least id, E , ttilde, delta, wts and covariates</p></td>
-    </tr>
-    <tr>
-      <th>weighting</th>
-      <td><p>Procedure to compute the inverse probability of censoring weights. Weighting="CoxPH" and weighting="CoxBoost" model the censoring by the Cox model and CoxBoost model respectively.</p></td>
-    </tr>
-    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a list with the tune parameters selected using the IPCW AUC loss function.</p>
+    <p>a character vector with all prediction algorithms  supported by ensBagg</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
     </ul>
 
