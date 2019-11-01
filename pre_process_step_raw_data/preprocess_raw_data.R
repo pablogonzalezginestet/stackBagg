@@ -9,7 +9,7 @@ rm(list = ls())
 
 set.seed(1983)
 
-hiv <- read.table("hiv_data.csv", header=TRUE, sep=",")
+#hiv <- read.table("hiv_data.csv", header=TRUE, sep=",")
 hiv<- hiv[order(as.Date(hiv$date_hiv, format="%d/%m/%Y")),]
 dim(hiv)
 
