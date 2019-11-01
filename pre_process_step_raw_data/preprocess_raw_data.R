@@ -1,9 +1,8 @@
 
 
-# Real Data
+# Pre-processing step to obtain the final dataset 
 
 rm(list = ls())
-
 
 
 #setwd("/..../")
