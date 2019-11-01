@@ -9,7 +9,9 @@ without competing risk.
 * Gonzalez Ginestet, P. et al. (2019). "Ensemble IPCW bagging: a case study in the HIV care
 registry".
 
-![alt text](src=https://github.com/pablogonzalezginestet/ensBagg/tree/master/figure/boxplot_coxph_sim2.png width=10%/)
+![](figure/boxplot_coxph_sim2.png)
+
+AUCs of each algorithm relative to the AUC of the ensemble based on 500 simulated data sets under the four scenarios (A=orange, B=green, C=blue and D=violet) using all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set. The horizontal line denotes the ensemble.
 
 ## Important Note
 
