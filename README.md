@@ -17,6 +17,8 @@ AUCs of each algorithm relative to the AUC of the ensemble based on 500 simulate
 
 The real data application in the paper relies on Swedish HIV care register (InfCareHIV) that cannot be openly shared. The data available on the folder fake_data is based on a fake, simulated  data that mimics the data used for the analysis. The R script which run the analysis of the data set is the same as the used for the analysis, but analysis results cannot be exactly reproduced. 
 
+The folder simulations contains the R file which runs the simulation and reproduces the main figures of the paper (AUC of each single algorithm relative to the AUC of the ensemble) and tables with the average estimated AUCs. The tables complement the figures and they are found in the supplementary material . 
+
 ## Installation
 
 You can install the development version of `ensBagg` from [GitHub](https://github.com/pablogonzalezginestet/ensBagg) with:
