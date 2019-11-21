@@ -30,7 +30,6 @@ The folder fake_data contains the fake data and the file that runs the analsys.
 The folder data constains the data used as example, the same that is shipped with the package.
 
 
-
 ## Installation
 
 You can install the development version of `ensBagg` from [GitHub](https://github.com/pablogonzalezginestet/ensBagg) with:
