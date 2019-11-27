@@ -8,7 +8,7 @@
 \alias{ipcw_brier}
 \alias{ipcw_crossentropy}
 \alias{tune_lasso}
-\alias{EnsBagg-internal}
+\alias{stackBagg-internal}
 \alias{optimun_auc_coef}
 \alias{risk_auc}
 \alias{MLprocedures}
@@ -16,7 +16,7 @@
 \alias{MLprocedures_natively}
 \alias{ML_list_natively}
 \alias{grid_parametersDataHIV}
-\title{Algorithm 2: Ensemble IPCW Bagging}
+\title{Algorithm 2:  Procedure to obtain optimally the coefficients to be used in Algorithm 1}
 \format{An object of class \code{list} of length 8.}
 \usage{
 ipcw_ensbagg(folds, MLprocedures, fmla, tuneparams, tao, B = NULL, A,
@@ -201,7 +201,7 @@ Compute weighted Cross Entropy Loss function for a single marker or a linear wei
 
 Obtain the lambda hyparameter for the LASSO using cross-validation
 
-Internal EnsBagg helper functions
+Internal stackBagg helper functions
 
 Compute the risk of missclassifying an individual using as a marker a single prediction or weighted linear combination of several predictions (1-AUC)
 

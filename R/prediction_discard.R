@@ -28,7 +28,7 @@ prediction_discard <- function( train.data,
   xnam.cont <- xnam[!(xnam %in% xnam.factor)]
   xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
   
-  all.library <- ensBagg::ens.all.algorithms()
+  all.library <- stackBagg::all.algorithms()
   
   names(train.data)[1] <- "ttilde"
   names(train.data)[2] <- "delta"
@@ -53,7 +53,7 @@ prediction_discard <- function( train.data,
   fmla <- as.formula(paste("E ~ ", paste(xnam, collapse= "+")))
   
   if (missing(tuneparams)) {
-    tuneparams <- ensBagg::parametersSimulation(folds = 5,xnam,train.data,tao)
+    tuneparams <- stackBagg::parametersSimulation(folds = 5,xnam,train.data,tao)
   }  
   
   

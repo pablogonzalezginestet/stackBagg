@@ -1,6 +1,6 @@
 
 #' IPC Weighted AUC Loss Function
-#' @description Compute time-varying IPCW AUC to account for censoring and competing risks.
+#' @description Compute time-dependent IPCW AUC to account for censoring and competing risks.
 #' @param T  vector of (censored) event-times
 #' @param delta  vector of event indicators at the corresponding value of the vector T. Censored observations must be denoted by the value 0. 
 #' @param marker   vector of the marker values for which we want to compute the time-dependent ROC curve. the function assumes that larger values of the marker are associated with higher risks of events
@@ -69,7 +69,7 @@ ipcw_auc <- function (T,delta, marker,cause, wts, tao){
 #' @param Z  a matrix that contains the predictions. Each column represents a single marker.
 #' @param y vector of response variable (binary).
 #' @param wts IPC weights
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 
 
 ipcw_brier<- function(par,Z,y,wts){
@@ -87,7 +87,7 @@ ipcw_brier<- function(par,Z,y,wts){
 #' @param Z  a matrix that contains the predictions. Each column represents a single marker.
 #' @param y vector of response variable (binary).
 #' @param wts IPC weights
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 
 
 

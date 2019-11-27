@@ -2,7 +2,7 @@
 % Please edit documentation in R/datageneration.R
 \name{datagenPaper}
 \alias{datagenPaper}
-\title{Simulation settings from Gonzalez Ginestet et al. (2019+). "Ensemble IPCW Bagging bagging: a case study in the HIV care registry"}
+\title{Simulation settings from Gonzalez Ginestet et al. (2019+). "Stacked IPCW Bagging bagging: a case study in the HIV care registry"}
 \usage{
 datagenPaper(J, n, frac.train, tao = 26.5, simulation, scenario)
 }

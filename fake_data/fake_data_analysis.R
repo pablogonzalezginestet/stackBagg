@@ -6,12 +6,12 @@
 # It reproduces:
 # Table 3: Estimated AUCs for predicting a rebound in viral load in split sample test set based
 # on Cox-PH-weights and Figure 1
-# Figure 1: Aalen-Johansen estimates for the cause-specic cumulative
+# Figure 1: Aalen-Johansen estimates for the cause-specific cumulative
 # incidences of failing to maintain HIV RNA undetectable within 2 years of suppression within
-# quartiles of the test data set and  ROC curves for the the optimized ensemble IPCW bagged.
+# quartiles of the test data set and  ROC curves for the the optimized stacked IPCW bagging.
 # 
-# We select the tuning parameters as it is described in the appendix of the paper  Gonzalez Ginestet et al. (2019+). "Ensemble IPCW Bagging bagging: a case study in the HIV care registry".
-# The tuning parameter is done using the function ensBagg::tune_params_ml based on a grid values of each of the hyperparameter considered. 
+# We select the tuning parameters as it is described in the appendix of the paper  Gonzalez Ginestet et al. (2019+). "Stacked IPCW Bagging bagging: a case study in the HIV care registry".
+# The tuning parameter is done using the function stackBagg::tune_params_ml based on a grid values of each of the hyperparameter considered. 
 # We consider the following hyperparameters:
 # GAM: degree of freedom (df). we only consider df equal to 3 and 4
 # LASSO: lambda
@@ -24,7 +24,7 @@
 
 rm(list = ls())
 library(dplyr)
-library(ensBagg)
+library(stackBagg)
 
 #  we load the fake data set which lies in this folder
 load("fake_data_train.RData")
@@ -39,10 +39,10 @@ fake_data_train <- fake_data_train[sample(nrow(fake_data_train),1000,replace = F
 xnam <- names(fake_data_train)[-(1:2)]
 
 # we set the grid of the hyperparameters that we are going to use in the tuning step
-grid.hyperparam <- ensBagg::grid_parametersDataHIV(xnam,fake_data_train,tao=730)
+grid.hyperparam <- stackBagg::grid_parametersDataHIV(xnam,fake_data_train,tao=730)
 
 # we tune the hyperparameters using the grid 
-tuneparams_fakedata<- ensBagg::tune_params_ml(gam_param = grid.hyperparam$gam_param, 
+tuneparams_fakedata<- stackBagg::tune_params_ml(gam_param = grid.hyperparam$gam_param, 
                                                  lasso_param = grid.hyperparam$lasso_param,
                                                  randomforest_param = grid.hyperparam$randomforest_param,
                                                  knn_param = grid.hyperparam$knn_param,
@@ -56,10 +56,10 @@ tuneparams_fakedata<- ensBagg::tune_params_ml(gam_param = grid.hyperparam$gam_pa
                                                  weighting="CoxPH")
 
 # we specify the algorithms
-ens.library <-ensBagg::ens.all.algorithms()
+ens.library <-stackBagg::all.algorithms()
 
-# we predict the outcome of interest using the ensBagg with Cox PH weights using all algorithms available in the package
-res.ensBagg <- ensBagg::ensBagg(train.data = fake_data_train,
+# we predict the outcome of interest using the stackBagg with Cox PH weights using all algorithms available in the package
+res.stackBagg <- stackBagg::stackBagg(train.data = fake_data_train,
                                 test.data = fake_data_test,
                                 xnam=xnam,
                                 tao=730,
@@ -73,13 +73,13 @@ res.ensBagg <- ensBagg::ensBagg(train.data = fake_data_train,
 #Estimated AUCs for predicting a rebound in viral load in split sample test set based
 #on Cox-PH-weights.
 
-table3 <- cbind(c(res.ensBagg$auc_ipcwBagg,res.ensBagg$auc_survival[1:2]),c(res.ensBagg$auc_native_weights,rep(NA,7)),c(rep(NA,3),res.ensBagg$auc_survival[3],rep(NA,7)))
+table3 <- cbind(c(res.stackBagg$auc_ipcwBagg,res.stackBagg$auc_survival[1:2]),c(res.stackBagg$auc_native_weights,rep(NA,7)),c(rep(NA,3),res.stackBagg$auc_survival[3],rep(NA,7)))
 table3
 
 
 ######               Figure 1                       ##########
-# Panel at right: the ROC curves for the the optimized ensemble IPCW bagged
-ensBagg::plot_roc(time=fake_data_test$ttilde,delta=fake_data_test$delta, marker=res.ensBagg$prediction_ensBagg[,"Ensemble"], tao=730, method="ipcw")
+# Panel at right: the ROC curves for the the optimized stacked IPCW bagging
+stackBagg::plot_roc(time=fake_data_test$ttilde,delta=fake_data_test$delta, marker=res.stackBagg$prediction_ensBagg[,"Stack"], tao=730, method="ipcw")
 
 #Panel at left: the Aalen-Johansen estimates for the cause-specific cumulative
 #incidences of failing to maintain HIV RNA undetectable within 2 years of suppression within
@@ -90,7 +90,7 @@ library(ggplot2)
 
 tao=730
 
-pred.ens <- res.ensBagg$prediction_ensBagg[,"Ensemble"]
+pred.ens <- res.stackBagg$prediction_ensBagg[,"Stack"]
 fake_data_test$quartile <- with(fake_data_test,
                            cut(pred.ens, 
                                breaks=quantile(pred.ens, probs=seq(0,1, by=0.2), na.rm=TRUE), 

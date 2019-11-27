@@ -1,15 +1,15 @@
 
-#' Internal EnsBagg functions
+#' Internal stackBagg functions
 #' 
-#' @description Internal EnsBagg helper functions
+#' @description Internal stackBagg helper functions
 #'
 #' @details These functions are not intended for use by users.
 #'
-#' @name EnsBagg-internal
+#' @name stackBagg-internal
 
 NULL
 
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 #' @param coef_init  starting values for the coefficients
 #' @param lambda penalization term. It is a positive scalar.
 #' @param data A data frame that contains at least: ttilde, delta, wts
@@ -32,7 +32,7 @@ optimun_auc_coef = function(coef_init,lambda,data,Z,tao){
 #' @param data A data frame  that constains at least: ttilde= time to event, delta=event type, wts= IPC weights
 #' @param tao time point of interest 
 #' @return 1-AUC
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 
 
 risk_auc<- function(par,lambda,Z,data,tao){
@@ -47,10 +47,10 @@ risk_auc<- function(par,lambda,Z,data,tao){
 
 #' Library of Machine learning procedures
 #' @description  Library of Machine Learning procedures
-#' @return a character vector with all prediction algorithms  supported by ensBagg 
+#' @return a character vector with all prediction algorithms  supported by stackBagg 
 #' @export
 
-ens.all.algorithms <- function(){
+all.algorithms <- function(){
   return(c("ens.glm","ens.gam","ens.lasso","ens.randomForest","ens.svm","ens.bartMachine","ens.knn","ens.nn"))
 }
 
@@ -63,7 +63,7 @@ ens.all.algorithms <- function(){
 #' @param tuneparams a list of tune parameters for each machine learning procedure
 #' @param i sample selected by bootstrap
 #' @return a matrix of predictions where each column is the prediction of each algorithm based on the testdata
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 
 #MLprocedures <- function(traindata,testdata,fmla, tuneparams,i){ 
   
@@ -142,7 +142,7 @@ MLprocedures <- function(traindata,
   
 #' @description  Library of Machine Learning procedures
 #' @return a list of Machine Learning functions
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 
 ML_list <- list(
   
@@ -298,7 +298,7 @@ ML_list <- list(
 #' @param fmla formula object ex. "E ~ x1+x2"
 #' @param tuneparams a list of tune parameters for each machine learning procedure
 #' @return a matrix of predictions where each column is the prediction of each algorithm based on the testdata
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 
 
 
@@ -341,7 +341,7 @@ MLprocedures_natively <- function(
 
 #' @description  Library of Machine Learning procedures that allows for weights
 #' @return a list of Machine Learning functions
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 #' 
 ML_list_natively <- list(
   
@@ -424,7 +424,7 @@ ML_list_natively <- list(
 #' nn_param a grid of positive integers values for the neurons
 #'  bart_param a three column matrix:  first column denotes the num_tree parameter, second column the k parameter and third column the q parameter.
 #' @export
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 
 
 grid_parametersDataHIV <- function(xnam,data,tao){
