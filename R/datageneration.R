@@ -1,4 +1,4 @@
-#' @title Simulation settings from Gonzalez Ginestet et al. (2019+). "Ensemble IPCW Bagging bagging: a case study in the HIV care registry"
+#' @title Simulation settings from Gonzalez Ginestet et al. (2019+). "Stacked IPCW Bagging bagging: a case study in the HIV care registry"
 #' @description Function that generates data of the different simulation studies
 #' presented in the accompanying paper. This function requires the
 #'   \code{gam} package to be installed.

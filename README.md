@@ -1,17 +1,17 @@
-# ensBagg: Ensemble IPCW Bagging
+# stackBagg: Stacked IPCW Bagging
 
-**ensBagg** is an `R` package that uses inverse probability of censoring weighted
+**stackBagg** is an `R` package that uses inverse probability of censoring weighted
 (IPCW) bagging approach as a pre-processing step to allow for all existing and any
 newly developed machine learning methods for classification to be applied to right-censored data with or
 without competing risk.
 
-**ensBagg** provides the files to reproduce the simulation studies and the real data application in the forthcoming paper:
-* Gonzalez Ginestet, P. et al. (2019). "Ensemble IPCW bagging: a case study in the HIV care
+**stackBagg** provides the files to reproduce the simulation studies and the real data application in the forthcoming paper:
+* Gonzalez Ginestet, P. et al. (2019). "Stacked IPCW bagging: a case study in the HIV care
 registry".
 
-![](figure/boxplot_coxph_sim2.png)
+![](figure/boxplot_sim1_coxph_stack.png)
 
-AUCs of each algorithm relative to the AUC of the ensemble based on 500 simulated data sets under the four scenarios (A=orange, B=green, C=blue and D=violet) using all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set. The horizontal line denotes the ensemble.
+AUCs of each algorithm relative to the AUC of the stack based on 500 simulated data sets under the four scenarios (A=orange, B=green, C=blue and D=violet) using all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set. The horizontal line denotes the stack.
 
 ## Important Note
 
@@ -19,7 +19,7 @@ The real data application in the paper relies on Swedish HIV care register (InfC
 
 ## Organization of folders
 
-The folder simulations contains the R file which runs the simulation and reproduces the main figures of the paper (AUC of each single algorithm relative to the AUC of the ensemble) and tables with the average estimated AUCs. The tables complement the figures and they are found in the supplementary material . 
+The folder simulations contains the R file which runs the simulation and reproduces the main figures of the paper (AUC of each single algorithm relative to the AUC of the stack) and tables with the average estimated AUCs. The tables complement the figures and they are found in the supplementary material . 
 
 R folder contains, among other files, the file datageneration.R that generates the simulated data for the different simulation studies and scenarios.
 
@@ -32,19 +32,19 @@ The folder data constains the data used as example, the same that is shipped wit
 
 ## Installation
 
-You can install the development version of `ensBagg` from [GitHub](https://github.com/pablogonzalezginestet/ensBagg) with:
+You can install the development version of `stackBagg` from [GitHub](https://github.com/pablogonzalezginestet/stackBagg) with:
 
 
 ```R
 if (!require("devtools")) install.packages("devtools")
-devtools::install_github("pablogonzalezginestet/ensBagg")
+devtools::install_github("pablogonzalezginestet/stackBagg")
 ```
 
 
 ## Vignette
 
 
-See the vignette for details about examples usage of the functions found in  `ensBagg`: [online vignette](https://pablogonzalezginestet.github.io/ensBagg/)
+See the vignette for details about examples usage of the functions found in  `stackBagg`: [online vignette](https://pablogonzalezginestet.github.io/stackBagg/)
 
 
 

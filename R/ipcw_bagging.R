@@ -1,5 +1,5 @@
 
-#' Algorithm 2: Ensemble IPCW Bagging 
+#' Algorithm 2:  Procedure to obtain optimally the coefficients to be used in Algorithm 1
 #' @description  Obtain predictions
 #' @param folds Number of folds
 #' @param MLprocedures \link{MLprocedures}
@@ -14,7 +14,7 @@
 #' @param xnam.cont.gam continous variables to be included in the smoothing operator gam::s(,df)
 #' @param ens.library  algorithms in the library
 #' @return a list with the predictions of each machine learning algorithm (id, predictions), the average AUC across folds for each of them, the optimal coefficients, an indicator if the optimization procedure has converged and the value of penalization term chosen
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 
 
 ipcw_ensbagg <- function(folds,
@@ -109,7 +109,7 @@ ipcw_ensbagg <- function(folds,
 
 
 
-#' Algorithm 1: General IPCW Bagging 
+#' Algorithm 1: Stacked IPCW Bagging 
 
 #' @description  Obtain predictions
 #' @importFrom boot boot
@@ -125,7 +125,7 @@ ipcw_ensbagg <- function(folds,
 #' @param xnam.cont.gam continous variables to be included in the smoothing operator gam::s(,df=)
 #' @param ens.library  algorithms in the library
 #' @return a matrix with the predictions on the test data set of each machine learning algorithm considered in \link{MLprocedures}
-#' @rdname EnsBagg-internal
+#' @rdname stackBagg-internal
 
 
 ipcw_genbagg <- function(fmla,
