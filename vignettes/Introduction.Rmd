@@ -1,8 +1,8 @@
 ---
-title: "Introduction to ensBagg package"
+title: "Introduction to stackBagg package"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to ensBagg package}
+  %\VignetteIndexEntry{Introduction to stackBagg package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,10 +23,10 @@ This vignette focuses on giving an overview of the main functions of the package
 
 ## Setup
 
-We load the package __ensBagg__ 
+We load the package __stackBagg__ 
 
 ```{r, eval=FALSE}
-library(ensBagg)
+library(stackBagg)
 ```
 
 ## Example: Simulated Data
@@ -34,7 +34,7 @@ library(ensBagg)
 The simulated data can be loaded via:
 
 ```{r}
-library(ensBagg)
+library(stackBagg)
 data("exampleData")
 ```
 
@@ -85,10 +85,10 @@ library(dplyr)
 test %>% subset(E==0 & ttilde<26.5) %>%  count(delta)
 ````
 
-Next we apply __ensBagg__ to estimate the risk of experiencing the main event using the 20 covariates in the data set. In other words, using __ensBagg__ we are going to estimate $P(T<26.5,\delta=1|X)$ using a bunch of machine learning algorithms.
-Before applying __ensBagg__, we need to make sure that the data set is in the appropiate format: time event is in the first column and the second column is the indicator event type. 
+Next we apply __stackBagg__ to estimate the risk of experiencing the main event using the 20 covariates in the data set. In other words, using __stackBagg__ we are going to estimate $P(T<26.5,\delta=1|X)$ using a bunch of machine learning algorithms.
+Before applying __stackBagg__, we need to make sure that the data set is in the appropiate format: time event is in the first column and the second column is the indicator event type. 
 
-#### Note: The first two columns of the data.frame data set must be in the following order: time and then status/event indicator. The function __ensBagg::ensBagg__ creates for us the binary variable of interest E in terms of the time point of interest and the status/event indicator.
+#### Note: The first two columns of the data.frame data set must be in the following order: time and then status/event indicator. The function __stackBagg::stackBagg__ creates for us the binary variable of interest E in terms of the time point of interest and the status/event indicator.
 
 ````{r}
 train <- train[,-(1:2)]
@@ -96,28 +96,28 @@ head(train,2)
 test <- test[,-(1:2)]
 head(test,2)
 ````
-Another argument of the function __ensBagg::ensBagg__ is the names of covariates as they are named in the data set that we want to include in the model. As we have said above, we are going to use all covariates 
+Another argument of the function __stackBagg::stackBagg__ is the names of covariates as they are named in the data set that we want to include in the model. As we have said above, we are going to use all covariates 
 
 ````{r}
 xnam <- names(train)[-(1:3)]
 xnam
 ````
 
-We have also to specify the library of algorithms that we want to use to predict the event of interest and to be used to form the ensemble. We could see all the algorithms that the user could potentially include in the analysis through __ensBagg::ens.all.algorithms()__. Let 's use all of them and we denote it as __ens.library__.
+We have also to specify the library of algorithms that we want to use to predict the event of interest and to be used to form the stack. We could see all the algorithms that the user could potentially include in the analysis through __stackBagg::all.algorithms()__. Let 's use all of them and we denote it as __ens.library__.
 
 ````{r}
-ens.library <-ensBagg::ens.all.algorithms()
+ens.library <-stackBagg::all.algorithms()
 ens.library
 ````
 
-Another argument of the function __ensBagg::ensBagg__ is a list of tune parameters for each machine learning procedure. If this argument is missing, the function uses as default values the same used for the simulation in the paper. For now, we are going to use the default values for the tune parameters.
+Another argument of the function __stackBagg::stackBagg__ is a list of tune parameters for each machine learning procedure. If this argument is missing, the function uses as default values the same used for the simulation in the paper. For now, we are going to use the default values for the tune parameters.
 Additionally, we will use 5 folds and we are going to show the results computing the weights under a Cox proportional hazard model (CoxPH) and boosting
 Cox regression (Cox-Boost).
 
 Firstly, we model the weights under CoxPH and we train the different models and get their predictions on the test data set.
 
 ````{r, warning=FALSE}
-pred <- ensBagg::ensBagg(train.data = train,test.data = test,xnam = xnam,tao = 26.5,weighting = "CoxPH",folds = 5,ens.library = ens.library )
+pred <- stackBagg::stackBagg(train.data = train,test.data = test,xnam = xnam,tao = 26.5,weighting = "CoxPH",folds = 5,ens.library = ens.library )
 ````
 
 We show several output of pred.
@@ -134,7 +134,7 @@ pred$library
 #### Predictions and performance of IPCW Bagging
 
 
-Let s take a look first at the IPCW Bagging prediction of the different algorithms and the ensemble IPCW Bagging on the test data set:
+Let s take a look first at the IPCW Bagging prediction of the different algorithms and the stacked IPCW Bagging on the test data set:
 ````{r}
 head(pred$prediction_ensBagg,5)
 ````
@@ -145,12 +145,12 @@ The assessment of predictive performance using the IPCW AUC is:
 pred$auc_ipcwBagg
 ````
 
-The optimal coefficients used to get the ensemble IPCW Bagging:
+The optimal coefficients used to get the stacked IPCW Bagging:
 
 ````{r}
 pred$optimal_coefficients
 ````
-We can note that the algorithms with the largest predictive performance weigh in more in the ensemble. We check if convergence has been reached in the optimization problem of finding the optimal coefficients (0 denotes convergence, 1 otherwise) and the penalization term used:
+We can note that the algorithms with the largest predictive performance weigh in more in the stack. We check if convergence has been reached in the optimization problem of finding the optimal coefficients (0 denotes convergence, 1 otherwise) and the penalization term used:
 ````{r}
 pred$convergence
 pred$penalization_term
@@ -167,12 +167,12 @@ The GAM is trained with two degree of freedom 3 and 4. The LASSO paremeter refer
 
 #### ROC curve 
 
-Let s compare the ROC curve for the best and worst single algorithm and the ensemble.
-The ensemble ROC curve is
+Let s compare the ROC curve for the best and worst single algorithm and the stack.
+The ROC curve of the stack is
 
 
 ````{r}
-ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"Ensemble"],wts=pred$wts_test,tao=26.5,method = "ipcw")
+stackBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"Stack"],wts=pred$wts_test,tao=26.5,method = "ipcw")
 ````
 
 
@@ -180,7 +180,7 @@ The GAM.4 ROC curve is
 
 
 ````{r}
-ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"ens.gam.4"],wts=pred$wts_test,tao=26.5,method = "ipcw")
+stackBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"ens.gam.4"],wts=pred$wts_test,tao=26.5,method = "ipcw")
 ````
 
 
@@ -188,7 +188,7 @@ The k-NN  ROC curve is
 
 
 ````{r}
-ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"ens.knn"],wts=pred$wts_test,tao=26.5,method = "ipcw")
+stackBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred$prediction_ensBagg[,"ens.knn"],wts=pred$wts_test,tao=26.5,method = "ipcw")
 ````
 
 
@@ -230,10 +230,10 @@ Lastly, we could see the performance of the algorithms if we were to discard the
 
 ````{r}
 
-pred.discard <- ensBagg::prediction_discard(train.data = train,test.data = test,xnam = xnam,tao = 26.5,ens.library=ens.library)
+pred.discard <- stackBagg::prediction_discard(train.data = train,test.data = test,xnam = xnam,tao = 26.5,ens.library=ens.library)
 head(pred.discard$prediction_discard)
 pred.discard$auc_discard
-ensBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred.discard$prediction_discard[,"ens.gam.4"],tao=26.5,method = "discard")
+stackBagg::plot_roc(time=test$ttilde,delta = test$delta,marker =pred.discard$prediction_discard[,"ens.gam.4"],tao=26.5,method = "discard")
 
 ````
 

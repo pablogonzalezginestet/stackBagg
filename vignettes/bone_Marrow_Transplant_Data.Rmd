@@ -17,14 +17,14 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-We apply the package __ensBagg__ to a data set The Bone Marrow Transplant Data (bmt) which is in the package __timereg__ . Bone marrow transplants are a standard treatment for acute leukemia. In the recovery process patients can suffer from Infections, toxicity, and (after allogeneic HSCT only), graft-vs.-host disease (GVHD) being  the main causes of death. We are interested in predicting  the time to death related to treatment where the risk of relapse is a competing risk. 
+We apply the package __stackBagg__ to a data set The Bone Marrow Transplant Data (bmt) which is in the package __timereg__ . Bone marrow transplants are a standard treatment for acute leukemia. In the recovery process patients can suffer from Infections, toxicity, and (after allogeneic HSCT only), graft-vs.-host disease (GVHD) being  the main causes of death. We are interested in predicting  the time to death related to treatment where the risk of relapse is a competing risk. 
 
 ## Setup
 
-We load the package __ensBagg__ and __timereg__ and we load the data set bmt
+We load the package __stackBagg__ and __timereg__ and we load the data set bmt
 
 ```{r}
-library(ensBagg)
+library(stackBagg)
 library(timereg)
 bmt.data <- data(bmt)
 ```
@@ -42,7 +42,7 @@ tao=7
 
 Let's define the library of algorithms:
 ````{r, warning=FALSE}
-ens.library <-ensBagg::ens.all.algorithms()
+ens.library <-stackBagg::all.algorithms()
 ````
 
 We set the covariates that we include in the models:
@@ -55,7 +55,7 @@ xnam
 Now, we are ready to predict the outcome of interest using all the algorithms:
 
 ````{r, warning=FALSE}
-pred.bmt=ensBagg::ensBagg(train.data = bmt.train,test.data = bmt.test,xnam=xnam,tao=7,weighting ="CoxPH" ,folds =5,ens.library = ens.library )
+pred.bmt=stackBagg::stackBagg(train.data = bmt.train,test.data = bmt.test,xnam=xnam,tao=7,weighting ="CoxPH" ,folds =5,ens.library = ens.library )
 ````
 
 The assessment of predictive performance using the IPCW AUC is:
@@ -88,38 +88,38 @@ pred.bmt$auc_survival
 Lastly, we could see the performance of the algorithms if we were to discard the censored observations
 
 ````{r,warning=FALSE}
-pred.discard <- ensBagg::prediction_discard(train.data = bmt.train,test.data = bmt.test,xnam=names(bmt)[-(1:2)],tao=7,ens.library=ens.library)
+pred.discard <- stackBagg::prediction_discard(train.data = bmt.train,test.data = bmt.test,xnam=names(bmt)[-(1:2)],tao=7,ens.library=ens.library)
 head(pred.discard$prediction_discard)
 pred.discard$auc_discard
 ````
 
 
-The ensemble ROC curve is
+The  ROC curve of the stack is
 ````{r}
-ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_ensBagg[,"Ensemble"],wts=pred.bmt$wts_test,tao=7,method = "ipcw")
+stackBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_ensBagg[,"Stack"],wts=pred.bmt$wts_test,tao=7,method = "ipcw")
 ````
 
 
 The Random Forest ROC curve is
 ````{r}
-ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_ensBagg[,"ens.randomForest"],wts=pred.bmt$wts_test,tao=7,method = "ipcw")
+stackBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_ensBagg[,"ens.randomForest"],wts=pred.bmt$wts_test,tao=7,method = "ipcw")
 ````
 
 
 The Random Forest survival ROC curve is
 ````{r}
-ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_survival[,"Random Forest"],wts=pred.bmt$wts_test,tao=7,method = "ipcw")
+stackBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_survival[,"Random Forest"],wts=pred.bmt$wts_test,tao=7,method = "ipcw")
 ````
 
 
 The Random Forest natively weighted ROC curve is
 ````{r}
-ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_native_weights[,"ens.randomForest"],wts=pred.bmt$wts_test,tao=7,method = "ipcw")
+stackBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.bmt$prediction_native_weights[,"ens.randomForest"],wts=pred.bmt$wts_test,tao=7,method = "ipcw")
 ````
 
 
 The Random Forest discarding censored observations
 ````{r}
-ensBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.discard$prediction_discard[,"ens.randomForest"],tao=7,method = "discard")
+stackBagg::plot_roc(time=bmt.test$time,delta = bmt.test$cause,marker =pred.discard$prediction_discard[,"ens.randomForest"],tao=7,method = "discard")
 ````
 

@@ -1,6 +1,6 @@
 
-# This script replicate the Simulation Study, section 5, from  Gonzalez Ginestet et al. (2019+). "Ensemble IPCW Bagging bagging: a case study in the HIV care registry"
-# # It reproduces the figures showing the AUC of each single method relative to the ensemble and the tables with average estimated AUCs that are found in the supplementary material.
+# This script replicate the Simulation Study, section 5, from  Gonzalez Ginestet et al. (2019+). "Stacked IPCW Bagging bagging: a case study in the HIV care registry"
+# # It reproduces the figures showing the AUC of each single method relative to the stack and the tables with average estimated AUCs that are found in the supplementary material.
 # The setting is the same as it is described in the paper:
 # two ways of computing the IPC weights: Cox PH and Cox Boost
 # 2 simulation studies and 4 scenarios in each simulation study
@@ -9,7 +9,7 @@
 # 80% of the data is kept as training data set
 # B=10 bootstrap samples
 # folds=5 number of folds
-# tune parameters are those that are specified in the paper and were computed using the function EnsBagg::parametersSimulation(folds = 5,xnam,train.data,tao) that computes the default tune parameters.
+# tune parameters are those that are specified in the paper and were computed using the function stackBagg::parametersSimulation(folds = 5,xnam,train.data,tao) that computes the default tune parameters.
 # Expected run time (standard desktop) of one simulation study (which is 4 scenarios and 500 simulated data sets) is 235 hours (9.8 days)  
 
 
@@ -17,7 +17,7 @@
 sim <- function(simdata,weighting,j){
   sim.data.train=simdata[[1]][[j]][,-(1:2)] # remove the first two columns: id and E so to have the appropiate format
   sim.data.test=simdata[[2]][[j]][,-(1:2)] # remove the first two columns: id and E
-  res <- ensBagg(train.data=sim.data.train,test.data=sim.data.test, xnam, tao=26.5 , weighting=weighting , folds=5,ens.library=ens.library ,B=10 )
+  res <- stackBagg(train.data=sim.data.train,test.data=sim.data.test, xnam, tao=26.5 , weighting=weighting , folds=5,ens.library=ens.library ,B=10 )
   true_ens <- apply(res$prediction_ensBagg,2, function(x) cvAUC::AUC(predictions =x,labels = sim.data.test$trueT))
   true_native <- apply(res$prediction_native_weights,2, function(x) cvAUC::AUC(predictions =x,labels = sim.data.test$trueT))
   true_survival <- apply(res$prediction_survival,2, function(x) cvAUC::AUC(predictions =x,labels = sim.data.test$trueT))
@@ -94,7 +94,7 @@ figure1_paper<- function(res,J,scenarios){
   colnames(data_boxplot1) <- c("ml","r.auc","scenario","method")
   
   p <- ggplot(data_boxplot1, aes(ml, r.auc,fill=factor(scenario)))
-  p <- p + geom_boxplot()  + labs(x="\n Machine Learning (ML) Algorithms",y=TeX("$AUC_{ML} /  AUC_{Ensemble} \n "),fill = "Scenario") +
+  p <- p + geom_boxplot()  + labs(x="\n Machine Learning (ML) Algorithms",y=TeX("$AUC_{ML} /  AUC_{Stack} \n "),fill = "Scenario") +
     facet_grid(~method,  scales = "free_x", space = "free_x") +
     geom_hline(aes(yintercept = 1)) + scale_y_continuous(breaks=seq(0.5,1.2,.05)) +
     theme_bw() +  theme(panel.grid.major = element_blank(),plot.margin = margin(10,0,10,0),
@@ -121,7 +121,7 @@ library(latex2exp)
 J <- 500# number of simulations
 xnam <- paste("X", 1:20, sep="") # names of the covariates 
 scenarios=list(1,2,3,4)
-ens.library <- ensBagg::ens.all.algorithms()
+ens.library <- stackBagg::all.algorithms()
 #####    Weighting = CoxPH    ####
 
 # Simulation 1
@@ -137,10 +137,10 @@ row.names(table1_sim2)[1] <- "True"
 figure1_sim2 <-figure1_paper(res_simulation2,J,scenarios) 
 
 
-# AUCs of each algorithm relative to the AUC of the ensemble based on 500 simulated data sets
+# AUCs of each algorithm relative to the AUC of the stack based on 500 simulated data sets
 #under the four scenarios (A being the darkest and D the whitest, alphabetically order)  using
 #all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set.
-#The horizontal line denotes the ensemble
+#The horizontal line denotes the stack
 
 figure1_sim1 #simulation 1
 figure1_sim2 #simulation 2
@@ -167,10 +167,10 @@ table1_sim2 <- table1_paper(res_simulation2,J,scenarios)
 row.names(table1_sim2)[1] <- "True"
 figure1_sim2 <-figure1_paper(res_simulation1,J,scenarios) 
 
-# AUCs of each algorithm relative to the AUC of the ensemble based on 500 simulated data sets
+# AUCs of each algorithm relative to the AUC of the stack based on 500 simulated data sets
 #under the four scenarios (A being the darkest and D the whitest, alphabetically order)  using
 #all available covariates and a CoxBoost model for censoring for predicting the event of interest in the test data set.
-#The horizontal line denotes the ensemble
+#The horizontal line denotes the stack
 
 figure1_sim1 #simulation 1
 figure1_sim2 #simulation 2

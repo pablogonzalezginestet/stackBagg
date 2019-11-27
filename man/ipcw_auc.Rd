@@ -23,5 +23,5 @@ ipcw_auc(T, delta, marker, cause, wts, tao)
 value of the AUC at tao
 }
 \description{
-Compute time-varying IPCW AUC to account for censoring and competing risks.
+Compute time-dependent IPCW AUC to account for censoring and competing risks.
 }
