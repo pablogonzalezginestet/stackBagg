@@ -36,6 +36,7 @@ xnam.cont <- xnam[!(xnam %in% xnam.factor)]
 # continous variables to be applied the smoothing function in the gam must have
 # 10 or more unique values or
 # have to have four values with more than 5%
+
 xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>10 | length(unique(z))<=10 & sum(table(z)/dim(train.data)[1]>0.05)>=4)]
 
 
