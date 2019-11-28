@@ -42,7 +42,7 @@ tao=7
 
 Let's define the library of algorithms:
 ````{r, warning=FALSE}
-ens.library <-stackBagg::all.algorithms()
+ens.library <-stackBagg::algorithms()
 ````
 
 We set the covariates that we include in the models:

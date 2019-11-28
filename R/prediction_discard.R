@@ -28,7 +28,7 @@ prediction_discard <- function( train.data,
   xnam.cont <- xnam[!(xnam %in% xnam.factor)]
   xnam.cont.gam <- xnam.cont[apply(train.data[xnam.cont],2, function(z) length(unique(z))>3 )]
   
-  all.library <- stackBagg::all.algorithms()
+  all.library <- stackBagg::algorithms()
   
   names(train.data)[1] <- "ttilde"
   names(train.data)[2] <- "delta"

@@ -106,7 +106,7 @@ xnam
 We have also to specify the library of algorithms that we want to use to predict the event of interest and to be used to form the stack. We could see all the algorithms that the user could potentially include in the analysis through __stackBagg::all.algorithms()__. Let 's use all of them and we denote it as __ens.library__.
 
 ````{r}
-ens.library <-stackBagg::all.algorithms()
+ens.library <-stackBagg::algorithms()
 ens.library
 ````
 

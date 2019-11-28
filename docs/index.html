@@ -5,18 +5,18 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ensemble IPCW Bagging • ensBagg</title>
+<title>Stacked IPCW Bagging • stackBagg</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Ensemble IPCW Bagging">
+<script src="pkgdown.js"></script><meta property="og:title" content="Stacked IPCW Bagging">
 <meta property="og:description" content="Estimation the risk of an event at a specific time in the presence of censored data with competing risk using a collection of 
              machine learning algorithms.
              Each algorithm is trained on a IPC-weighted bootstrap sample from the training set and predictions are obtained for the validation set.
-             The Ensemble IPCW Bagging prediction is given by the weighted linear combination of the prediction of each algorithm.
-             The area under the IPCW time-varying receiver operator curve (AUC) is used for evaluating
-             the predictive performance and calibrating the ensemble and each single algorithm.">
+             The stacked IPCW Bagging prediction is given by the weighted linear combination of the prediction of each algorithm.
+             The area under the IPCW time-dependent receiver operator curve (AUC) is used for evaluating
+             the predictive performance and calibrating the stack and each single algorithm.">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -35,7 +35,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">ensBagg</a>
+        <a class="navbar-link" href="index.html">stackBagg</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
@@ -59,10 +59,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/bone_Marrow_Transplant_Data.html">Bone Marrow Transplant Data Set</a>
+      <a href="articles/Bone_Marrow_Transplant_Data.html">Bone Marrow Transplant Data Set</a>
     </li>
     <li>
-      <a href="articles/intro.html">Introduction to ensBagg package</a>
+      <a href="articles/Introduction.html">Introduction to stackBagg package</a>
     </li>
   </ul>
 </li>
@@ -82,30 +82,41 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="ensbagg-ensemble-ipcw-bagging" class="section level1">
+<div id="stackbagg-stacked-ipcw-bagging" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#ensbagg-ensemble-ipcw-bagging" class="anchor"></a>ensBagg: Ensemble IPCW Bagging</h1></div>
-<p><strong>ensBagg</strong> is an <code>R</code> package that uses inverse probability of censoring weighted (IPCW) bagging approach as a pre-processing step to allow for all existing and any newly developed machine learning methods for classification to be applied to right-censored data with or without competing risk.</p>
-<p><strong>ensBagg</strong> provides the files to reproduce the simulation studies and the real data application in the forthcoming paper:</p>
+<a href="#stackbagg-stacked-ipcw-bagging" class="anchor"></a>stackBagg: Stacked IPCW Bagging</h1></div>
+<p><strong>stackBagg</strong> is an <code>R</code> package that uses inverse probability of censoring weighted (IPCW) bagging approach as a pre-processing step to allow for all existing and any newly developed machine learning methods for classification to be applied to right-censored data with or without competing risk.</p>
+<p><strong>stackBagg</strong> provides the files to reproduce the simulation studies and the real data application in the forthcoming paper:</p>
 <ul>
-<li>Gonzalez Ginestet, P. et al. (2019). “Ensemble IPCW bagging: a case study in the HIV care registry”.</li>
+<li>Gonzalez Ginestet, P. et al. (2019). “Stacked IPCW Bagging: a case study in the HIV care registry”.</li>
 </ul>
+<p><img src="figure/boxplot_sim1_coxph_stack.png"></p>
+<p>AUCs of each algorithm relative to the AUC of the stack based on 500 simulated data sets under the four scenarios (A=orange, B=green, C=blue and D=violet) using all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set. The horizontal line denotes the stack.</p>
 <div id="important-note" class="section level2">
 <h2 class="hasAnchor">
 <a href="#important-note" class="anchor"></a>Important Note</h2>
 <p>The real data application in the paper relies on Swedish HIV care register (InfCareHIV) that cannot be openly shared. The data available on the folder fake_data is based on a fake, simulated data that mimics the data used for the analysis. The R script which run the analysis of the data set is the same as the used for the analysis, but analysis results cannot be exactly reproduced.</p>
 </div>
+<div id="organization-of-folders" class="section level2">
+<h2 class="hasAnchor">
+<a href="#organization-of-folders" class="anchor"></a>Organization of folders</h2>
+<p>The folder simulations contains the R file which runs the simulation and reproduces the main figures of the paper (AUC of each single algorithm relative to the AUC of the stack) and tables with the average estimated AUCs. The tables complement the figures and they are found in the supplementary material .</p>
+<p>R folder contains, among other files, the file datageneration.R that generates the simulated data for the different simulation studies and scenarios.</p>
+<p>The folder pre_process_step_raw_data contains the R file with all preprocessing step applied to the raw dataset to get the final dataset that was used in the analysis. The final data is the same that is found in the folder fake_data.</p>
+<p>The folder fake_data contains the fake data and the file that runs the analsys.</p>
+<p>The folder data constains the data used as example, the same that is shipped with the package.</p>
+</div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the development version of <code>ensBagg</code> from <a href="https://github.com/pablogonzalezginestet/ensBagg">GitHub</a> with:</p>
+<p>You can install the development version of <code>stackBagg</code> from <a href="https://github.com/pablogonzalezginestet/stackBagg">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"devtools"</span>)) <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
-<a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"pablogonzalezginestet/ensBagg"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"pablogonzalezginestet/stackBagg"</span>)</a></code></pre></div>
 </div>
 <div id="vignette" class="section level2">
 <h2 class="hasAnchor">
 <a href="#vignette" class="anchor"></a>Vignette</h2>
-<p>See the vignette for details about examples usage of the functions found in <code>ensBagg</code>: <a href="https://pablogonzalezginestet.github.io/ensBagg/">online vignette</a></p>
+<p>See the vignette for details about examples usage of the functions found in <code>stackBagg</code>: <a href="https://pablogonzalezginestet.github.io/stackBagg/">online vignette</a></p>
 </div>
 </div>
   </div>

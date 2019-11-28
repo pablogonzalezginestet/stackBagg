@@ -24,7 +24,7 @@
 
 stackBagg <- function(train.data,test.data, xnam, tao , weighting , folds ,ens.library, tuneparams=NULL ,B=NULL ){
 
- all.library <- stackBagg::all.algorithms()
+ all.library <- stackBagg::algorithms()
 
 if (missing(B)) {
   B <- 10

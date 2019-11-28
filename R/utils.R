@@ -50,7 +50,7 @@ risk_auc<- function(par,lambda,Z,data,tao){
 #' @return a character vector with all prediction algorithms  supported by stackBagg 
 #' @export
 
-all.algorithms <- function(){
+  algorithms <- function(){
   return(c("ens.glm","ens.gam","ens.lasso","ens.randomForest","ens.svm","ens.bartMachine","ens.knn","ens.nn"))
 }
 
