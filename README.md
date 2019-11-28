@@ -10,7 +10,7 @@ without competing risk.
 * Gonzalez Ginestet, P. et al. (2019). "Stacked IPCW Bagging: a case study in the HIV care
 registry".
 
-![](figure/boxplot_sim1_coxph_stack.png)
+![](man/figures/boxplot_sim1_coxph_stack.png)
 
 AUCs of each algorithm relative to the AUC of the stack based on 500 simulated data sets under the four scenarios (A=orange, B=green, C=blue and D=violet) using all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set. The horizontal line denotes the stack.
 
