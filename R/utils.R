@@ -182,6 +182,7 @@ ML_list <- list(
       pred <- predict(fit, newdata=testdata, type = "response", na.action=na.omit)
       return(pred)
       }else {
+        
       newterms=c(paste0("s(",xnam.cont.gam, ",df=4)"),xnam[!xnam %in% xnam.cont.gam])
       newfmla=stats::reformulate(newterms,fmla[[2]]) 
       fit <- gam::gam(newfmla, data = data, family = 'quasibinomial')
