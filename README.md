@@ -1,5 +1,6 @@
 # stackBagg: Stacked IPCW Bagging
 
+
 **stackBagg** is an `R` package that uses inverse probability of censoring weighted
 (IPCW) bagging approach as a pre-processing step to allow for all existing and any
 newly developed machine learning methods for classification to be applied to right-censored data with or
