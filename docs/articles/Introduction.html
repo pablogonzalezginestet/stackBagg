@@ -88,16 +88,357 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(stackBagg)</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co">#&gt; Loading required package: Matrix</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co">#&gt; Loading required package: gam</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co">#&gt; Loading required package: splines</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="co">#&gt; Loading required package: foreach</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co">#&gt; Loaded gam 1.16.1</span></a></code></pre></div>
+<div id="introduction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#introduction" class="anchor"></a>Introduction</h2>
+<p>This vignette focuses on giving an overview of the main functions of the package. This vignette uses the simulated data which ships with the package.</p>
+</div>
+<div id="setup" class="section level2">
+<h2 class="hasAnchor">
+<a href="#setup" class="anchor"></a>Setup</h2>
+<p>We load the package <strong>stackBagg</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(stackBagg)</a></code></pre></div>
+</div>
+<div id="example-simulated-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example-simulated-data" class="anchor"></a>Example: Simulated Data</h2>
+<p>The simulated data can be loaded via:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(stackBagg)</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="co">#&gt; Loading required package: Matrix</span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="co">#&gt; Loading required package: gam</span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="co">#&gt; Loading required package: splines</span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt; Loading required package: foreach</span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; Loaded gam 1.16.1</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"exampleData"</span>)</a></code></pre></div>
+<p><strong>exampleData</strong> is a list with three elements. The first elemenent contains the training data set and the second element contains the test data set. The data set train and test consist of the variables id, the binary outcome E, the event times denoted as ttilde, delta as the event indicator at ttilde (censored observations are denoted by the value 0), the trueT which denotes the binary outcome under no censoring and lastly 20 covariates:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">train &lt;-<span class="st"> </span>exampleData[[<span class="dv">1</span>]][[<span class="dv">1</span>]]</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(train)</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt;      id    E    ttilde delta trueT          X1           X2          X3</span></a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt; 423 423    0 52.300159     1 FALSE  0.08281419  0.172352230  0.06647657</span></a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt; 780 780    1  7.949695     1  TRUE  0.16976528 -0.081576673 -0.10240238</span></a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="co">#&gt; 250 250    0 34.372640     1 FALSE  0.09636968  0.052661443  0.12062371</span></a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="co">#&gt; 646 646 &lt;NA&gt;  8.767113     0 FALSE -0.15564309 -0.061024800 -0.01785616</span></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="co">#&gt; 411 411    0 36.957775     1 FALSE -0.07297439  0.004880959 -0.13187802</span></a>
+<a class="sourceLine" id="cb3-9" title="9"><span class="co">#&gt; 273 273 &lt;NA&gt; 10.331866     0 FALSE  0.09327623 -0.163935475 -0.05678734</span></a>
+<a class="sourceLine" id="cb3-10" title="10"><span class="co">#&gt;               X4           X5          X6          X7          X8</span></a>
+<a class="sourceLine" id="cb3-11" title="11"><span class="co">#&gt; 423  0.010862900 -0.060631525 -0.08074032  0.16873440  0.04340777</span></a>
+<a class="sourceLine" id="cb3-12" title="12"><span class="co">#&gt; 780 -0.063301947 -0.189945655 -0.24955745 -0.05273801  0.01022313</span></a>
+<a class="sourceLine" id="cb3-13" title="13"><span class="co">#&gt; 250  0.002720333 -0.121034800 -0.15937346  0.12669938  0.13122538</span></a>
+<a class="sourceLine" id="cb3-14" title="14"><span class="co">#&gt; 646  0.080797624  0.007448868 -0.04943161  0.06093838 -0.23895869</span></a>
+<a class="sourceLine" id="cb3-15" title="15"><span class="co">#&gt; 411 -0.046518184  0.003982125 -0.04968490 -0.09684055  0.06668652</span></a>
+<a class="sourceLine" id="cb3-16" title="16"><span class="co">#&gt; 273 -0.106773616 -0.053778966 -0.36543560  0.04241530 -0.04468489</span></a>
+<a class="sourceLine" id="cb3-17" title="17"><span class="co">#&gt;               X9         X10         X11        X12        X13        X14</span></a>
+<a class="sourceLine" id="cb3-18" title="18"><span class="co">#&gt; 423 -0.006117758 -0.12283608 -0.64504704  0.3258370 -0.2671135  0.8266186</span></a>
+<a class="sourceLine" id="cb3-19" title="19"><span class="co">#&gt; 780 -0.070563657 -0.08396796 -0.18397728  0.6004917 -0.4475623 -0.3590347</span></a>
+<a class="sourceLine" id="cb3-20" title="20"><span class="co">#&gt; 250  0.029273293  0.01372634 -0.38093408 -0.9907098  0.2355303  0.8957453</span></a>
+<a class="sourceLine" id="cb3-21" title="21"><span class="co">#&gt; 646 -0.113911314 -0.13912994 -0.69319058 -1.3872817  1.0595717 -0.1584360</span></a>
+<a class="sourceLine" id="cb3-22" title="22"><span class="co">#&gt; 411 -0.071835283 -0.10135100 -0.02037296 -0.3527412 -0.4043686 -0.6587839</span></a>
+<a class="sourceLine" id="cb3-23" title="23"><span class="co">#&gt; 273 -0.071334425 -0.05086768 -0.67349006 -0.3978803  0.3390769  0.2385083</span></a>
+<a class="sourceLine" id="cb3-24" title="24"><span class="co">#&gt;            X15        X16        X17        X18         X19        X20</span></a>
+<a class="sourceLine" id="cb3-25" title="25"><span class="co">#&gt; 423 -0.2348479  0.9260907  0.5582131  0.1672586  0.05897599  0.4196418</span></a>
+<a class="sourceLine" id="cb3-26" title="26"><span class="co">#&gt; 780  0.9044775  0.0510946 -0.3397124  0.8655912  0.58665758 -1.0098241</span></a>
+<a class="sourceLine" id="cb3-27" title="27"><span class="co">#&gt; 250  0.3558889  1.3780777  0.1241028 -0.4286867  0.10661455 -0.4749545</span></a>
+<a class="sourceLine" id="cb3-28" title="28"><span class="co">#&gt; 646 -0.7281273  0.6509288 -0.5915999 -0.2572964 -0.81711210  0.5843599</span></a>
+<a class="sourceLine" id="cb3-29" title="29"><span class="co">#&gt; 411  0.5088058 -0.5017764 -0.6649954  0.2478391  0.03220401  0.7999203</span></a>
+<a class="sourceLine" id="cb3-30" title="30"><span class="co">#&gt; 273 -0.1007935  0.1772234  0.9978399  0.7961343 -0.08876092  0.4818328</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">test &lt;-<span class="st"> </span>exampleData[[<span class="dv">2</span>]][[<span class="dv">1</span>]]</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(test)</a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt;    id    E    ttilde delta trueT          X1          X2          X3</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt; 2   2    0 64.494547     1 FALSE  0.19653678 -0.06612803 -0.17318574</span></a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; 7   7    0 64.323597     2 FALSE  0.07215234  0.02897143  0.08957245</span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt; 32 32    1 20.115272     1  TRUE  0.10124635 -0.13058958  0.08660183</span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt; 50 50 &lt;NA&gt;  9.417668     0  TRUE -0.05097176 -0.06717374  0.18942554</span></a>
+<a class="sourceLine" id="cb4-8" title="8"><span class="co">#&gt; 62 62 &lt;NA&gt; 12.124566     0 FALSE -0.11860139 -0.03328412  0.01552746</span></a>
+<a class="sourceLine" id="cb4-9" title="9"><span class="co">#&gt; 65 65    0 20.023369     2 FALSE  0.21348415 -0.02690853 -0.02702318</span></a>
+<a class="sourceLine" id="cb4-10" title="10"><span class="co">#&gt;             X4          X5          X6          X7          X8</span></a>
+<a class="sourceLine" id="cb4-11" title="11"><span class="co">#&gt; 2   0.08928017  0.02733158 -0.06803704 -0.06582461 -0.03348928</span></a>
+<a class="sourceLine" id="cb4-12" title="12"><span class="co">#&gt; 7   0.05467074 -0.05344298 -0.07477942  0.08642445 -0.05110457</span></a>
+<a class="sourceLine" id="cb4-13" title="13"><span class="co">#&gt; 32  0.01934914 -0.13447104 -0.00592559  0.02323055  0.03760170</span></a>
+<a class="sourceLine" id="cb4-14" title="14"><span class="co">#&gt; 50 -0.15595468  0.18782818 -0.11684748 -0.07174367  0.10368502</span></a>
+<a class="sourceLine" id="cb4-15" title="15"><span class="co">#&gt; 62 -0.03566977  0.17223400  0.11178515 -0.07117080  0.10993110</span></a>
+<a class="sourceLine" id="cb4-16" title="16"><span class="co">#&gt; 65  0.05891138  0.08819088  0.02286303  0.07790421  0.13443462</span></a>
+<a class="sourceLine" id="cb4-17" title="17"><span class="co">#&gt;               X9         X10         X11         X12         X13</span></a>
+<a class="sourceLine" id="cb4-18" title="18"><span class="co">#&gt; 2  -0.0817359311  0.03067802  0.53518872  0.04725869  0.69187769</span></a>
+<a class="sourceLine" id="cb4-19" title="19"><span class="co">#&gt; 7  -0.0635635495 -0.02555120  0.45535370  0.24984347  0.08591775</span></a>
+<a class="sourceLine" id="cb4-20" title="20"><span class="co">#&gt; 32 -0.0156705988  0.09414932 -0.77074516 -0.05461036  0.18559911</span></a>
+<a class="sourceLine" id="cb4-21" title="21"><span class="co">#&gt; 50 -0.0001588212  0.03087372  0.09910245  0.08448019  0.06461913</span></a>
+<a class="sourceLine" id="cb4-22" title="22"><span class="co">#&gt; 62  0.2151523951 -0.03255328  0.75207670  0.66549092  0.46742318</span></a>
+<a class="sourceLine" id="cb4-23" title="23"><span class="co">#&gt; 65  0.1478304786  0.01003466 -0.01380349 -1.25888263 -0.49010812</span></a>
+<a class="sourceLine" id="cb4-24" title="24"><span class="co">#&gt;           X14        X15           X16        X17        X18         X19</span></a>
+<a class="sourceLine" id="cb4-25" title="25"><span class="co">#&gt; 2  -0.1857249  0.4538783  0.0308172015 -0.7309331  0.3560292 -0.27862282</span></a>
+<a class="sourceLine" id="cb4-26" title="26"><span class="co">#&gt; 7   0.5821856 -0.3025899 -0.9635968963  1.4319108 -0.1644014  1.37290745</span></a>
+<a class="sourceLine" id="cb4-27" title="27"><span class="co">#&gt; 32 -0.4332053  0.9523075  0.3172001109 -1.0319663  1.0912307 -0.09370163</span></a>
+<a class="sourceLine" id="cb4-28" title="28"><span class="co">#&gt; 50 -1.2068642 -0.7959719 -0.2613358633 -0.4844889 -0.5355841  0.01226348</span></a>
+<a class="sourceLine" id="cb4-29" title="29"><span class="co">#&gt; 62 -1.2911703 -0.2458894  0.0004135976 -0.7451024 -0.6173149 -0.43773691</span></a>
+<a class="sourceLine" id="cb4-30" title="30"><span class="co">#&gt; 65  0.2247324  0.3529755  0.3388744213 -0.2660526 -0.2320293 -0.18283466</span></a>
+<a class="sourceLine" id="cb4-31" title="31"><span class="co">#&gt;            X20</span></a>
+<a class="sourceLine" id="cb4-32" title="32"><span class="co">#&gt; 2  -0.63319481</span></a>
+<a class="sourceLine" id="cb4-33" title="33"><span class="co">#&gt; 7   0.02371843</span></a>
+<a class="sourceLine" id="cb4-34" title="34"><span class="co">#&gt; 32 -0.57132685</span></a>
+<a class="sourceLine" id="cb4-35" title="35"><span class="co">#&gt; 50 -0.55612238</span></a>
+<a class="sourceLine" id="cb4-36" title="36"><span class="co">#&gt; 62 -0.10535540</span></a>
+<a class="sourceLine" id="cb4-37" title="37"><span class="co">#&gt; 65 -1.30989032</span></a></code></pre></div>
+<p>There is a third element <strong>exampleData</strong> which is the true AUC for the simulated data on the cumulative incidence of the main event at time 26.5 computed analytically under the Weibull distribution using the scale and shape parameter for both event times.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">auc_true &lt;-<span class="st"> </span>exampleData[[<span class="dv">3</span>]][[<span class="dv">1</span>]]</a>
+<a class="sourceLine" id="cb5-2" title="2">auc_true</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; [1] 0.7805624</span></a></code></pre></div>
+<p>The train data set consists in 800 individuals where 167 are censored and 180 experience the event of interest at time 26.5:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">n_train&lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(train)[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb6-2" title="2">n_train</a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt; [1] 800</span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(train<span class="op">$</span>E)</a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt;    0    1 NA's </span></a>
+<a class="sourceLine" id="cb6-6" title="6"><span class="co">#&gt;  453  180  167</span></a></code></pre></div>
+<p>and 51 subjects experience the competing event within the time of interest 26.5. These individuals are part of the control group.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; Attaching package: 'dplyr'</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; The following objects are masked from 'package:stats':</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt;     filter, lag</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; The following objects are masked from 'package:base':</span></a>
+<a class="sourceLine" id="cb7-8" title="8"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-9" title="9"><span class="co">#&gt;     intersect, setdiff, setequal, union</span></a>
+<a class="sourceLine" id="cb7-10" title="10">train <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(E<span class="op">==</span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>ttilde<span class="op">&lt;</span><span class="fl">26.5</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">count</span>(delta)</a>
+<a class="sourceLine" id="cb7-11" title="11"><span class="co">#&gt; # A tibble: 1 x 2</span></a>
+<a class="sourceLine" id="cb7-12" title="12"><span class="co">#&gt;   delta     n</span></a>
+<a class="sourceLine" id="cb7-13" title="13"><span class="co">#&gt;   &lt;dbl&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb7-14" title="14"><span class="co">#&gt; 1     2    51</span></a></code></pre></div>
+<p>The test data set consists in 200 individuals where 45 are censored and 39 experience the event of interest:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">n_test&lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(test)[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb8-2" title="2">n_test</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [1] 200</span></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(test<span class="op">$</span>E)</a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="co">#&gt;    0    1 NA's </span></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="co">#&gt;  116   39   45</span></a></code></pre></div>
+<p>and there are 24 subjects that experience the competing event within the time of interest 26.5:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)</a>
+<a class="sourceLine" id="cb9-2" title="2">test <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(E<span class="op">==</span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>ttilde<span class="op">&lt;</span><span class="fl">26.5</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">count</span>(delta)</a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="co">#&gt; # A tibble: 1 x 2</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt;   delta     n</span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt;   &lt;dbl&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; 1     2    24</span></a></code></pre></div>
+<p>Next we apply <strong>stackBagg</strong> to estimate the risk of experiencing the main event using the 20 covariates in the data set. In other words, using <strong>stackBagg</strong> we are going to estimate <span class="math inline">\(P(T&lt;26.5,\delta=1|X)\)</span> using a bunch of machine learning algorithms. Before applying <strong>stackBagg</strong>, we need to make sure that the data set is in the appropiate format: time event is in the first column and the second column is the indicator event type.</p>
+<div id="note-the-first-two-columns-of-the-data-frame-data-set-must-be-in-the-following-order-time-and-then-statusevent-indicator--the-function-stackbaggstackbagg-creates-for-us-the-binary-variable-of-interest-e-in-terms-of-the-time-point-of-interest-and-the-statusevent-indicator-" class="section level4">
+<h4 class="hasAnchor">
+<a href="#note-the-first-two-columns-of-the-data-frame-data-set-must-be-in-the-following-order-time-and-then-statusevent-indicator--the-function-stackbaggstackbagg-creates-for-us-the-binary-variable-of-interest-e-in-terms-of-the-time-point-of-interest-and-the-statusevent-indicator-" class="anchor"></a>Note: The first two columns of the data.frame data set must be in the following order: time and then status/event indicator. The function <strong>stackBagg::stackBagg</strong> creates for us the binary variable of interest E in terms of the time point of interest and the status/event indicator.</h4>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">train &lt;-<span class="st"> </span>train[,<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(train,<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="co">#&gt;        ttilde delta trueT         X1          X2          X3          X4</span></a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="co">#&gt; 423 52.300159     1 FALSE 0.08281419  0.17235223  0.06647657  0.01086290</span></a>
+<a class="sourceLine" id="cb10-5" title="5"><span class="co">#&gt; 780  7.949695     1  TRUE 0.16976528 -0.08157667 -0.10240238 -0.06330195</span></a>
+<a class="sourceLine" id="cb10-6" title="6"><span class="co">#&gt;              X5          X6          X7         X8           X9</span></a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="co">#&gt; 423 -0.06063153 -0.08074032  0.16873440 0.04340777 -0.006117758</span></a>
+<a class="sourceLine" id="cb10-8" title="8"><span class="co">#&gt; 780 -0.18994565 -0.24955745 -0.05273801 0.01022313 -0.070563657</span></a>
+<a class="sourceLine" id="cb10-9" title="9"><span class="co">#&gt;             X10        X11       X12        X13        X14        X15</span></a>
+<a class="sourceLine" id="cb10-10" title="10"><span class="co">#&gt; 423 -0.12283608 -0.6450470 0.3258370 -0.2671135  0.8266186 -0.2348479</span></a>
+<a class="sourceLine" id="cb10-11" title="11"><span class="co">#&gt; 780 -0.08396796 -0.1839773 0.6004917 -0.4475623 -0.3590347  0.9044775</span></a>
+<a class="sourceLine" id="cb10-12" title="12"><span class="co">#&gt;           X16        X17       X18        X19        X20</span></a>
+<a class="sourceLine" id="cb10-13" title="13"><span class="co">#&gt; 423 0.9260907  0.5582131 0.1672586 0.05897599  0.4196418</span></a>
+<a class="sourceLine" id="cb10-14" title="14"><span class="co">#&gt; 780 0.0510946 -0.3397124 0.8655912 0.58665758 -1.0098241</span></a>
+<a class="sourceLine" id="cb10-15" title="15">test &lt;-<span class="st"> </span>test[,<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a>
+<a class="sourceLine" id="cb10-16" title="16"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(test,<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb10-17" title="17"><span class="co">#&gt;     ttilde delta trueT         X1          X2          X3         X4</span></a>
+<a class="sourceLine" id="cb10-18" title="18"><span class="co">#&gt; 2 64.49455     1 FALSE 0.19653678 -0.06612803 -0.17318574 0.08928017</span></a>
+<a class="sourceLine" id="cb10-19" title="19"><span class="co">#&gt; 7 64.32360     2 FALSE 0.07215234  0.02897143  0.08957245 0.05467074</span></a>
+<a class="sourceLine" id="cb10-20" title="20"><span class="co">#&gt;            X5          X6          X7          X8          X9         X10</span></a>
+<a class="sourceLine" id="cb10-21" title="21"><span class="co">#&gt; 2  0.02733158 -0.06803704 -0.06582461 -0.03348928 -0.08173593  0.03067802</span></a>
+<a class="sourceLine" id="cb10-22" title="22"><span class="co">#&gt; 7 -0.05344298 -0.07477942  0.08642445 -0.05110457 -0.06356355 -0.02555120</span></a>
+<a class="sourceLine" id="cb10-23" title="23"><span class="co">#&gt;         X11        X12        X13        X14        X15        X16</span></a>
+<a class="sourceLine" id="cb10-24" title="24"><span class="co">#&gt; 2 0.5351887 0.04725869 0.69187769 -0.1857249  0.4538783  0.0308172</span></a>
+<a class="sourceLine" id="cb10-25" title="25"><span class="co">#&gt; 7 0.4553537 0.24984347 0.08591775  0.5821856 -0.3025899 -0.9635969</span></a>
+<a class="sourceLine" id="cb10-26" title="26"><span class="co">#&gt;          X17        X18        X19         X20</span></a>
+<a class="sourceLine" id="cb10-27" title="27"><span class="co">#&gt; 2 -0.7309331  0.3560292 -0.2786228 -0.63319481</span></a>
+<a class="sourceLine" id="cb10-28" title="28"><span class="co">#&gt; 7  1.4319108 -0.1644014  1.3729075  0.02371843</span></a></code></pre></div>
+<p>Another argument of the function <strong>stackBagg::stackBagg</strong> is the names of covariates as they are named in the data set that we want to include in the model. As we have said above, we are going to use all covariates</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">xnam &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(train)[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)]</a>
+<a class="sourceLine" id="cb11-2" title="2">xnam</a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="co">#&gt;  [1] "X1"  "X2"  "X3"  "X4"  "X5"  "X6"  "X7"  "X8"  "X9"  "X10" "X11"</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="co">#&gt; [12] "X12" "X13" "X14" "X15" "X16" "X17" "X18" "X19" "X20"</span></a></code></pre></div>
+<p>We have also to specify the library of algorithms that we want to use to predict the event of interest and to be used to form the stack. We could see all the algorithms that the user could potentially include in the analysis through <strong>stackBagg::all.algorithms()</strong>. Let ’s use all of them and we denote it as <strong>ens.library</strong>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">ens.library &lt;-stackBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/stackBagg/man/algorithms.html">algorithms</a></span>()</a>
+<a class="sourceLine" id="cb12-2" title="2">ens.library</a>
+<a class="sourceLine" id="cb12-3" title="3"><span class="co">#&gt; [1] "ens.glm"          "ens.gam"          "ens.lasso"       </span></a>
+<a class="sourceLine" id="cb12-4" title="4"><span class="co">#&gt; [4] "ens.randomForest" "ens.svm"          "ens.bartMachine" </span></a>
+<a class="sourceLine" id="cb12-5" title="5"><span class="co">#&gt; [7] "ens.knn"          "ens.nn"</span></a></code></pre></div>
+<p>Another argument of the function <strong>stackBagg::stackBagg</strong> is a list of tune parameters for each machine learning procedure. If this argument is missing, the function uses as default values the same used for the simulation in the paper. For now, we are going to use the default values for the tune parameters. Additionally, we will use 5 folds and we are going to show the results computing the weights under a Cox proportional hazard model (CoxPH) and boosting Cox regression (Cox-Boost).</p>
+<p>Firstly, we model the weights under CoxPH and we train the different models and get their predictions on the test data set.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">pred &lt;-<span class="st"> </span>stackBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/stackBagg/man/stackBagg-package.html">stackBagg</a></span>(<span class="dt">train.data =</span> train,<span class="dt">test.data =</span> test,<span class="dt">xnam =</span> xnam,<span class="dt">tao =</span> <span class="fl">26.5</span>,<span class="dt">weighting =</span> <span class="st">"CoxPH"</span>,<span class="dt">folds =</span> <span class="dv">5</span>,<span class="dt">ens.library =</span> ens.library )</a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb13-3" title="3">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="st">  </span><span class="er">|</span><span class="st">                                                                </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb13-5" title="5">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span>                                                    <span class="op">|</span><span class="st">  </span><span class="dv">20</span>%</a>
+<a class="sourceLine" id="cb13-7" title="7">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span>                                      <span class="op">|</span><span class="st">  </span><span class="dv">40</span>%</a>
+<a class="sourceLine" id="cb13-9" title="9">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span>                          <span class="op">|</span><span class="st">  </span><span class="dv">60</span>%</a>
+<a class="sourceLine" id="cb13-11" title="11">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb13-12" title="12"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span>            <span class="op">|</span><span class="st">  </span><span class="dv">80</span>%</a>
+<a class="sourceLine" id="cb13-13" title="13">  <span class="op">|</span><span class="st">                                                                      </span></a>
+<a class="sourceLine" id="cb13-14" title="14"><span class="st">  </span><span class="er">|:)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">:</span><span class="er">)</span><span class="op">|</span><span class="st"> </span><span class="dv">100</span>%</a></code></pre></div>
+<p>We show several output of pred.</p>
+</div>
+<div id="library-of-algorithms" class="section level4">
+<h4 class="hasAnchor">
+<a href="#library-of-algorithms" class="anchor"></a>Library of algorithms</h4>
+<p>The machine learning algorithms in the library:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">pred<span class="op">$</span>library</a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="co">#&gt; [1] "ens.glm"          "ens.gam.3"        "ens.gam.4"       </span></a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="co">#&gt; [4] "ens.lasso"        "ens.randomForest" "ens.svm"         </span></a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="co">#&gt; [7] "ens.bartMachine"  "ens.knn"          "ens.nn"</span></a></code></pre></div>
+</div>
+<div id="predictions-and-performance-of-ipcw-bagging" class="section level4">
+<h4 class="hasAnchor">
+<a href="#predictions-and-performance-of-ipcw-bagging" class="anchor"></a>Predictions and performance of IPCW Bagging</h4>
+<p>Let s take a look first at the IPCW Bagging prediction of the different algorithms and the stacked IPCW Bagging on the test data set:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred<span class="op">$</span>prediction_ensBagg,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="co">#&gt;        ens.glm ens.gam.3  ens.gam.4 ens.lasso ens.randomForest   ens.svm</span></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="co">#&gt; [1,] 0.1559622 0.1180456 0.03857042 0.1633598        0.1494275 0.1565593</span></a>
+<a class="sourceLine" id="cb15-4" title="4"><span class="co">#&gt; [2,] 0.2614951 0.2519487 0.07396405 0.2316321        0.1871839 0.2099276</span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="co">#&gt; [3,] 0.2534527 0.2906154 0.09440609 0.2287183        0.2131776 0.2600919</span></a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="co">#&gt; [4,] 0.5559835 0.3303077 0.71193037 0.3460316        0.6723123 0.4322193</span></a>
+<a class="sourceLine" id="cb15-7" title="7"><span class="co">#&gt; [5,] 0.1054385 0.1130769 0.04882688 0.2518276        0.1823337 0.2123074</span></a>
+<a class="sourceLine" id="cb15-8" title="8"><span class="co">#&gt;      ens.bartMachine    ens.knn     ens.nn      Stack</span></a>
+<a class="sourceLine" id="cb15-9" title="9"><span class="co">#&gt; [1,]      0.03253677 0.02577992 0.05760647 0.06266094</span></a>
+<a class="sourceLine" id="cb15-10" title="10"><span class="co">#&gt; [2,]      0.17965015 0.18568787 0.20113403 0.15477451</span></a>
+<a class="sourceLine" id="cb15-11" title="11"><span class="co">#&gt; [3,]      0.14812594 0.15644825 0.18880207 0.15846704</span></a>
+<a class="sourceLine" id="cb15-12" title="12"><span class="co">#&gt; [4,]      0.79075871 0.83026502 0.42824998 0.71549212</span></a>
+<a class="sourceLine" id="cb15-13" title="13"><span class="co">#&gt; [5,]      0.06060300 0.05455434 0.15078758 0.09525806</span></a></code></pre></div>
+<p>The assessment of predictive performance using the IPCW AUC is:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">pred<span class="op">$</span>auc_ipcwBagg</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="co">#&gt;        ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest   ens.svm</span></a>
+<a class="sourceLine" id="cb16-3" title="3"><span class="co">#&gt; [1,] 0.5619396 0.5548103 0.6915458 0.5921362        0.6812674 0.6145555</span></a>
+<a class="sourceLine" id="cb16-4" title="4"><span class="co">#&gt;      ens.bartMachine   ens.knn    ens.nn     Stack</span></a>
+<a class="sourceLine" id="cb16-5" title="5"><span class="co">#&gt; [1,]       0.7040165 0.7230655 0.6145805 0.7197562</span></a></code></pre></div>
+<p>The optimal coefficients used to get the stacked IPCW Bagging:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">pred<span class="op">$</span>optimal_coefficients</a>
+<a class="sourceLine" id="cb17-2" title="2"><span class="co">#&gt; [1] -0.078969888  0.043493920  0.265539853  0.008251157  0.195595449</span></a>
+<a class="sourceLine" id="cb17-3" title="3"><span class="co">#&gt; [6]  0.099257061  0.206471484  0.258597059  0.001763905</span></a></code></pre></div>
+<p>We can note that the algorithms with the largest predictive performance weigh in more in the stack. We check if convergence has been reached in the optimization problem of finding the optimal coefficients (0 denotes convergence, 1 otherwise) and the penalization term used:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">pred<span class="op">$</span>convergence</a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="co">#&gt; [1] 0</span></a>
+<a class="sourceLine" id="cb18-3" title="3">pred<span class="op">$</span>penalization_term</a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="co">#&gt; [1] 0.01</span></a></code></pre></div>
+<p>We can check the tune parameters used to train the algorithms:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">pred<span class="op">$</span>tuneparams</a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="co">#&gt; $gam_param</span></a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="co">#&gt; [1] 3 4</span></a>
+<a class="sourceLine" id="cb19-4" title="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb19-5" title="5"><span class="co">#&gt; $lasso_param</span></a>
+<a class="sourceLine" id="cb19-6" title="6"><span class="co">#&gt; [1] 0.02576709</span></a>
+<a class="sourceLine" id="cb19-7" title="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb19-8" title="8"><span class="co">#&gt; $randomforest_param</span></a>
+<a class="sourceLine" id="cb19-9" title="9"><span class="co">#&gt; [1] 500   4</span></a>
+<a class="sourceLine" id="cb19-10" title="10"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb19-11" title="11"><span class="co">#&gt; $knn_param</span></a>
+<a class="sourceLine" id="cb19-12" title="12"><span class="co">#&gt; [1] 25</span></a>
+<a class="sourceLine" id="cb19-13" title="13"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb19-14" title="14"><span class="co">#&gt; $svm_param</span></a>
+<a class="sourceLine" id="cb19-15" title="15"><span class="co">#&gt; [1] 0.01   NA 2.00</span></a>
+<a class="sourceLine" id="cb19-16" title="16"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb19-17" title="17"><span class="co">#&gt; $nn_param</span></a>
+<a class="sourceLine" id="cb19-18" title="18"><span class="co">#&gt; [1] 1</span></a>
+<a class="sourceLine" id="cb19-19" title="19"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb19-20" title="20"><span class="co">#&gt; $bart_param</span></a>
+<a class="sourceLine" id="cb19-21" title="21"><span class="co">#&gt; [1] 50.0  1.0  0.9</span></a></code></pre></div>
+<p>The GAM is trained with two degree of freedom 3 and 4. The LASSO paremeter refers to the lambda penalization term. The parameters in the random forest refer to the number of trees (num_tree=500) and the umber of variables randomly sampled as candidates at each split (mtry=4). k chosen in the k-NN is 25. The SVM parameters are the cost, gamma and kernel (radial=1 and linear=2). Since the kernel is linear the gamma is NA since the linear kernel does not use the gamma parameter. The neurons is set to 1 in the neural network. The last values are the parameter number of trees, k that determines the prior probability that the average of the outcome falls into (-3,3) and q the quantile of the prior on the error variance.</p>
+</div>
+<div id="roc-curve" class="section level4">
+<h4 class="hasAnchor">
+<a href="#roc-curve" class="anchor"></a>ROC curve</h4>
+<p>Let s compare the ROC curve for the best and worst single algorithm and the stack. The ROC curve of the stack is</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">stackBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/stackBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>test<span class="op">$</span>ttilde,<span class="dt">delta =</span> test<span class="op">$</span>delta,<span class="dt">marker =</span>pred<span class="op">$</span>prediction_ensBagg[,<span class="st">"Stack"</span>],<span class="dt">wts=</span>pred<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="fl">26.5</span>,<span class="dt">method =</span> <span class="st">"ipcw"</span>)</a></code></pre></div>
+<p><img src="Introduction_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
+<p>The GAM.4 ROC curve is</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">stackBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/stackBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>test<span class="op">$</span>ttilde,<span class="dt">delta =</span> test<span class="op">$</span>delta,<span class="dt">marker =</span>pred<span class="op">$</span>prediction_ensBagg[,<span class="st">"ens.gam.4"</span>],<span class="dt">wts=</span>pred<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="fl">26.5</span>,<span class="dt">method =</span> <span class="st">"ipcw"</span>)</a></code></pre></div>
+<p><img src="Introduction_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
+<p>The k-NN ROC curve is</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">stackBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/stackBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>test<span class="op">$</span>ttilde,<span class="dt">delta =</span> test<span class="op">$</span>delta,<span class="dt">marker =</span>pred<span class="op">$</span>prediction_ensBagg[,<span class="st">"ens.knn"</span>],<span class="dt">wts=</span>pred<span class="op">$</span>wts_test,<span class="dt">tao=</span><span class="fl">26.5</span>,<span class="dt">method =</span> <span class="st">"ipcw"</span>)</a></code></pre></div>
+<p><img src="Introduction_files/figure-html/unnamed-chunk-23-1.png" width="700"></p>
+</div>
+<div id="native-weights" class="section level4">
+<h4 class="hasAnchor">
+<a href="#native-weights" class="anchor"></a>Native Weights</h4>
+<p>Now let s take a look at prediction of the algorithms that allows for weights natively:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred<span class="op">$</span>prediction_native_weights,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb23-2" title="2"><span class="co">#&gt;     ens.glm ens.gam.3  ens.gam.4  ens.lasso ens.randomForest</span></a>
+<a class="sourceLine" id="cb23-3" title="3"><span class="co">#&gt; 1 0.1095532 0.1843952 0.06515164 0.06515164       0.06515164</span></a>
+<a class="sourceLine" id="cb23-4" title="4"><span class="co">#&gt; 2 0.1746294 0.2242448 0.25510227 0.25510227       0.25510227</span></a>
+<a class="sourceLine" id="cb23-5" title="5"><span class="co">#&gt; 3 0.1911524 0.2658060 0.20201615 0.20201615       0.20201615</span></a>
+<a class="sourceLine" id="cb23-6" title="6"><span class="co">#&gt; 4 0.6919468 0.4225253 0.43986199 0.43986199       0.43986199</span></a>
+<a class="sourceLine" id="cb23-7" title="7"><span class="co">#&gt; 5 0.1122500 0.2054692 0.12499985 0.12499985       0.12499985</span></a></code></pre></div>
+<p>and their performance is:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">pred<span class="op">$</span>auc_native_weights</a>
+<a class="sourceLine" id="cb24-2" title="2"><span class="co">#&gt;        ens.glm ens.gam.3 ens.gam.4 ens.lasso ens.randomForest</span></a>
+<a class="sourceLine" id="cb24-3" title="3"><span class="co">#&gt; [1,] 0.6725895 0.6098706 0.6031226 0.6031226        0.6031226</span></a></code></pre></div>
+</div>
+<div id="survival-methods" class="section level4">
+<h4 class="hasAnchor">
+<a href="#survival-methods" class="anchor"></a>Survival Methods</h4>
+<p>Moreover, let s see the prediction of three survival based methods: a cause-specific Cox proportional hazard regression model, Cox-Boost and survival random forests for competing risk.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred<span class="op">$</span>prediction_survival,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb25-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
+<a class="sourceLine" id="cb25-3" title="3"><span class="co">#&gt; [1,] 0.1152463 0.0994056    0.08752753</span></a>
+<a class="sourceLine" id="cb25-4" title="4"><span class="co">#&gt; [2,] 0.1214467 0.1199515    0.13840973</span></a>
+<a class="sourceLine" id="cb25-5" title="5"><span class="co">#&gt; [3,] 0.2594568 0.2107714    0.17209881</span></a>
+<a class="sourceLine" id="cb25-6" title="6"><span class="co">#&gt; [4,] 0.3256768 0.3598332    0.49221347</span></a>
+<a class="sourceLine" id="cb25-7" title="7"><span class="co">#&gt; [5,] 0.2014442 0.2723971    0.11921118</span></a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">pred<span class="op">$</span>auc_survival</a>
+<a class="sourceLine" id="cb26-2" title="2"><span class="co">#&gt;          CoxPH  CoxBoost Random Forest</span></a>
+<a class="sourceLine" id="cb26-3" title="3"><span class="co">#&gt; [1,] 0.6368811 0.6176013     0.6850854</span></a></code></pre></div>
+</div>
+<div id="naive-methods" class="section level4">
+<h4 class="hasAnchor">
+<a href="#naive-methods" class="anchor"></a>Naive Methods</h4>
+<p>Lastly, we could see the performance of the algorithms if we were to discard the censored observations</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1"></a>
+<a class="sourceLine" id="cb27-2" title="2">pred.discard &lt;-<span class="st"> </span>stackBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/stackBagg/man/prediction_discard.html">prediction_discard</a></span>(<span class="dt">train.data =</span> train,<span class="dt">test.data =</span> test,<span class="dt">xnam =</span> xnam,<span class="dt">tao =</span> <span class="fl">26.5</span>,<span class="dt">ens.library=</span>ens.library)</a>
+<a class="sourceLine" id="cb27-3" title="3"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
+<a class="sourceLine" id="cb27-4" title="4"><span class="co">#&gt; argument ignored</span></a>
+<a class="sourceLine" id="cb27-5" title="5"></a>
+<a class="sourceLine" id="cb27-6" title="6"><span class="co">#&gt; Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts</span></a>
+<a class="sourceLine" id="cb27-7" title="7"><span class="co">#&gt; argument ignored</span></a>
+<a class="sourceLine" id="cb27-8" title="8"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred.discard<span class="op">$</span>prediction_discard)</a>
+<a class="sourceLine" id="cb27-9" title="9"><span class="co">#&gt;     ens.glm ens.gam.3  ens.gam.4 ens.lasso ens.randomForest   ens.svm</span></a>
+<a class="sourceLine" id="cb27-10" title="10"><span class="co">#&gt; 1 0.1852658      0.20 0.03337158 0.2306498        0.1129921 0.1892031</span></a>
+<a class="sourceLine" id="cb27-11" title="11"><span class="co">#&gt; 2 0.1904691      0.32 0.10073532 0.2554904        0.1507214 0.2271614</span></a>
+<a class="sourceLine" id="cb27-12" title="12"><span class="co">#&gt; 3 0.1884330      0.28 0.20280603 0.2859323        0.2133889 0.2906479</span></a>
+<a class="sourceLine" id="cb27-13" title="13"><span class="co">#&gt; 6 0.1856332      0.48 0.21496920 0.2496146        0.2500238 0.2182391</span></a>
+<a class="sourceLine" id="cb27-14" title="14"><span class="co">#&gt; 7 0.3464290      0.40 0.44767629 0.3197274        0.4585413 0.4035441</span></a>
+<a class="sourceLine" id="cb27-15" title="15"><span class="co">#&gt; 8 0.1903577      0.32 0.44871232 0.2597693        0.2870984 0.2569864</span></a>
+<a class="sourceLine" id="cb27-16" title="16"><span class="co">#&gt;   ens.bartMachine    ens.knn     ens.nn</span></a>
+<a class="sourceLine" id="cb27-17" title="17"><span class="co">#&gt; 1      0.02691724 0.02050142 0.06454572</span></a>
+<a class="sourceLine" id="cb27-18" title="18"><span class="co">#&gt; 2      0.16964078 0.14835985 0.25879185</span></a>
+<a class="sourceLine" id="cb27-19" title="19"><span class="co">#&gt; 3      0.14755887 0.15837638 0.22572062</span></a>
+<a class="sourceLine" id="cb27-20" title="20"><span class="co">#&gt; 6      0.11574933 0.14557574 0.10215265</span></a>
+<a class="sourceLine" id="cb27-21" title="21"><span class="co">#&gt; 7      0.62192293 0.60810967 0.56224708</span></a>
+<a class="sourceLine" id="cb27-22" title="22"><span class="co">#&gt; 8      0.27447448 0.21984137 0.23713833</span></a>
+<a class="sourceLine" id="cb27-23" title="23">pred.discard<span class="op">$</span>auc_discard</a>
+<a class="sourceLine" id="cb27-24" title="24"><span class="co">#&gt;          ens.glm        ens.gam.3        ens.gam.4        ens.lasso </span></a>
+<a class="sourceLine" id="cb27-25" title="25"><span class="co">#&gt;        0.6235632        0.5870911        0.7210433        0.6268789 </span></a>
+<a class="sourceLine" id="cb27-26" title="26"><span class="co">#&gt; ens.randomForest          ens.svm  ens.bartMachine          ens.knn </span></a>
+<a class="sourceLine" id="cb27-27" title="27"><span class="co">#&gt;        0.6949602        0.6366048        0.7270115        0.7458002 </span></a>
+<a class="sourceLine" id="cb27-28" title="28"><span class="co">#&gt;           ens.nn </span></a>
+<a class="sourceLine" id="cb27-29" title="29"><span class="co">#&gt;        0.6220159</span></a>
+<a class="sourceLine" id="cb27-30" title="30">stackBagg<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/stackBagg/man/plot_roc.html">plot_roc</a></span>(<span class="dt">time=</span>test<span class="op">$</span>ttilde,<span class="dt">delta =</span> test<span class="op">$</span>delta,<span class="dt">marker =</span>pred.discard<span class="op">$</span>prediction_discard[,<span class="st">"ens.gam.4"</span>],<span class="dt">tao=</span><span class="fl">26.5</span>,<span class="dt">method =</span> <span class="st">"discard"</span>)</a></code></pre></div>
+<p><img src="Introduction_files/figure-html/unnamed-chunk-28-1.png" width="700"></p>
+<pre><code>#&gt; NULL</code></pre>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
 
+        <div id="tocnav">
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#introduction">Introduction</a></li>
+      <li><a href="#setup">Setup</a></li>
+      <li><a href="#example-simulated-data">Example: Simulated Data</a></li>
+      </ul>
+</div>
       </div>
 
 </div>
