@@ -1,5 +1,7 @@
 pandoc: 2.7.2
 pkgdown: 1.4.1
 pkgdown_sha: ~
-articles: {}
+articles:
+  Bone_Marrow_Transplant_Data: ../../../../../../../../../Z:/Project 1/Program/git/stackBagg/vignettes/Bone_Marrow_Transplant_Data.html
+  Introduction: ../../../../../../../../../Z:/Project 1/Program/git/stackBagg/vignettes/Introduction.html
 
