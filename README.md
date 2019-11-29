@@ -37,8 +37,8 @@ You can install the development version of `stackBagg` from [GitHub](https://git
 
 
 ```R
-if (!require("devtools")) install.packages("devtools")
-devtools::install_github("pablogonzalezginestet/stackBagg")
+if (!require("remotes")) install.packages("remotes")
+remotes::install_github("pablogonzalezginestet/stackBagg")
 ```
 
 
