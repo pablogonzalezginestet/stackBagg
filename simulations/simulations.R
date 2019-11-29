@@ -136,17 +136,17 @@ table1_sim2 <- table1_paper(res_simulation2,J,scenarios)
 row.names(table1_sim2)[1] <- "True"
 figure1_sim2 <-figure1_paper(res_simulation2,J,scenarios) 
 
-
+#Figure 1 and 2 main text
 # AUCs of each algorithm relative to the AUC of the stack based on 500 simulated data sets
 #under the four scenarios (A being the darkest and D the whitest, alphabetically order)  using
 #all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set.
 #The horizontal line denotes the stack
 
-figure1_sim1 #simulation 1
-figure1_sim2 #simulation 2
+figure1_sim1 #simulation 1 (Figure 1 main text)
+figure1_sim2 #simulation 2 (Figure 2 main text)
 
 
-# Table 1: Average Estimated AUCs across 500 data sets for Simulation 1 and 2 and their four scenarios (A, B, C and D) using
+# Table S4: Average Estimated AUCs across 500 data sets for Simulation 1 and 2 and their four scenarios (A, B, C and D) using
 # all available covariates and a Cox-PH model for censoring for predicting the event of interest in the test data set.
 
 library(xtable)
@@ -172,11 +172,11 @@ figure1_sim2 <-figure1_paper(res_simulation1,J,scenarios)
 #all available covariates and a CoxBoost model for censoring for predicting the event of interest in the test data set.
 #The horizontal line denotes the stack
 
-figure1_sim1 #simulation 1
-figure1_sim2 #simulation 2
+figure1_sim1 #simulation 1 (supplementary material)
+figure1_sim2 #simulation 2 (supplementary material)
 
 
-# Table 2: Average Estimated AUCs across 500 data sets for Simulation 1 and 2 and their four scenarios (A, B, C and D) using
+# Table S5 : Average Estimated AUCs across 500 data sets for Simulation 1 and 2 and their four scenarios (A, B, C and D) using
 # all available covariates and a CoxBoost model for censoring for predicting the event of interest in the test data set.
 
 xtable::xtable(cbind(table1_sim1,table1_sim2),digits=c(0,rep(3,16)))

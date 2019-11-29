@@ -6,7 +6,7 @@
 # It reproduces:
 # Table 3: Estimated AUCs for predicting a rebound in viral load in split sample test set based
 # on Cox-PH-weights and Figure 1
-# Figure 1: Aalen-Johansen estimates for the cause-specific cumulative
+# Figure 3: Aalen-Johansen estimates for the cause-specific cumulative
 # incidences of failing to maintain HIV RNA undetectable within 2 years of suppression within
 # quartiles of the test data set and  ROC curves for the the optimized stacked IPCW bagging.
 # 
@@ -69,7 +69,7 @@ res.stackBagg <- stackBagg::stackBagg(train.data = fake_data_train,
                                 tuneparams = tuneparams_fakedata)
 
 
-###########             Table 3                     ########### 
+###########             Table 2                     ########### 
 #Estimated AUCs for predicting a rebound in viral load in split sample test set based
 #on Cox-PH-weights.
 
@@ -77,7 +77,7 @@ table3 <- cbind(c(res.stackBagg$auc_ipcwBagg,res.stackBagg$auc_survival[1:2]),c(
 table3
 
 
-######               Figure 1                       ##########
+######               Figure 3                       ##########
 # Panel at right: the ROC curves for the the optimized stacked IPCW bagging
 stackBagg::plot_roc(time=fake_data_test$ttilde,delta=fake_data_test$delta, marker=res.stackBagg$prediction_ensBagg[,"Stack"], tao=730, method="ipcw")
 
