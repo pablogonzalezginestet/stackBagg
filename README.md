@@ -7,8 +7,7 @@ newly developed machine learning methods for classification to be applied to rig
 without competing risk.
 
 **stackBagg** provides the files to reproduce the simulation studies and the real data application in the forthcoming paper:
-* Gonzalez Ginestet, P. et al. (2019). "Stacked IPCW Bagging: a case study in the HIV care
-registry".
+* Gonzalez Ginestet, P. et al. (2019). "Stacked IPCW Bagging: A Case Study in The InfCareHIV Register".
 
 ![](man/figures/boxplot_sim1_coxph_stack.png)
 
