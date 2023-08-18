@@ -348,30 +348,30 @@ auc_survival1 <- stackBagg::ipcw_auc(T=test.data$ttilde,delta=test.data$delta,ma
 }
 #cox boost 
 
-if(is.null(xnam.factor)){
-  X.coxboost=as.matrix(train.data[xnam])
-  newX.coxboost <- as.matrix(as.data.frame(test.data)[xnam])
-  fitCoxboost <- CoxBoost::CoxBoost(time=train.data$ttilde,status=train.data$delta, x=X.coxboost,stepno=300,penalty=100)
-  pred.coxboost <- predict(fitCoxboost,newdata=newX.coxboost,times=tao,type="CIF")
+#if(is.null(xnam.factor)){
+#  X.coxboost=as.matrix(train.data[xnam])
+#  newX.coxboost <- as.matrix(as.data.frame(test.data)[xnam])
+#  fitCoxboost <- CoxBoost::CoxBoost(time=train.data$ttilde,status=train.data$delta, x=X.coxboost,stepno=300,penalty=100)
+#  pred.coxboost <- predict(fitCoxboost,newdata=newX.coxboost,times=tao,type="CIF")
 
-}else{
-X.cboost.train <- train.data[xnam.cont]
-X.cboost.train<- cbind(X.cboost.train,predict(caret::dummyVars( ~ ., data =train.data[xnam.factor], fullRank = TRUE), newdata=train.data[xnam.factor]))
-colnames(X.cboost.train)=c(paste("x", 1:(dim(X.cboost.train)[2]), sep=""))
-train.data2=cbind(ttilde=train.data$ttilde,delta=train.data$delta,X.cboost.train)
+#}else{
+#X.cboost.train <- train.data[xnam.cont]
+#X.cboost.train<- cbind(X.cboost.train,predict(caret::dummyVars( ~ ., data =train.data[xnam.factor], fullRank = TRUE), newdata=train.data[xnam.factor]))
+#colnames(X.cboost.train)=c(paste("x", 1:(dim(X.cboost.train)[2]), sep=""))
+#train.data2=cbind(ttilde=train.data$ttilde,delta=train.data$delta,X.cboost.train)
 
-X.cboost.test <- test.data[xnam.cont]
-X.cboost.test <- cbind(X.cboost.test,predict(caret::dummyVars( ~ ., data =test.data[xnam.factor],fullRank = TRUE), newdata=test.data[xnam.factor]))
-colnames(X.cboost.test)=c(paste("x", 1:(dim(X.cboost.test)[2]), sep=""))
-test.data2=cbind(ttilde=test.data$ttilde,delta=test.data$delta,X.cboost.test)
+#X.cboost.test <- test.data[xnam.cont]
+#X.cboost.test <- cbind(X.cboost.test,predict(caret::dummyVars( ~ ., data =test.data[xnam.factor],fullRank = TRUE), newdata=test.data[xnam.factor]))
+#colnames(X.cboost.test)=c(paste("x", 1:(dim(X.cboost.test)[2]), sep=""))
+#test.data2=cbind(ttilde=test.data$ttilde,delta=test.data$delta,X.cboost.test)
 
-X.coxboost=as.matrix(train.data2[c(-1,-2)])
-newX.coxboost <- as.matrix(as.data.frame(test.data2)[c(-1,-2)])
-fit.coxboost <-  CoxBoost::CoxBoost(time=train.data2$ttilde,status=train.data2$delta, x=X.coxboost,stepno=300,penalty=100)
-pred.coxboost <- predict(fit.coxboost,newdata=newX.coxboost,times=tao,type="CIF")
-}
+#X.coxboost=as.matrix(train.data2[c(-1,-2)])
+#newX.coxboost <- as.matrix(as.data.frame(test.data2)[c(-1,-2)])
+#fit.coxboost <-  CoxBoost::CoxBoost(time=train.data2$ttilde,status=train.data2$delta, x=X.coxboost,stepno=300,penalty=100)
+#pred.coxboost <- predict(fit.coxboost,newdata=newX.coxboost,times=tao,type="CIF")
+#}
 
-auc_survival2 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=pred.coxboost,cause=1,wts=test.data$wts,tao)
+#auc_survival2 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=pred.coxboost,cause=1,wts=test.data$wts,tao)
 
 #random forest
 fmla.rf <- as.formula(paste("Surv(ttilde,delta) ~ ", paste(xnam, collapse= "+")))
@@ -381,11 +381,15 @@ time.index.cif.rf <- data.table::last(which(predSurvRf$time.interest<25))
 cifRf <- predSurvRf$cif[,time.index.cif.rf,1]
 auc_survival3 <- ipcw_auc(T=test.data$ttilde,delta=test.data$delta,marker=cifRf,cause=1,wts=test.data$wts,tao)
 
-auc_survival<- cbind(auc_survival1,auc_survival2,auc_survival3)
-colnames(auc_survival) <- c("CoxPH","CoxBoost","Random Forest")
-prediction_survival <- cbind(predcoxfit,pred.coxboost,cifRf)
-colnames(prediction_survival) <- c("CoxPH","CoxBoost","Random Forest")
+#auc_survival<- cbind(auc_survival1,auc_survival2,auc_survival3)
+#colnames(auc_survival) <- c("CoxPH","CoxBoost","Random Forest")
+#prediction_survival <- cbind(predcoxfit,pred.coxboost,cifRf)
+#colnames(prediction_survival) <- c("CoxPH","CoxBoost","Random Forest")
 
+auc_survival<- cbind(auc_survival1,auc_survival3)
+colnames(auc_survival) <- c("CoxPH","Random Forest")
+prediction_survival <- cbind(predcoxfit,cifRf)
+colnames(prediction_survival) <- c("CoxPH","Random Forest")
 
 return(list( 
   library=ml_names,
