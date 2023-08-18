@@ -16,7 +16,6 @@ Depends:
     gam
 Imports: 
     survival,
-    CoxBoost,
     boot,
     ggplot2
 License: MIT + file LICENSE
